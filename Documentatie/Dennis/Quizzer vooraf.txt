@@ -1,0 +1,23 @@
+Wireframes
+Informatiemodel (data) -->  Wat moet er bewaard blijven
+	database
+	react/ redux state
+	session
+
+directory + applicatiearchitectuur
+	client-side
+		vragen
+		scorebord
+		quizmaster
+
+Client server communicatie?
+Bijbehorende url
+rest
+	resources
+	subresources
+	id's eruizien in url of als mongoID
+	Alles (GET, POST, PUT, DELETE)
+Websockets
+	alleen updates triggers
+	heel of half resource base api.
+	of action based api
