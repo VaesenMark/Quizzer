@@ -73,6 +73,6 @@ Extra:
 Timer inbouwen per vraag?
 inloggen met QR code?
 Geschiedenis behouden bij kwijtraken sessions?
-
+	Teams onthouden (competitie)
 
  
