@@ -1,0 +1,78 @@
+Informatiemodel (data) -->  Wat moet er bewaard blijven
+	database
+
+
+Client server communicatie?
+Bijbehorende url
+rest
+	resources
+	subresources
+	id's eruizien in url of als mongoID
+	Alles (GET, POST, PUT, DELETE)
+
+	Websockets
+	alleen updates triggers
+	heel of half resource base api.
+	of action based api
+
+	
+Database:
+collection 
+
+Categories
+		- vragen
+			-antwoord1
+
+Geschiedenis van pubquiz bewaren?
+
+
+Session
+-Id
+-Teamnaam
+-Rondes 
+	- punten
+
+-Totaalpunten
+
+Gebruik van redux en react
+
+state
+ - huidige vraag
+ - Totaal punten
+ - huidige teams
+
+ 
+Categories
+	- Id
+	- naam
+	Vragen
+		- id
+		- vraag
+		Antwoord
+			- Antwoord
+ 
+ 
+/login
+/logout
+/pubb/{id}
+/team/{id}
+/pubb/{id}/vraag/{id}
+
+
+/quizmaster/login
+/quizmaster/logout
+/quizmaster/categorie
+/quizmaster/pub/{id}/categorie/{id}
+/quizmaster/pub/{id}/categorie{id}/vraag{id}
+
+/scorebord/login
+/scorebord/logout
+/scorebord
+
+Extra:
+Timer inbouwen per vraag?
+inloggen met QR code?
+Geschiedenis behouden bij kwijtraken sessions?
+
+
+ 
