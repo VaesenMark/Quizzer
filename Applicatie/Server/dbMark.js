@@ -7,22 +7,7 @@ require('./MongooseModels/QuizMaster');
 require('./MongooseModels/Quiz');
 
 
-const Team = mongoose.model('Team');
 
-
-var team = new Team({ teamName: 'Team Mark', roundPoints: 0, approved: false, quizID: 1 });
-
-
-team.save(function (err, char) {
-    if (err) {
-        console.log(err);
-        mongoose.connection.close();
-    }
-    else {
-        console.log(char);
-        mongoose.connection.close();
-    }
-});
 
 
 const Category = mongoose.model('Category');
@@ -37,7 +22,6 @@ category.save(function (err, char) {
         mongoose.connection.close();
     }
     else {
-        console.log(char);
         mongoose.connection.close();
     }
 });
@@ -55,7 +39,6 @@ question.save(function (err, char) {
         mongoose.connection.close();
     }
     else {
-        console.log(char);
         mongoose.connection.close();
     }
 });
@@ -73,7 +56,6 @@ quizmaster.save(function (err, char) {
         mongoose.connection.close();
     }
     else {
-        console.log(char);
         mongoose.connection.close();
     }
 });
@@ -97,7 +79,37 @@ quiz.save(function (err, char) {
         mongoose.connection.close();
     }
     else {
-        console.log(char);
+        mongoose.connection.close();
+    }
+});
+
+
+
+
+
+const Team = mongoose.model('Team');
+
+
+var team = new Team({ teamName: 'Team Mark', roundPoints: 0, approved: false, quizID: 1 });
+
+
+team.save(function (err, char) {
+    if (err) {
+        console.log(err);
+        mongoose.connection.close();
+    }
+    else {
+        mongoose.connection.close();
+    }
+});
+
+Team.login('asd1', function(err, data) {
+    if (err) {
+        console.log(err);
+        mongoose.connection.close();
+    }
+    else {
+        console.log(data);
         mongoose.connection.close();
     }
 });

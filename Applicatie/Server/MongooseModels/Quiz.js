@@ -75,7 +75,6 @@ const quizSchema = new mongoose.Schema({
     rounds: [roundSchema]
 });
 
-
 quizSchema.plugin(autoIncrement.plugin, {
     model: 'Quiz',
     startAt: 1
