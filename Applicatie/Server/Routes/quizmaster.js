@@ -12,16 +12,17 @@ app.use(function(req, res, next) {
     next();
 });
 
+//Quizmaster login
 app.post('/login', function(req, res, next){
     if(req.body.username === req.body.password){
-        res.send("Gebruiker: "+req.body.username+" is ingelogd");
+        res.send("Quizmaster: "+req.body.username+" is ingelogd");
     }
     else{
-        res.send("Gebruiker heeft het verkeerde wachtwoord opgegeven");
+        res.send("Quizmaster heeft het verkeerde wachtwoord opgegeven");
     }
 });
 
-
+//quizmaster logout
 app.get('/logout', function(req, res, next){
     res.send("Gebruiker is uitgelogd");
 });

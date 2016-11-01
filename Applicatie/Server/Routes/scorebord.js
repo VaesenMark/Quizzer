@@ -14,7 +14,7 @@ app.use(function(req, res, next) {
 
 app.post('/login', function(req, res, next){
     if(req.body.username === req.body.password){
-        res.send("Gebruiker: "+req.body.username+" is ingelogd");
+        res.send("Scorebord: "+req.body.username+" is ingelogd");
     }
     else{
         res.send("Gebruiker heeft het verkeerde wachtwoord opgegeven");

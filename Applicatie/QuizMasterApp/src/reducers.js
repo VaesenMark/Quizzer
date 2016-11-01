@@ -8,6 +8,48 @@ import update from 'immutability-helper';
 //=====================================================================
 //    State management for HN Items and their read/seen-statuses
 //---------------------------------------------------------------------
+const loginState = {
+    id: null,
+    teamname: "",
+    score: 0
+};
+export function loginAction(item) {
+    return {type: "loginAction", item};
+}
+
+
+function loginReducer(state = loginState, action) {
+    switch (action.type) {
+
+        case 'loginAction': {
+            if(state.id == nulll){
+
+            }
+        }
+        case 'markAsSeenAction': {
+            let changingStatuses = {};
+            state.items.forEach((itm, idx) => {
+                if (idx < action.listSize && state.statuses[itm.id] == undefined) {
+                    changingStatuses[itm.id] = "seen";
+                }
+            });
+            return update(state, {statuses: {$merge: changingStatuses}});
+        }
+        default:
+            return state;
+    }
+}
+
+
+//===========================================================================
+//  Combining the reducers and their state into a single reducer managing
+//  a single state
+//---------------------------------------------------------------------------
+
+export const mainReducer = Redux.combineReducers({
+    login: loginReducer,
+});
+
 
 // Action Creators:
 
@@ -132,13 +174,3 @@ function preferencesReducer(state = initialPreferencesState, action) {
             return state;
     }
 }
-
-//===========================================================================
-//  Combining the reducers and their state into a single reducer managing
-//  a single state
-//---------------------------------------------------------------------------
-
-export const mainReducer = Redux.combineReducers({
-    hnItems: hnItemsReducer,
-    prefs: preferencesReducer
-});
