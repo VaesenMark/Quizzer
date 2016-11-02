@@ -79,12 +79,63 @@ TeamApp
  */
 
 //Submit answer
-app.post('/:quizId/round/:roundId/question/:QuestionId/teamanswer/:tgeamId',function(req, res, next) {
+app.post('/:quizId/round/:roundId/question/:QuestionId/teamanswer/:teamId',function(req, res, next) {
+    try {
+        const Quiz = mongoose.model('Quiz');
+        Quiz.findOne(
+            {
+                _id: req.params.quizId
+            },
+            function (err, quiz) {
+                try {
+                    if (err) {
+                        throw new Error(err);
+                    }
+                    if (quiz === null) {
+                        res.status(404);
+                        res.json({message: "Unknown quiz"});
+                        return;
+                    }
+
+                    // TODO check if team has already submitted a question
+                    quiz.rounds.find(x => x.roundNumber === 1)
+                        .playedQuestions.find(x => x.questionNumber === 1)
+                        .teamAnswers.push({teamID: 2, answer: "Blue", approved: false});
+
+                    quiz.save(function (err, quiz) {
+                        try {
+                            if (err) {
+                                throw new Error(err);
+                            }
+                            res.json({message: "Question inserted"});
+                            // TODO notify quizmaster
+                        }
+                        catch(exception) {
+                            console.log(exception);
+                            res.status(500);
+                            res.json({message: "A server error occured"});
+                        }
+                    });
+                }
+                catch (exception) {
+                    console.log(exception);
+                    res.status(500);
+                    res.json({message: "A server error occured"});
+                }
+            }
+        )
+    }
+    catch(exception) {
+        console.log(exception);
+        res.status(500);
+        res.json({message: "A server error occured"});
+    }
+
     res.send("vraag van quiz35 " + req.params.quizId + " in ronde " + req.params.roundId + " en vraag  " + req.params.QuestionId + " als antwoord " + req.body.answer+" van team "+ req.params.teamId);
 });
 
 //Change answer
-app.put('/:quizId/round/:roundId/question/:QuestionId/teamanswer/:tgeamId',function(req, res, next) {
+app.put('/:quizId/round/:roundId/question/:QuestionId/teamanswer/:teamId',function(req, res, next) {
     res.send("vraag van quiz35 " + req.params.quizId + " in ronde " + req.params.roundId + " en vraag  " + req.params.QuestionId + " heeft nu antwoord " + req.body.answer+" van team "+ req.params.teamId);
 });
 
