@@ -252,8 +252,14 @@ TeamApp
  */
 
 //Submit answer
-app.post('/:quizId/round/:roundId/question/:QuestionId/teamanswer/:teamId',function(req, res, next) {
+app.post('/:quizId/round/:roundNumber/question/:questionNumber/teamanswer',function(req, res, next) {
     try {
+        // Check if user is logged in
+        if(!req.session.teamId) {
+            res.status(403);
+            res.json({message: "You need to be logged in to do this"});
+            return;
+        }
         const Quiz = mongoose.model('Quiz');
         Quiz.findOne(
             {
@@ -270,10 +276,34 @@ app.post('/:quizId/round/:roundId/question/:QuestionId/teamanswer/:teamId',funct
                         return;
                     }
 
-                    // TODO check if team has already submitted a question
-                    quiz.rounds.find(x => x.roundNumber === 1)
-                        .playedQuestions.find(x => x.questionNumber === 1)
-                        .teamAnswers.push({teamID: 2, answer: "Blue", approved: false});
+                    // Check if entered round number exists
+                    if(!quiz.rounds.find(x => x.roundNumber == req.params.roundNumber)) {
+                        res.status(404);
+                        res.json({message: "Unknown round number"});
+                        return;
+                    }
+
+                    // Check if entered question number exists
+                    if(!quiz.rounds.find(x => x.roundNumber == req.params.roundNumber)
+                            .playedQuestions.find(x => x.questionNumber == req.params.questionNumber)) {
+                        res.status(404);
+                        res.json({message: "Unknown question number"});
+                        return;
+                    }
+
+                    // Check if the team has already answered this question
+                    if(quiz.rounds.find(x => x.roundNumber == req.params.roundNumber)
+                            .playedQuestions.find(x => x.questionNumber == req.params.questionNumber)
+                            .teamAnswers.find(x => x.teamID == req.session.teamId)) {
+                        res.status(400);
+                        res.json({message: "Duplicate answers not allowed"});
+                        return;
+                    }
+
+                    // Everything checks out, go create teamAnswer
+                    quiz.rounds.find(x => x.roundNumber == req.params.roundNumber)
+                        .playedQuestions.find(x => x.questionNumber == req.params.questionNumber)
+                        .teamAnswers.push({teamID: req.session.teamId, answer: req.body.answer, approved: false});
 
                     quiz.save(function (err, quiz) {
                         try {
@@ -303,13 +333,56 @@ app.post('/:quizId/round/:roundId/question/:QuestionId/teamanswer/:teamId',funct
         res.status(500);
         res.json({message: "A server error occured"});
     }
-
-    res.send("vraag van quiz35 " + req.params.quizId + " in ronde " + req.params.roundId + " en vraag  " + req.params.QuestionId + " als antwoord " + req.body.answer+" van team "+ req.params.teamId);
 });
 
 //Change answer
-app.put('/:quizId/round/:roundId/question/:QuestionId/teamanswer/:teamId',function(req, res, next) {
-    res.send("vraag van quiz35 " + req.params.quizId + " in ronde " + req.params.roundId + " en vraag  " + req.params.QuestionId + " heeft nu antwoord " + req.body.answer+" van team "+ req.params.teamId);
+app.put('/:quizId/round/:roundNumber/question/:QuestionNumber/teamanswer/:teamId',function(req, res, next) {
+    // Check if user is logged in
+    if(!req.session.teamId) {
+        res.status(403);
+        res.json({message: "You need to be logged in to do this"});
+        return;
+    }
+
+    // Check if the logged in user's teamId is equals to the params teamId
+    if(!req.session.teamId == req.params.teamId) {
+        res.status(403);
+        res.json({message: "You cannot change another teams's answer"});
+        return;
+    }
+
+    const newAnswer = {
+        teamID: req.params.teamId,
+        answer: body.answer,
+        approved: false
+    };
+
+    const Quiz = mongoose.model('Quiz');
+    Quiz.findOne(
+        {
+            _id: req.params.quizId
+        },
+        function (err, quiz) {
+            try {
+                if (err) {
+                    throw new Error(err);
+                }
+                if (quiz === null) {
+                    res.status(404);
+                    res.json({message: "Unknown quiz"});
+                    return;
+                }
+                quiz.rounds.find(x => x.roundNumber == req.params.roundNumber)
+                    .playedQuestions.find(x => x.questionNumber == req.params.questionNumber)
+                    .teamAnswers.find(x => x.teamID == req.session.teamId).answer = req.body.answer
+            }
+            catch(exception) {
+                console.log(exception);
+                res.status(500);
+                res.json({message: "A server error occured"});
+            }
+        }
+    );
 });
 
 function createRandomString(characters){
