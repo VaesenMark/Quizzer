@@ -1,6 +1,7 @@
 import React from 'react'
 import * as ReactRedux from 'react-redux';
 import {Login} from './Login';
+import {Logout} from './Logout';
 
 
 class AppUI extends React.Component {
@@ -8,10 +9,16 @@ class AppUI extends React.Component {
       super(props);
    }
    render() {
+      var content = "";
+      console.log(this.props.id>0, this.props.id);
+      if(this.props.id == 0){
+         content = <div><Login/></div>
+      }
+      else{
+         content = <div><Logout/></div>
+      }
       return (
-          <div>Hallo
-             <Login/>
-          </div>
+          content
       );
    }
 }
@@ -19,13 +26,16 @@ class AppUI extends React.Component {
 
 
 
-
+function mapDispatchToProps(dispatch) {
+   return {
+   }
+}
 
 
 function mapStateToProps(state) {
    return {
-       selectedItem: 0
+       id: state.quizMaster.id
    }
 }
 
-export const App = ReactRedux.connect(mapStateToProps)(AppUI);
+export const App = ReactRedux.connect(mapStateToProps, mapDispatchToProps)(AppUI);

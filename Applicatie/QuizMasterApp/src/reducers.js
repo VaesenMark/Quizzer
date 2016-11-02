@@ -8,28 +8,66 @@ import update from 'immutability-helper';
 //=====================================================================
 //    State management for HN Items and their read/seen-statuses
 //---------------------------------------------------------------------
-const loginState = {
-    id: null,
-    teamname: "",
-    score: 0
+const quizMasterState = {
+    id: 0,
+    username: "Mark",
+    password: "Hoi",
 };
-export function loginAction(item) {
-    return {type: "loginAction", item};
+
+export function loginAction(username, password) {
+    console.log(username);
+    return {type: "loginAction", username, password};
 }
 
+export function editUsername(username) {
+    return {type: "editUserName", username: username}
+}
 
-function loginReducer(state = loginState, action) {
+export function editPassword(password) {
+    return {type: "editPassword", password: password}
+}
+
+export function logout() {
+    return {type: "logout"}
+}
+
+function loginReducer(state = quizMasterState, action) {
     switch (action.type) {
 
         case 'loginAction': {
-            if (state.id == null) {
-                var test = quizMasterAPI.getLogin("denn", "denn");
-                var update = {
-                    "id": 5,
-                    "teamname": "Mankey's",
-                    "score": 3
-                }
+                quizMasterAPI.getLogin(action.username, action.password, (err, nothing) => {
+                    if (err) {
+                        console.log(err);
+                    } else {
+                        let update = {
+                            'id': nothing._id
+                        };
+
+                        return copyAndUpdateObj(state, update);
+
+                    }
+                });
+
+
             }
+        case 'editUserName': {
+            let update = {
+                'username': action.username
+            };
+            return copyAndUpdateObj(state, update);
+
+        }
+        case 'editPassword': {
+            let update = {
+                'password': action.password
+            };
+            return copyAndUpdateObj(state, update);
+        }
+        case 'logout': {
+            let update = {
+                'id': 0
+            };
+            console.log(copyAndUpdateObj(state, update));
             return copyAndUpdateObj(state, update);
         }
         default:
@@ -47,5 +85,5 @@ function copyAndUpdateObj(copiedObject, update) {
 }
 
 export const mainReducer = Redux.combineReducers({
-    login: loginReducer,
+    quizMaster: loginReducer,
 });
