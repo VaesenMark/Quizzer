@@ -1,14 +1,20 @@
 import React from 'react'
 import * as ReactRedux from 'react-redux';
+import {loginAction} from '../reducers';
 
 
-class AppUI extends React.Component {
+class LoginUi extends React.Component {
    constructor(props) {
       super(props);
    }
    render() {
       return (
-          <div>Hallo</div>
+          <div>Hallo
+             <button id="markAsSeen" onClick={() => this.props.getLogin()}>
+                Mark all items as “seen”
+             </button>
+          </div>
+
       );
    }
 }
@@ -17,7 +23,11 @@ class AppUI extends React.Component {
 
 
 
-
+function mapDispatchToProps(dispatch) {
+   return {
+      getLogin: () => dispatch(loginAction()),
+   }
+}
 
 function mapStateToProps(state) {
    return {
@@ -25,4 +35,4 @@ function mapStateToProps(state) {
    }
 }
 
-export const App = ReactRedux.connect(mapStateToProps)(AppUI);
+export const Login = ReactRedux.connect(mapStateToProps, mapDispatchToProps)(LoginUi);
