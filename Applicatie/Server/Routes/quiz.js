@@ -82,6 +82,7 @@ app.get('/:quizId/team/:teamId', function(req, res, next){
     res.send("get informatie van quiz " +req.params.quizId+ " voor team: "+ req.params.teamId);
 });
 
+
 //Create Round
 app.post('/:quizId/round', function(req, res, next){
     const Quiz = mongoose.model('Quiz');
@@ -124,25 +125,66 @@ app.post('/:quizId/round', function(req, res, next){
 });
 
 
-
-
 //Create Round Question
 app.post('/:quizId/round/:roundId/question/', function(req, res, next){
-//todo subitems??
     const Quiz = mongoose.model('Quiz');
     res.send("Set nieuwe vraag voor quiz "+req.params.quizId+" in ronde "+req.params.roundId+" en vraag  "+req.body.QuestionId+" ");
+    Quiz.findOne({_id: req.params.quizId}, function (err, quiz) {
+        if (err) {
+            res.send(err);
+        }
+        else if(quiz != null) {
+            //todo kijken of vraag niet al geweest is.
+            //is het mogelijk om vragen in vorige ronde toe te voegen?
+            if(quiz.rounds.length <= req.params.roundId) {
+                quiz.rounds[(req.params.roundId - 1)].playedQuestions.push({
+                    questionNumber: req.body.questionNumber,
+                    questionID: req.body.questionId
+                });
+                quiz.save(function (err, char) {
+                    if (err) {
+                        res.send(err);
+                    }
+                    else {
+                        res.send("There is a question add to quiz/round " + req.params.roundId);
+                    }
+                });
+            }
+        }
+        else
+        {
+            res.send("error")
+        }
+    })
 });
 
-//Get round question info
-app.get('/:quizId/round/:roundId/question/:QuestionId', function(req, res, next){
-    //todo Wat wil je hier precies krijgen???
-    res.send("Get vraag van quiz "+req.params.quizId+" in ronde "+req.params.roundId+" en vraag  "+req.params.QuestionId+" ");
-});
 
 // Get round question team answers
 app.get('/:quizId/round/:roundId/question/:QuestionId/teamanswer',function(req, res, next) {
     //todo subitems??
+    const Quiz = mongoose.model('Quiz');
+    res.send("Set nieuwe vraag voor quiz "+req.params.quizId+" in ronde "+req.params.roundId+" en vraag  "+req.body.QuestionId+" ");
+    Quiz.findOne({_id: req.params.quizId}, function (err, quiz) {
+        if (err) {
+            res.send(err);
+        }
+        else if(quiz != null) {
+            //todo kijken of vraag niet al geweest is.
+            //is het mogelijk om vragen in vorige ronde toe te voegen?
+            if(quiz.rounds[(req.params.roundId - 1)]) {
+            }
+            else{
+                res.send("error")
+            }
+        }
+        else
+        {
+            res.send("error")
+        }
+    });
     res.send("vraag van quiz " + req.params.quizId + " in ronde " + req.params.roundId + " en vraag  " + req.params.QuestionId + " als antwoord " + req.body.answer +" van "+ req.body.teamId);
+
+
 });
 
 
@@ -153,9 +195,15 @@ app.put('/:quizId/round/:roundId/question/:QuestionId/teamanswer/:teamId',functi
 });
 
 
+//Get round question info
+app.get('/:quizId/round/:roundId/question/:QuestionId', function(req, res, next){
+    //todo Wat wil je hier precies krijgen???
+    res.send("Get vraag van quiz "+req.params.quizId+" in ronde "+req.params.roundId+" en vraag  "+req.params.QuestionId+" ");
+});
 
 //Get information from quiz en one team
 app.get('/:quizId/team/:teamId', function(req, res, next){
+    //todo Wat wil je hier precies krijgen???
     res.send("get informatie van quiz " +req.params.quizId+"en team"+req.params.teamId);
 });
 
@@ -187,6 +235,8 @@ app.put('/close/:quizId',function(req, res) {
         }
     });
 });
+
+
 /*
 
 Scorebord
