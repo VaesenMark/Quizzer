@@ -19,6 +19,7 @@ app.use(bodyParser.urlencoded({extended: true}));
 /*
 Quizmaster
 */
+//todo id aanpassen naar ID en overal zo houden
 
 //Start quiz
 app.post('/', function(req, res, next) {
@@ -64,23 +65,15 @@ app.get('/:quizId/teams', function(req, res, next){
         else{
             console.log(teams.length);
             if(teams.length <= 0){
-                res.send("The're are nog teams for this quiz")
+                res.send("The're are no teams signed in for this quiz")
             }
-
             else{
-                console.log(teams);
                 res.send(teams);
             }
         }
     });
 });
 
-
-//Get teams appliances
-app.get('/:quizId/team/:teamId', function(req, res, next){
-    //Todo  informatie van team krijgen
-    res.send("get informatie van quiz " +req.params.quizId+ " voor team: "+ req.params.teamId);
-});
 
 
 //Create Round
@@ -93,6 +86,7 @@ app.post('/:quizId/round', function(req, res, next){
             res.send(err);
         }
         else if(quiz != null) {
+            // Check if entered categoryId exists
             Category.findOne({_id: req.body.categoryId}, function (err, category) {
                 if (err) {
                     res.send(err);
@@ -100,25 +94,34 @@ app.post('/:quizId/round', function(req, res, next){
                 else {
                     if(category !=null) {
                         //todo Controleren of categorie niet al is voorgekomen.
-                        quiz.rounds.push({roundNumber: (quiz.rounds.length + 1), categoryID: req.body.categoryId});
+                        if (quiz.rounds.find(x => x.categoryID === req.body.categoryId)) {
+                            quiz.rounds.push({roundNumber: (quiz.rounds.length + 1), categoryID: req.body.categoryId});
 
-                        quiz.save(function (err, char) {
-                            if (err) {
-                                res.send(err);
-                            }
-                            else {
-                                res.send("There is a Round add to quiz");
-                            }
-                        });
+                            quiz.save(function (err, char) {
+                                if (err) {
+                                    res.send(err);
+                                }
+                                else {
+                                    res.status(200);
+                                    res.json({message: "There is a Round add to quiz"});
+                                }
+                            });
+                        }
+                        else{
+                            res.status(400);
+                            res.json({message: "This category is al being use for this quiz"});
+                        }
                     }
                     else{
-                        res.send("There is no category");
+                        res.status(404);
+                        res.json({message: "There is no category"});
                     }
                 }
             })
         }
         else{
-            res.send("There go something wrong. Try again!!");
+            res.json({message: "The quiz can't be found"});
+            res.status(404);
         }
     });
 
@@ -135,6 +138,7 @@ app.post('/:quizId/round/:roundId/question/', function(req, res, next){
         }
         else if(quiz != null) {
             //todo kijken of vraag niet al geweest is.
+            //todo kijken of vraag bij de categorie hoort
             //is het mogelijk om vragen in vorige ronde toe te voegen?
             if(quiz.rounds.length <= req.params.roundId) {
                 quiz.rounds[(req.params.roundId - 1)].playedQuestions.push({
@@ -160,29 +164,32 @@ app.post('/:quizId/round/:roundId/question/', function(req, res, next){
 
 
 // Get round question team answers
+//    res.send("Set nieuwe vraag voor quiz "+req.params.quizId+" in ronde "+req.params.roundId+" en vraag  "+req.body.QuestionId+" ");
 app.get('/:quizId/round/:roundId/question/:QuestionId/teamanswer',function(req, res, next) {
-    //todo subitems??
     const Quiz = mongoose.model('Quiz');
-    res.send("Set nieuwe vraag voor quiz "+req.params.quizId+" in ronde "+req.params.roundId+" en vraag  "+req.body.QuestionId+" ");
+
     Quiz.findOne({_id: req.params.quizId}, function (err, quiz) {
         if (err) {
             res.send(err);
         }
         else if(quiz != null) {
-            //todo kijken of vraag niet al geweest is.
-            //is het mogelijk om vragen in vorige ronde toe te voegen?
-            if(quiz.rounds[(req.params.roundId - 1)]) {
+            var round = quiz.rounds.find(x => x.roundNumber == req.params.roundId);
+            console.log(quiz, req.params.roundId);
+            if(round != null) {
+                const playedQuestions = round.playedQuestions.find(x=> x.questionID == req.params.QuestionId);
+                res.json({result: playedQuestions.teamAnswers})
             }
             else{
-                res.send("error")
+                res.status(400);
+                res.json({message: "This round is not being created"})
             }
         }
         else
         {
-            res.send("error")
+            res.status(404);
+            res.json({message: "The're no quiz"});
         }
     });
-    res.send("vraag van quiz " + req.params.quizId + " in ronde " + req.params.roundId + " en vraag  " + req.params.QuestionId + " als antwoord " + req.body.answer +" van "+ req.body.teamId);
 
 
 });
@@ -191,10 +198,36 @@ app.get('/:quizId/round/:roundId/question/:QuestionId/teamanswer',function(req, 
 //Accept/Deny team answer
 app.put('/:quizId/round/:roundId/question/:QuestionId/teamanswer/:teamId',function(req, res){
     //todo subitems??
-    res.send("vraag van quiz "+req.params.quizId+" in ronde "+req.params.roundId+" en vraag  "+req.params.QuestionId+" voor "+req.params.teamId + " is " + req.body.approved);
-});
+    const Quiz = mongoose.model('Quiz');
+    Quiz.findOne(
+        {
+            _id: req.params.quizId
+        },
+        function (err, quiz) {
+            if(err){
+                res.send(err);
+            }
+            else{
+                const teamAnswers = quiz.rounds.find(x => x.roundNumber == req.params.roundId)
+                    .playedQuestions.find(x => x.questionNumber == req.params.QuestionId)
+                    .teamAnswers.find(x=> x.teamID == req.params.teamId);
+                teamAnswers.approved = req.body.approved;
+                quiz.save(function (err, char) {
+                    if (err) {
+                        res.status(400);
+                        res.json({message: "The answers is not being controled by the quizmaster",err})
+                    }
+                    else {
+                        res.status(200);
+                        res.json({message: "The answers is being checked by the quizmaster"})
+                    }
+                });
+            }
+        });
+    });
 
-
+//todo weggooien?
+/*
 //Get round question info
 app.get('/:quizId/round/:roundId/question/:QuestionId', function(req, res, next){
     //todo Wat wil je hier precies krijgen???
@@ -206,7 +239,7 @@ app.get('/:quizId/team/:teamId', function(req, res, next){
     //todo Wat wil je hier precies krijgen???
     res.send("get informatie van quiz " +req.params.quizId+"en team"+req.params.teamId);
 });
-
+*/
 
 
 

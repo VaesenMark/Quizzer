@@ -1,5 +1,6 @@
 import React from 'react'
 import * as ReactRedux from 'react-redux';
+import {Login} from './Login';
 
 
 class AppUI extends React.Component {
@@ -8,7 +9,9 @@ class AppUI extends React.Component {
    }
    render() {
       return (
-          <div>Hallo</div>
+          <div>Hallo
+             <Login/>
+          </div>
       );
    }
 }
