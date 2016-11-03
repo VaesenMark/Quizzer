@@ -195,36 +195,7 @@ app.get('/:quizId/round/:roundId/question/:QuestionId/teamanswer',function(req, 
 });
 
 
-//Accept/Deny team answer
-app.put('/:quizId/round/:roundId/question/:QuestionId/teamanswer/:teamId',function(req, res){
-    //todo subitems??
-    const Quiz = mongoose.model('Quiz');
-    Quiz.findOne(
-        {
-            _id: req.params.quizId
-        },
-        function (err, quiz) {
-            if(err){
-                res.send(err);
-            }
-            else{
-                const teamAnswers = quiz.rounds.find(x => x.roundNumber == req.params.roundId)
-                    .playedQuestions.find(x => x.questionNumber == req.params.QuestionId)
-                    .teamAnswers.find(x=> x.teamID == req.params.teamId);
-                teamAnswers.approved = req.body.approved;
-                quiz.save(function (err, char) {
-                    if (err) {
-                        res.status(400);
-                        res.json({message: "The answers is not being controled by the quizmaster",err})
-                    }
-                    else {
-                        res.status(200);
-                        res.json({message: "The answers is being checked by the quizmaster"})
-                    }
-                });
-            }
-        });
-    });
+
 
 //todo weggooien?
 /*
@@ -368,8 +339,55 @@ app.post('/:quizId/round/:roundNumber/question/:questionNumber/teamanswer',funct
     }
 });
 
-//Change answer
-app.put('/:quizId/round/:roundNumber/question/:QuestionNumber/teamanswer/:teamId',function(req, res, next) {
+
+// GET answered question
+app.get('/:quizId/round/:roundNumber/question/:questionNumber/teamanswer/:teamId',function(req, res, next) {
+    const Quiz = mongoose.model('Quiz');
+    Quiz.findOne(
+        {
+            _id: req.params.quizId
+        },
+        function (err, quiz) {
+            if(err){
+                res.send(err);
+            }
+            else{
+                const teamAnswer = quiz.rounds.find(x => x.roundNumber == req.params.roundNumber)
+                    .playedQuestions.find(x => x.questionNumber == req.params.questionNumber)
+                    .teamAnswers.find(x => x.teamID == req.params.teamId);
+                if(teamAnswer) {
+                    res.status(200);
+                    res.json({result: teamAnswer});
+                }
+                else {
+                    res.status(500);
+                    res.json({message: "Some error"});
+                }
+            }
+        }
+    );
+});
+
+
+// PUT answered question
+app.put('/:quizId/round/:roundNumber/question/:questionNumber/teamanswer/:teamId',function(req, res, next) {
+    //todo subitems?? wat?
+
+    console.log(req.body.answer);
+    console.log(req.body.approved);
+
+    if(!req.body.answer) {
+        res.status(400);
+        res.json({message: "The 'answer' value is required"});
+        return;
+    }
+
+    if((!req.body.approved == true) && (!req.body.approved == false)) {
+        res.status(400);
+        res.json({message: "The 'approved' value is required"});
+        return;
+    }
+
     // Check if user is logged in
     if(!req.session.teamId) {
         res.status(403);
@@ -383,12 +401,6 @@ app.put('/:quizId/round/:roundNumber/question/:QuestionNumber/teamanswer/:teamId
         res.json({message: "You cannot change another teams's answer"});
         return;
     }
-
-    const newAnswer = {
-        teamID: req.params.teamId,
-        answer: body.answer,
-        approved: false
-    };
 
     const Quiz = mongoose.model('Quiz');
     Quiz.findOne(
@@ -405,9 +417,32 @@ app.put('/:quizId/round/:roundNumber/question/:QuestionNumber/teamanswer/:teamId
                     res.json({message: "Unknown quiz"});
                     return;
                 }
-                quiz.rounds.find(x => x.roundNumber == req.params.roundNumber)
+                const answer = quiz.rounds.find(x => x.roundNumber == req.params.roundNumber)
                     .playedQuestions.find(x => x.questionNumber == req.params.questionNumber)
-                    .teamAnswers.find(x => x.teamID == req.session.teamId).answer = req.body.answer
+                    .teamAnswers.find(x => x.teamID == req.session.teamId);
+                answer.answer = req.body.answer;
+                answer.approved = req.body.approved;
+
+                quiz.save(function (err, quiz) {
+                    try {
+                        if (err) {
+                            throw new Error(err);
+                        }
+                        if (quiz === null) {
+                            res.status(400);
+                            res.json({message: "Quiz couldnt be updated"});
+                            return;
+                        }
+                        // TODO Notify quizmaster
+                        res.status(200);
+                        res.json({message: "The answers is being checked by the quizmaster"})
+                    }
+                    catch(exception) {
+                        console.log(exception);
+                        res.status(500);
+                        res.json({message: "A server error occured"});
+                    }
+                });
             }
             catch(exception) {
                 console.log(exception);
