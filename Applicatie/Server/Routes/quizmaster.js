@@ -7,46 +7,44 @@ require('../MongooseModels/QuizMaster');
 require('../MongooseModels/Quiz');
 
 var express = require('express');
-var bodyParser = require('body-parser');
-
 var fs = require('fs');
-
 var app = express();
-
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({extended: true}));
-
-
-
-app.use(function(req, res, next) {
-    console.log(req.path , res);
-    next();
-});
 
 //Quizmaster login
 app.post('/login', function(req, res, next){
     const QuizMaster = mongoose.model('QuizMaster');
-    console.log(req.body);
-    console.log("_______________________________________________");
     QuizMaster.findOne({username: req.body.username, password: req.body.password}, function (err, quizMaster) {
-        if (err) {
+        if (err || quizMaster == null) {
             res.status(400);
-            res.json({message: "Quizmaster heeft het verkeerde wachtwoord opgegeven"})
+            res.json({message: "Quizmaster have given the wrong userName or Password"})
         }
         else {
-            if(quizMaster == null) {
-                res.status(400);
-                res.json({message: "Quizmaster heeft het verkeerde wachtwoord opgegeven"})
-            }
-            else{
             console.log(quizMaster);
             res.status(200);
             res.json(quizMaster);
-            }
         }
 
     });
 });
+
+
+app.get('/:quizmasterId/quiz',  function(req, res, next){
+    const Quiz = mongoose.model('Quiz');
+    Quiz.find({quizMasterID: req.params.quizmasterId, status: {
+        $lt: 4
+    }}, function (err, quiz) {
+        if(err){
+            res.status(500);
+            res.json({message: err})
+        }
+        else{
+            res.status(200);
+            res.json({message: quiz})
+        }
+
+    });
+});
+
 
 app.get('/categories', function(req, res, next) {
     const Category = mongoose.model('Category');

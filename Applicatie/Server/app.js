@@ -27,7 +27,6 @@ var team = require('./Routes/team');
 var quiz = require('./Routes/quiz');
 
 app.use(cors());
-
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 app.use('/quizmaster', quizmaster);

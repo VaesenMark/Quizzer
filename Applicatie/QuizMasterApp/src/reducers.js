@@ -2,7 +2,6 @@ import * as Redux from 'redux';
 import quizMasterAPI from './quizMasterAPI'
 // import initialFrontPageData from './frontPageData';
 // import initialItemStatuses from './itemStatuses';
-
 import update from 'immutability-helper';
 
 //=====================================================================
@@ -12,11 +11,27 @@ const quizMasterState = {
     id: 0,
     username: "Mark",
     password: "Hoi",
+    error: "test"
 };
 
 export function loginAction(username, password) {
-    console.log(username);
-    return {type: "loginAction", username, password};
+    console.log("sfsfs");
+    return (dispatch) => {
+        quizMasterAPI.getLogin( username, password, function(err, response) {
+            if (err) {
+                console.log("err1", response.message, response);
+                dispatch( {type: "loginFailed", message: response.message})
+            }
+            else {
+                if(response.status != 200){
+                    console.log("err", response.message, response);
+                    dispatch( {type: "loginFailed", message: response.message})
+                }
+                console.log("apireturn", response.id);
+                dispatch( {type: "loginSucces", id: response.id})
+            }
+        });
+    }
 }
 
 export function editUsername(username) {
@@ -34,22 +49,22 @@ export function logout() {
 function loginReducer(state = quizMasterState, action) {
     switch (action.type) {
 
-        case 'loginAction': {
-                quizMasterAPI.getLogin(action.username, action.password, (err, nothing) => {
-                    if (err) {
-                        console.log(err);
-                    } else {
-                        let update = {
-                            'id': nothing._id
-                        };
+        case 'loginSucces': {
+            let update = {
+                'id': action.id
+            };
+            console.log("result",copyAndUpdateObj(state, update));
+            return copyAndUpdateObj(state, update);
 
-                        return copyAndUpdateObj(state, update);
+        }
+        case 'loginFailed': {
+            let update = {
+                'error': action.message
+            };
+            console.log(copyAndUpdateObj(state, update));
+            return copyAndUpdateObj(state, update);
 
-                    }
-                });
-
-
-            }
+        }
         case 'editUserName': {
             let update = {
                 'username': action.username
