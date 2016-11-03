@@ -4,15 +4,9 @@ require('../MongooseModels/Team');
 require('../MongooseModels/Quiz');
 
 var express = require('express');
-var bodyParser = require('body-parser');
 var fs = require('fs');
 
 var app = express();
-var router = express.Router();
-
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({extended: true}));
-
 
 // Team login:
 // -create team
@@ -215,4 +209,4 @@ app.post('/logout', function(req, res, next) {
     }
 });
 
-module.exports = app, router;
+module.exports = app;

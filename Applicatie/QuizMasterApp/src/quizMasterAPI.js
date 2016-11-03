@@ -6,7 +6,7 @@ let quizMasterAPI = {
             .post('http://localhost:3000/quizmaster/login')
             .send({username: username, password: password})
             .end( (err,response) => {
-                console.log(response.body)
+                console.log(response.body);
                 callback(err, response.body);
             })
     }

@@ -1,6 +1,6 @@
 import React from 'react'
 import * as ReactRedux from 'react-redux';
-import {loginAction, editPassword, editUsername, logout} from '../reducers';
+import {loginAction, editPassword, editUsername} from '../reducers';
 
 
 class LoginUi extends React.Component {
@@ -30,9 +30,9 @@ class LoginUi extends React.Component {
                 Password <input id="quizMasterPassword" value={this.props.password} onChange={this.passwordChange.bind(this)}/>
              </label>
              <button id="markAsSeen" onClick={this.doLogin.bind(this)}>
-                Mark all items as “seen”
+                Login
              </button>
-             <h1>{this.props.id}</h1>
+              {this.props.error}
           </div>
       );
    }
@@ -51,7 +51,8 @@ function mapStateToProps(state) {
    return {
       username: state.quizMaster.username,
       password: state.quizMaster.password,
-      id: state.quizMaster.id
+      id: state.quizMaster.id,
+          error: state.quizMaster.error
    }
 }
 
