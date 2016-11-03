@@ -1,37 +1,57 @@
 import React from 'react'
 import * as ReactRedux from 'react-redux';
-import {loginAction} from '../reducers';
+import {loginAction, editPassword, editUsername, logout} from '../reducers';
 
 
 class LoginUi extends React.Component {
    constructor(props) {
       super(props);
    }
+   usernameChange(evt) {
+      this.props.doEditUsername(evt.target.value)
+   }
+
+   passwordChange(evt){
+      this.props.doEditPassword(evt.target.value)
+   }
+
+   doLogin(){
+      this.props.getLogin(this.props.username, this.props.password);
+   }
+
+
+
    render() {
-      return (
-          <div>Hallo
-             <button id="markAsSeen" onClick={() => this.props.getLogin()}>
+      return (<div>
+             <label htmlFor="Username">
+                Username <input id="listSizeField" value={this.props.username} onChange={this.usernameChange.bind(this)}/>
+             </label><br/>
+             <label htmlFor="Password">
+                Password <input id="quizMasterPassword" value={this.props.password} onChange={this.passwordChange.bind(this)}/>
+             </label>
+             <button id="markAsSeen" onClick={this.doLogin.bind(this)}>
                 Mark all items as “seen”
              </button>
+             <h1>{this.props.id}</h1>
           </div>
-
       );
    }
 }
 
 
-
-
-
 function mapDispatchToProps(dispatch) {
    return {
-      getLogin: () => dispatch(loginAction()),
+      getLogin: (username, password) => dispatch(loginAction(username,password)),
+      doEditUsername: (userName) => dispatch(editUsername(userName)),
+      doEditPassword: (password) => dispatch(editPassword(password)),
    }
 }
 
 function mapStateToProps(state) {
    return {
-       selectedItem: 0
+      username: state.quizMaster.username,
+      password: state.quizMaster.password,
+      id: state.quizMaster.id
    }
 }
 

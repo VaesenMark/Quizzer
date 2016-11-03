@@ -354,6 +354,36 @@ app.post('/:quizId/round/:roundId/question/:QuestionId/teamanswer/:teamId',funct
     res.send("vraag van quiz35 " + req.params.quizId + " in ronde " + req.params.roundId + " en vraag  " + req.params.QuestionId + " als antwoord " + req.body.answer+" van team "+ req.params.teamId);
 });
 
+<<<<<<< HEAD
+
+// GET answered question
+app.get('/:quizId/round/:roundNumber/question/:questionNumber/teamanswer/:teamId',function(req, res, next) {
+    const Quiz = mongoose.model('Quiz');
+    Quiz.findOne(
+        {
+            _id: req.params.quizId
+        },
+        function (err, quiz) {
+            if(err){
+                res.send(err);
+            }
+            else{
+                const teamAnswer = quiz.rounds.find(x => x.roundNumber == req.params.roundNumber)
+                    .playedQuestions.find(x => x.questionNumber == req.params.questionNumber)
+                    .teamAnswers.find(x => x.teamID == req.params.teamId);
+                if(teamAnswer) {
+                    res.status(200);
+                    res.json({result: teamAnswer});
+                }
+                else {
+                    res.status(500);
+                    res.json({message: "Some error"});
+                }
+            }
+        }
+    );
+});
+
 
 // PUT answered question
 app.put('/:quizId/round/:roundNumber/question/:questionNumber/teamanswer/:teamId',function(req, res, next) {
@@ -437,6 +467,11 @@ app.put('/:quizId/round/:roundNumber/question/:questionNumber/teamanswer/:teamId
             }
         }
     );
+=======
+//Change answer
+app.put('/:quizId/round/:roundId/question/:QuestionId/teamanswer/:teamId',function(req, res, next) {
+    res.send("vraag van quiz35 " + req.params.quizId + " in ronde " + req.params.roundId + " en vraag  " + req.params.QuestionId + " heeft nu antwoord " + req.body.answer+" van team "+ req.params.teamId);
+>>>>>>> bc086bac07641d722f6ee537a4cb98f4cc8f4ecc
 });
 
 function createRandomString(characters){
