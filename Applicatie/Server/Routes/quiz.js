@@ -180,14 +180,14 @@ app.get('/:quizId/round/:roundNumber/questions', function(req, res, next){
         const Question = mongoose.model('Question');
         Quiz.findOne({_id: req.params.quizId}, function (err, quiz) {
             if (err) {
-                res.status(400)
+                res.status(400);
                 res.json({message:err});
             }
             else if (quiz != null) {
                 var categoryId = quiz.rounds.find(x => x.roundNumber == req.params.roundNumber).categoryID;
                 Category.findOne({_id: categoryId}, function (err, categorie) {
                     if (err) {
-                        res.status(400)
+                        res.status(400);
                         res.json({message:err});
                     }
                     else {
@@ -221,6 +221,33 @@ app.get('/:quizId/round/:roundNumber/questions', function(req, res, next){
 });
 
 
+//Get Quiz Categories that aren't play
+app.get('/:quizId/categories', function(req, res, next){
+    try {
+        const Quiz = mongoose.model('Quiz');
+        const Category = mongoose.model('Category');
+        Category.find({}, function (err, categorie) {
+            if (err) {
+                res.status(400)
+                res.json({message:err});
+            }
+            else if (categorie != null) {
+                res.status(200);
+                res.json({message: categorie});
+            }
+            else {
+                res.status(400);
+                res.json({message: "There is no quiz"});
+            }
+        });
+    }
+    catch (exception) {
+        console.log(exception);
+        res.status(500);
+        res.json({message: "A server error occured"});
+    }
+
+});
 
 // Get round question team answers
 //    res.send("Set nieuwe vraag voor quiz "+req.params.quizId+" in ronde "+req.params.roundNumber+" en vraag  "+req.body.questionNumber+" ");

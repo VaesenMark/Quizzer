@@ -1,7 +1,9 @@
 import React from 'react'
 import * as ReactRedux from 'react-redux';
 import {Login} from './Login';
-import {Logout} from './Logout';
+import {QuizList} from './QuizList';
+import {CategorieList} from './CategorieList';
+import {QuestionList} from './QuestionList';
 
 
 class AppUI extends React.Component {
@@ -10,12 +12,20 @@ class AppUI extends React.Component {
    }
    render() {
       var content = "";
-      console.log(this.props.id>0, this.props.id);
-      if(this.props.id == 0){
+      if(this.props.currentPage == 1){
          content = <div><Login/></div>
       }
-      else{
-         content = <div><Logout/></div>
+      else if(this.props.currentPage == 2){
+         content = <div><QuizList/></div>
+
+      }
+      else if(this.props.currentPage == 3){
+         content = <div><CategorieList/></div>
+
+      }
+      else if(this.props.currentPage == 4){
+         content = <div><QuestionList/></div>
+
       }
       return (
           content
@@ -34,7 +44,7 @@ function mapDispatchToProps(dispatch) {
 
 function mapStateToProps(state) {
    return {
-       id: state.quizMaster.id
+      currentPage: state.headState.currentPage
    }
 }
 
