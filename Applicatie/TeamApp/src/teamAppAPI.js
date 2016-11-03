@@ -7,10 +7,16 @@ let loginAPI = {
             .send({ password: password, teamName: teamname })
             .set('Content-Type', 'application/json')
             .end( (err,response) => {
-                if(err)
-                    throw err;
+                if(err) {
+                    if(err.status === 403 || err.status === 500) {
+                        callback(null, response.body);
+                    }
+                    else {
+                        callback(err, response.body);
+                    }
+                }
                 else {
-                    callback(err, response.body);
+                    callback(null, response.body);
                 }
             })
     }

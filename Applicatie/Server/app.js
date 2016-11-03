@@ -38,27 +38,29 @@ app.use('/quiz', quiz);
 
 
 
-// var websocketRouter = require('./websockets');
-// app.use('/', websocketRouter);
 
 
-var ns = 1;
 
-app.ws('/', function(ws, req) {
-    console.log('connected');
-    req.session.blaat = ns;
-    ns++;
-    ws.on('message', function(msg) {
+// var ns = 1;
 
-        for(let client of expressWs.getWss().clients) {
-            console.log("session blaat: ", client.upgradeReq.session.blaat);
-        }
-        console.log("clientlength: ", expressWs.getWss().clients.length);
+// app.ws('/', function(ws, req) {
+//     console.log('connected');
+//     req.session.blaat = ns;
+//     ns++;
+//     ws.on('message', function(msg) {
+//
+//         for(let client of expressWs.getWss().clients) {
+//             console.log("session blaat: ", client.upgradeReq.session.blaat);
+//         }
+//         console.log("clientlength: ", expressWs.getWss().clients.length);
+//
+//         ws.send(msg);
+//     });
+// });
 
-        ws.send(msg);
-    });
-});
+module.exports = app;
 
-
+var websocketRouter = require('./websockets').router;
+app.use('/', websocketRouter);
 
 app.listen(3000);

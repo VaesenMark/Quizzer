@@ -1,5 +1,5 @@
 import * as Redux from 'redux';
-import loginAPI from './loginAPI'
+import loginAPI from './teamAppAPI'
 
 import update from 'immutability-helper';
 
@@ -142,15 +142,14 @@ export function updatePasswordAction(password) {
 export function updateTeamnameAction(teamname) {
     return {type: "updateTeamname", teamname: teamname};
 }
-export function submitLoginAction() {
+export function submitLoginAction(password, teamname) {
     return (dispatch) => {
-        loginAPI.login( (err, message) => {
+        loginAPI.login(password, teamname, function(err, result) {
+            const message = result.message;
             if(err) {
-                console.log('returnwaarde error: ' + err);
-                dispatch({ type: 'loginFailed', success:false, });
+                dispatch({ type: 'loginFailed', result: "Something went wrong" });
             } else {
-                console.log('returnwaarde: ' + message);
-                dispatch({ type: 'loginFinished', success:true, message });
+                dispatch({ type: 'loginFinished', result: message });
             }
         });
     };
@@ -183,14 +182,14 @@ function loginReducer(state = initialLoginState, action) {
         }
         case 'loginFinished': {
             let changes = {
-                loginMessage: {$set: action.message}
+                loginMessage: {$set: action.result}
             };
 
             return update(state, changes);
         }
         case 'loginFailed': {
             let changes = {
-                loginMessage: {$set: 'Some error occurred'}
+                loginMessage: {$set: action.result}
             };
 
             return update(state, changes);

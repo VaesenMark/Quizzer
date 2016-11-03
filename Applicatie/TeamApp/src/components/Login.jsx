@@ -23,7 +23,7 @@ class LoginUI extends React.Component {
     }
 
     submitLogin(evt) {
-        this.props.submitLogin(evt.target.value)
+        this.props.submitLogin(this.props.password, this.props.teamname)
     }
 
     render() {
@@ -56,7 +56,7 @@ function mapDispatchToProps(dispatch) {
     return {
         updatePassword: (password) => dispatch(updatePasswordAction(password)),
         updateTeamname: (teamname) => dispatch(updateTeamnameAction(teamname)),
-        submitLogin: () => dispatch(submitLoginAction())
+        submitLogin: (password, teamname) => dispatch(submitLoginAction(password, teamname))
     }
 }
 

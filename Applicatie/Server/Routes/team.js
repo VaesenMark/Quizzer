@@ -74,7 +74,7 @@ app.post('/login', function(req, res, next) {
                                         }
                                         req.session.teamID = team._id;
                                         req.session.quizID = quiz._id;
-                                        res.json({message: "Team successfully logged in"});
+                                        res.json({message: "Team successfully logged in. Waiting for the quizmaster to approve it"});
                                         //TODO notify quizmaster
                                     }
                                     catch(exception) {
