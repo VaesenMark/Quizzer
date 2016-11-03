@@ -10,8 +10,11 @@
   "license": "ISC",
   "dependencies": {
     "body-parser": "^1.15.2",
+    "cookie-parser": "^1.4.3",
+    "cors": "^2.8.1",
     "express": "^4.14.0",
     "express-session": "^1.14.2",
+    "express-ws": "^2.0.0",
     "mongoose": "^4.6.5",
     "mongoose-auto-increment": "^5.0.1",
     "ws": "^1.1.1"
