@@ -60,12 +60,12 @@ quizmaster.save(function (err, char) {
 const Quiz = mongoose.model('Quiz');
 
 
-var quiz = new Quiz({ password: 'asd1', quizMasterID: 1, status: 1  });
+var quiz = new Quiz({ password: 'asd1', quizMasterID: 1, status: "1"  });
 
 quiz.rounds.push({ roundNumber: 1, categoryID: 1 });
 quiz.rounds.push({ roundNumber: 2, categoryID: 2 });
 
-quiz.rounds[0].playedQuestions.push({ questionNumber: 1, questionID: 1 });
+quiz.rounds[0].playedQuestions.push({ questionNumber: 1, question: 1 });
 
 quiz.rounds[0].playedQuestions[0].teamAnswers.push({ teamID: 1, answer: 'Red', approved: false });
 

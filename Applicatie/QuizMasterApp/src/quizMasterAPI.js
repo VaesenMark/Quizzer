@@ -30,6 +30,7 @@ let quizMasterAPI = {
         request
             .get('http://localhost:3000/quiz/'+quizID+'/round/'+roundID+'/questions')
             .end( (err,response) => {
+                console.log(response.body);
                 callback(err, response.body.message);
             })
     },
@@ -38,7 +39,6 @@ let quizMasterAPI = {
             .post('http://localhost:3000/quiz')
             .send({quizMasterID: quizMasterID})
             .end( (err,response) => {
-                console.log(response);
                 callback(err, response.body.message);
             })
     },

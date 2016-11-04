@@ -21,7 +21,7 @@ Quizmaster
 app.post('/', function(req, res, next) {
     const Quiz = mongoose.model('Quiz');
     const QuizMaster = mongoose.model('QuizMaster');
-
+console.log(req.body.quizMasterID);
     QuizMaster.findOne({_id: req.body.quizMasterID}, function (err, quizMaster) {
         if (err) {
             res.status(500);
@@ -233,6 +233,7 @@ app.get('/:quizId/round/:roundNumber/questions', function(req, res, next){
         const Category = mongoose.model('Category');
         const Question = mongoose.model('Question');
         Quiz.findOne({_id: req.params.quizId}, function (err, quiz) {
+            console.log(quiz);
             if (err) {
                 res.status(400);
                 res.json({message:err});

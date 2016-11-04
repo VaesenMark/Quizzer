@@ -26,11 +26,10 @@ const playedQuestionSchema = new mongoose.Schema({
         required: true,
         min: 1
     },
-    questionID: {
-        type: Number,
+    question: {
+        type: String,
         ref: 'Question',
         required: true,
-        min: 1
     },
     teamAnswers: [teamAnswerSchema],
     _id: false

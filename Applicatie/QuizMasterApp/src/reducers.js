@@ -46,6 +46,7 @@ export function loginAction(username, password) {
                 if(response.status != 200){
                     dispatch( {type: "loginFailed", message: response.message})
                 }
+                console.log(response);
                 dispatch( {type: "loginSucces", id: response._id})
 
             }
@@ -164,6 +165,7 @@ export function GetAllCategories(quizID) {
 export function GetAllQuestions(quizId = 4, roundId = 1) {
     return (dispatch) => {
         quizMasterAPI.getQuestions(quizId, roundId, (err, items) => {
+
             if(err) {
                 dispatch({ type: 'errorGetAllQuestionstems', success:false });
             } else {
@@ -174,12 +176,10 @@ export function GetAllQuestions(quizId = 4, roundId = 1) {
     };
 }
 
-export function GetAllQuizen(id = 1) {
+export function GetAllQuizen(id) {
 
     return (dispatch) => {
-        console.log("test4")
         quizMasterAPI.getQuiz(id, (err, items) => {
-            console.log("test5");
             if(err) {
                 console.log(err);
                 dispatch({ type: 'errorGetAllQuizItems', success:false });
@@ -191,20 +191,17 @@ export function GetAllQuizen(id = 1) {
     };
 }
 
-export function AddQuiz(){
+export function AddQuiz(id){
     //todo de andere functie aanroepen
-    console.log(HeadState);
     return (dispatch) => {
-        quizMasterAPI.addQuiz(1, (err, items) => {
+        quizMasterAPI.addQuiz(id, (err, items) => {
             if(err) {
                 dispatch({ type: 'errorAddQuizItems', message:"quiz can't be created" });
             } else {
-                quizMasterAPI.getQuiz(1, (err, items) => {
+                quizMasterAPI.getQuiz(id, (err, items) => {
                     if(err) {
-                        console.log(err);
                         dispatch({ type: 'errorGetAllQuizItems', message:" The quiz can't be show try again" });
                     } else {
-                        console.log(items);
                         dispatch({ type: 'successGetAllQuizItems', success:true, items });
                     }
                 });
@@ -219,7 +216,6 @@ export function addQuestion(quizId, roundNumber, question){
             if(err) {
                 dispatch({ type: 'errorSaveQuestions', success:false, message: err });
             } else {
-                console.log(items);
                 dispatch({ type: 'successSaveQuestion', success:true, item });
             }
         });

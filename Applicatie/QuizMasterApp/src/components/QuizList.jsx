@@ -11,11 +11,11 @@ class ChoseQuizUI extends React.Component {
    }
 
    getItems(){
-   this.props.doGetItems()
+   this.props.doGetItems(this.props.id)
    };
 
     addQuiz(){
-        this.props.doAddQuiz()
+        this.props.doAddQuiz(this.props.id)
     };
 
 
@@ -49,14 +49,15 @@ console.log(theItems);
 
 function mapDispatchToProps(dispatch) {
    return {
-      doGetItems: () => dispatch(GetAllQuizen()),
-       doAddQuiz: () => dispatch(AddQuiz())
+      doGetItems: (id) => dispatch(GetAllQuizen(id)),
+       doAddQuiz: (id) => dispatch(AddQuiz(id))
    }
 }
 
 function mapStateToProps(state) {
    return {
-      items: state.quizItems.items
+      items: state.quizItems.items,
+       id: state.headState.quizMasterID
    }
 }
 
