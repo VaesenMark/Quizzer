@@ -1,6 +1,8 @@
 import React from 'react'
 import * as ReactRedux from 'react-redux';
 import {Login} from './Login';
+import {QuestionInput} from './AnswerInput';
+import WaitingRoomUI from './WaitingRoom';
 
 class AppUI extends React.Component {
    constructor(props) {
@@ -16,8 +18,13 @@ class AppUI extends React.Component {
       } else if(this.props.currentScreen == 2) {
          screenContent =
              <div>
-                <Login/>
+                <WaitingRoomUI/>
              </div>
+      } else if(this.props.currentScreen == 3) {
+          screenContent =
+              <div>
+                  <QuestionInput/>
+              </div>
       } else {
          screenContent =
              <div>
@@ -40,7 +47,8 @@ class AppUI extends React.Component {
 
 function mapStateToProps(state) {
    return {
-       currentScreen: state.main.currentScreen
+       currentScreen: state.main.currentScreen,
+       websocket: state.main.websocket
    }
 }
 

@@ -5,9 +5,6 @@ import {
     updatePasswordAction, updateTeamnameAction, submitLoginAction
 } from '../reducers';
 
-//============================================================================
-//  The React component that renders the UI for the PreferencesDialog
-//----------------------------------------------------------------------------
 
 class LoginUI extends React.Component {
     constructor(props) {

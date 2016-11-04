@@ -1,5 +1,5 @@
 import * as Redux from 'redux';
-import loginAPI from './teamAppAPI'
+import teamAppAPI from './teamAppAPI'
 
 import update from 'immutability-helper';
 
@@ -16,111 +16,14 @@ export function toggleItemAction(item) {
 // Reducer:
 
 const mainState = {
-    currentScreen: 1
+    currentScreen: 1,
+    websocket: new WebSocket("ws://localhost:3000"),
+    teamId: 0,
+    teamName: ""
 };
 
 function asdfReducer(state = mainState, action) {
-    // Note how all branches of the switch-statement always return
-    // (a new version of) the state. Reducers must always return a (new) state.
     switch (action.type) {
-
-        // case 'toggleItemAction': {
-        //     if (state.selectedItem) {
-        //         if (action.item.id === state.selectedItem.id) {
-        //             return update(state, {selectedItem: {$set: null}});
-        //         }
-        //     }
-        //     return update(state, {
-        //         selectedItem: {$set: action.item},
-        //         statuses: {[action.item.id]: {$set: "read"}}
-        //     })
-        // }
-        // case 'markAsSeenAction': {
-        //     let changingStatuses = {};
-        //     state.items.forEach((itm, idx) => {
-        //         if (idx < action.listSize && state.statuses[itm.id] == undefined) {
-        //             changingStatuses[itm.id] = "seen";
-        //         }
-        //     });
-        //     return update(state, {statuses: {$merge: changingStatuses}});
-        // }
-        default:
-            return state;
-    }
-}
-
-//=====================================================================
-//    State management for the Preferences
-//---------------------------------------------------------------------
-
-// Action Creators:
-
-export function showPrefsAction() {
-    console.log('hoi');
-    return {type: "showPrefsAction"};
-}
-export function closePrefsAction() {
-    return {type: "closePrefsAction"};
-}
-export function closeAndApplyPrefsAction() {
-    return {type: "closeAndApplyPrefsAction"};
-}
-export function editColorAction(selectedColor) {
-    return {type: "editColorAction", selectedColor: selectedColor}
-}
-export function editListSizeAction(itemCount) {
-    return {type: "editListSizeAction", itemCount: itemCount}
-}
-
-// Reducer:
-
-const initialPreferencesState = {
-    showingPrefs: false,
-    editingColor: null,
-    editingListSize: null,
-    currentColor: "orange",
-    currentListSize: 42
-};
-
-function preferencesReducer(state = initialPreferencesState, action) {
-    // Note how all branches of the switch-statement always return
-    // (a new version of) the state. Reducers must always return a (new) state.
-    switch (action.type) {
-
-        case 'showPrefsAction': {
-            let changes = {
-                showingPrefs: {$set: true},
-                editingColor: {$set: state.currentColor},
-                editingListSize: {$set: state.currentListSize}
-            };
-            return update(state, changes);
-        }
-        case 'closePrefsAction': {
-            let changes = {
-                showingPrefs: {$set: false}
-            };
-            return update(state, changes);
-        }
-        case 'editColorAction': {
-            let changes = {
-                editingColor: {$set: action.selectedColor}
-            };
-            return update(state, changes);
-        }
-        case 'closeAndApplyPrefsAction': {
-            let changes = {
-                currentColor: {$set: state.editingColor},
-                currentListSize: {$set: state.editingListSize},
-                showingPrefs: {$set: false}
-            };
-            return update(state, changes);
-        }
-        case 'editListSizeAction': {
-            let changes = {
-                editingListSize: {$set: action.itemCount}
-            };
-            return update(state, changes);
-        }
         default:
             return state;
     }
@@ -144,7 +47,7 @@ export function updateTeamnameAction(teamname) {
 }
 export function submitLoginAction(password, teamname) {
     return (dispatch) => {
-        loginAPI.login(password, teamname, function(err, result) {
+        teamAppAPI.login(password, teamname, function(err, result) {
             const message = result.message;
             if(err) {
                 dispatch({ type: 'loginFailed', result: "Something went wrong" });
@@ -161,10 +64,75 @@ export function submitLoginAction(password, teamname) {
 const initialLoginState = {
     password: "",
     teamname: "",
-    loginMessage: ""
+    loginMessage: "",
 };
 
 function loginReducer(state = initialLoginState, action) {
+    switch (action.type) {
+        case 'updatePassword': {
+            let changes = {
+                password: {$set: action.password}
+            };
+
+            return update(state, changes);
+        }
+        case 'updateTeamname': {
+            let changes = {
+                teamname: {$set: action.teamname}
+            };
+
+            return update(state, changes);
+        }
+        case 'loginFinished': {
+            let changes = {
+                loginMessage: {$set: action.result}
+            };
+
+            return update(state, changes);
+        }
+        case 'loginFailed': {
+            let changes = {
+                loginMessage: {$set: action.result}
+            };
+
+            return update(state, changes);
+        }
+        default:
+            return state;
+    }
+}
+
+
+
+// ------------- ANSWER INPUT REDUCER --------------
+
+// Action Creators:
+
+export function updateAnswerAction(answer) {
+    return {type: "updateAnswer", answer: answer};
+}
+export function submitAnswerAction(answer) {
+    return (dispatch) => {
+        teamAppAPI.submitAnswer(answer, function(err, result) {
+            const message = result.message;
+            if(err) {
+                dispatch({ type: 'loginFailed', result: "Something went wrong" });
+            } else {
+                dispatch({ type: 'loginFinished', result: message });
+            }
+        });
+    };
+}
+
+
+// Reducer:
+
+const initialAnswerInputState = {
+    answer: "",
+    message: ""
+};
+
+function answerInputReducer(state = initialAnswerInputState, action) {
     switch (action.type) {
         case 'updatePassword': {
             let changes = {
@@ -209,5 +177,5 @@ function loginReducer(state = initialLoginState, action) {
 export const mainReducer = Redux.combineReducers({
     main: asdfReducer,
     login: loginReducer,
-    prefs: preferencesReducer
+    answer: answerInputReducer
 });

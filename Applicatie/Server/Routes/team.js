@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 require('../MongooseModels/connection');
 require('../MongooseModels/Team');
 require('../MongooseModels/Quiz');
+// const websocket = require('../websockets');
 
 var express = require('express');
 var fs = require('fs');
@@ -66,10 +67,11 @@ app.post('/login', function(req, res, next) {
                                         if (err) {
                                             throw new Error(err);
                                         }
-                                        req.session.teamID = team._id;
-                                        req.session.quizID = quiz._id;
+                                        req.session.teamId = team._id;
+                                        req.session.quizId = quiz._id;
                                         res.json({message: "Team successfully logged in. Waiting for the quizmaster to approve it"});
-                                        //TODO notify quizmaster
+                                        //TODO test notify quizmaster
+                                        // websocket.newTeamCreated(quiz._id);
                                     }
                                     catch(exception) {
                                         console.log(exception);
