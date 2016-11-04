@@ -52,7 +52,6 @@ let quizMasterAPI = {
             })
     },
         addQuestion(quizID, roundNumber, question, callback){
-        console.log(questionID);
             request
                 .post('http://localhost:3000/quiz/'+quizID+'/round/'+roundNumber+'/question')
                 .send({question: question})

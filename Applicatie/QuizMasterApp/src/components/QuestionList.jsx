@@ -31,7 +31,6 @@ class QuestionListUI extends React.Component {
           <div>
              <button id="showItems" onClick={this.getQuestionItems.bind(this)}>
                 get Questions
-
              </button>
              {theItems}
              <Logout/>
