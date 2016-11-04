@@ -17,15 +17,23 @@ export function toggleItemAction(item) {
 
 const mainState = {
     currentScreen: 1,
+    quizId: 0,
     teamId: 0,
     teamName: "",
-    quizId: 0,
     roundNumber: 0,
     questionNumber: 0
 };
 
 function asdfReducer(state = mainState, action) {
     switch (action.type) {
+        case 'loginFinished': {
+            let changes = {
+                quizId: {$set: action.result.quizId},
+                teamId: {$set: action.result.teamId}
+            };
+
+            return update(state, changes);
+        }
         default:
             return state;
     }
@@ -50,11 +58,10 @@ export function updateTeamnameAction(teamname) {
 export function submitLoginAction(password, teamname) {
     return (dispatch) => {
         teamAppAPI.login(password, teamname, function(err, result) {
-            const message = result.message;
             if(err) {
                 dispatch({ type: 'loginFailed', result: "Something went wrong" });
             } else {
-                dispatch({ type: 'loginFinished', result: message });
+                dispatch({ type: 'loginFinished', result });
             }
         });
     };
@@ -87,7 +94,7 @@ function loginReducer(state = initialLoginState, action) {
         }
         case 'loginFinished': {
             let changes = {
-                loginMessage: {$set: action.result}
+                loginMessage: {$set: action.result.message}
             };
 
             return update(state, changes);
@@ -113,7 +120,7 @@ function loginReducer(state = initialLoginState, action) {
 export function updateAnswerAction(answer) {
     return {type: "updateAnswer", answer: answer};
 }
-export function submitAnswerAction(answer) {
+export function submitAnswerAction(answer, quizId, roundNumber, questionNumber) {
     return (dispatch) => {
         teamAppAPI.submitAnswer(answer, quizId, roundNumber, questionNumber, function(err, result) {
             const message = result.message;

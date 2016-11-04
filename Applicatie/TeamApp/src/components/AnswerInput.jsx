@@ -47,7 +47,7 @@ function mapStateToProps(state) {
 function mapDispatchToProps(dispatch) {
     return {
         updateAnswer: (answer) => dispatch(updateAnswerAction(answer)),
-        submitAnswer: (answer) => dispatch(submitAnswerAction(answer))
+        submitAnswer: (answer, quizId, roundNumber, questionNumber, teamId) => dispatch(submitAnswerAction(answer))
     }
 }
 
