@@ -5,7 +5,8 @@ require('./MongooseModels/Category');
 require('./MongooseModels/Question');
 require('./MongooseModels/QuizMaster');
 require('./MongooseModels/Quiz');
-
+mongoose.Promise = global.Promise;
+var questions = require('./questions');
 
 const Category = mongoose.model('Category');
 
@@ -25,6 +26,11 @@ category.save(function (err, char) {
 
 
 const Question = mongoose.model('Question');
+
+Question.create(questions,function(err){
+    if(err) return console.log(err);
+    console.log("gelukt");
+});
 
 var question = new Question({ question: 'what color is a firetruck?', answer: 'red', category: 'Films' });
 
