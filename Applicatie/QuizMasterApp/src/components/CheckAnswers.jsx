@@ -1,38 +1,32 @@
 import React from 'react'
 import * as ReactRedux from 'react-redux';
-import {loginAction, editPassword, editUsername} from '../reducers';
+import {getNextQuestion} from '../reducers';
 
 
-class LoginUi extends React.Component {
-   constructor(props) {
-      super(props);
-   }
-   usernameChange(evt) {
-      this.props.doEditUsername(evt.target.value)
+class CheckAnswersUI extends React.Component {
+   getAnswers(){
+     // this.props.getAnswers(this.props.quizID, this.props.roundNumber, this.props.questionID)
    }
 
-   passwordChange(evt){
-      this.props.doEditPassword(evt.target.value)
+   nextQuestion(){
+      this.props.getNextQuestion(this.props.quizID, this.props.roundNumber);
    }
-
-   doLogin(){
-      this.props.getLogin(this.props.username, this.props.password);
-   }
-
-
-
    render() {
+      console.log(this.props);
+
       return (<div>
-             <label htmlFor="Username">
-                Username <input id="listSizeField" value={this.props.username} onChange={this.usernameChange.bind(this)}/>
-             </label><br/>
-             <label htmlFor="Password">
-                Password <input id="quizMasterPassword" value={this.props.password} onChange={this.passwordChange.bind(this)}/>
-             </label>
-             <button id="markAsSeen" onClick={this.doLogin.bind(this)}>
-                Login
+             <h1>test</h1>
+             quizid: {this.props.quizID}
+            pundnumber:  {this.props.roundNumber}
+             number:{this.props.questionNumber}
+             <button id="markAsSeen" onClick={this.getAnswers.bind(this)}>
+                Get Answers
              </button>
-              {this.props.loginMessage}
+             <button id="markAsSeen" onClick={this.nextQuestion.bind(this)}>
+                Next Question
+             </button>
+             {this.props.questionNumber}
+
           </div>
       );
    }
@@ -41,18 +35,17 @@ class LoginUi extends React.Component {
 
 function mapDispatchToProps(dispatch) {
    return {
-      getLogin: (username, password) => dispatch(loginAction(username,password)),
-      doEditUsername: (userName) => dispatch(editUsername(userName)),
-      doEditPassword: (password) => dispatch(editPassword(password)),
+      //getAnswers: (quizID, roundNumber, questionID) => dispatch(getAnswersquizID(), roundNumber, questionID),
+      getNextQuestion: (quizID, RoundNumber) => dispatch(getNextQuestion(quizID, RoundNumber)),
    }
 }
 
 function mapStateToProps(state) {
    return {
-      username: state.login.username,
-      password: state.login.password,
-      loginMessage: state.login.error
+      quizID: state.questions.quizID,
+      roundNumber:  state.questions.roundNumber,
+      questionNumber: state.questions.questionNumber
    }
 }
 
-export const Login = ReactRedux.connect(mapStateToProps, mapDispatchToProps)(LoginUi);
+export const CheckAnswers = ReactRedux.connect(mapStateToProps, mapDispatchToProps)(CheckAnswersUI);

@@ -4,7 +4,8 @@ import {Login} from './Login';
 import {QuizList} from './QuizList';
 import {CategorieList} from './CategorieList';
 import {QuestionList} from './QuestionList';
-
+import {CheckAnswers} from './CheckAnswers';
+import {CloseQuestion} from './CloseQuestion';
 
 class AppUI extends React.Component {
    constructor(props) {
@@ -27,6 +28,15 @@ class AppUI extends React.Component {
          content = <div><QuestionList/></div>
 
       }
+      else if(this.props.currentPage == 5){
+         content = <div><CloseQuestion/></div>
+
+      }
+      else if(this.props.currentPage == 6){
+         content = <div><CheckAnswers/></div>
+
+      }
+
       return (
           content
       );

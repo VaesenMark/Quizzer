@@ -165,7 +165,7 @@ console.log(parseInt(req.body.questionID));
                             }
                             else {
                                 res.status(200);
-                                res.json({message: "There is a question add to quiz/round " + req.params.roundNumber});
+                                res.json({message: "There is a question add to quiz/round " + req.params.roundNumber, questionNumber: questionNumber});
                             }
                         });
                     }

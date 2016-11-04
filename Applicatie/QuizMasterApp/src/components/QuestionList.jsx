@@ -22,7 +22,7 @@ class QuestionListUI extends React.Component {
       if (this.props.items.length>1) {
          theItems = this.props.items.map((itm, idx) =>
              <QuestionItem item={itm}
-                   key = {itm.question}
+                   key = {itm._id}
                             question = {itm.question}
              />
          )

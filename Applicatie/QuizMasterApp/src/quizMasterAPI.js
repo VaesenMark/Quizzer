@@ -30,7 +30,7 @@ let quizMasterAPI = {
         request
             .get('http://localhost:3000/quiz/'+quizID+'/round/'+roundID+'/questions')
             .end( (err,response) => {
-                console.log(response.body);
+                console.log("return api call",response.body);
                 callback(err, response.body.message);
             })
     },
@@ -51,12 +51,12 @@ let quizMasterAPI = {
                 callback(err, response.body);
             })
     },
-        addQuestion(quizID, roundNumber, question, callback){
+        addQuestion(quizID, roundNumber, questionID, callback){
             request
                 .post('http://localhost:3000/quiz/'+quizID+'/round/'+roundNumber+'/question')
-                .send({question: question})
+                .send({questionID: questionID})
                 .end( (err,response) => {
-                    console.log(response);
+                    console.log("response",response);
                     callback(err, response.body);
                 })
         }

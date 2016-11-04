@@ -35,7 +35,6 @@ class CategorieListUI extends React.Component {
 
              </button>
              {theItems}
-             {this.props.quiz._id}
              <Logout/>
           </div>
       );

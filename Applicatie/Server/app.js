@@ -46,6 +46,12 @@ app.use(bodyParser.urlencoded({extended: true}));
 
 
 
+///------- toegevoegd --------
+
+
+
+
+
 // ------ Quiz Routes ------
 
 //Start quiz
@@ -129,11 +135,12 @@ app.post('/quiz/:quizID/round', function(req, res, next){
                 else {
                     if(category != null) {
                         console.log("test",req.body.categoryID, !quiz.rounds.find(x => x.categoryID == req.body.categoryID));
-                        //todo Controleren of categorie niet al is voorgekomen.
                         if (!quiz.rounds.find(x => x.categoryID == req.body.categoryID)) {
                             console.log(category,quiz);
                             quiz.rounds.push({roundNumber: (quiz.rounds.length + 1), categoryID: req.body.categoryID});
-
+                            if(quiz.status == 1) {
+                                quiz.status = 2;
+                            }
                             quiz.save(function (err, char) {
                                 if (err) {
                                     res.status(500);
@@ -180,23 +187,26 @@ app.post('/quiz/:quizId/round/:roundNumber/question', function(req, res, next){
             if(quiz.rounds.length == req.params.roundNumber) {
                 let round = quiz.rounds.find(x => x.roundNumber == req.params.roundNumber);
                 var questionNumber = round.playedQuestions.length +1;
+                console.log("round",round);
                 if(questionNumber <= 12) {
-
-                    if (round.playedQuestions.length == 0 ||round.playedQuestions.find(x => x.questionID !== req.body.categoryID)) {
-                        console.log(parseInt(req.body.questionID));
+                    console.log(round.playedQuestions.length == 0);
+                    console.log("test",round.playedQuestions);
+                    console.log(round.playedQuestions.find(x => x.questionID !== req.body.categoryID));
+                    if (round.playedQuestions.length == 0 ||round.playedQuestions.find(x => x.questionID != req.body.categoryID)) {
                         round.playedQuestions.push({
                             questionNumber: questionNumber,
-                            question: req.body.question
+                            questionID: parseInt(req.body.questionID)
                         });
-                        console.log(round);
+                        console.log(quiz);
                         quiz.save(function (err, char) {
                             if (err) {
                                 res.status(500);
+                                console.log(err)
                                 res.json({message: err})
                             }
                             else {
                                 res.status(200);
-                                res.json({message: "There is a question add to quiz/round " + req.params.roundNumber});
+                                res.json({message: "There is a question add to quiz/round " + req.params.roundNumber, questionNumber: questionNumber});
                             }
                         });
                     }
@@ -229,29 +239,40 @@ app.post('/quiz/:quizId/round/:roundNumber/question', function(req, res, next){
 });
 
 app.get('/quiz/:quizID/categories', function(req, res, next) {
-    //todo eruit filteren de categoriën die al zijn gekozen
     const Category = mongoose.model('Category');
     const Quiz = mongoose.model('Quiz');
     Category.find({}, function (err, categories) {
-        if (categories != null) {
-            let notUsedCategories = '';
-            Quiz.findOne({_id: req.params.quizId}, function (err, quiz) {
-                if (err) {
-                    res.status(500);
-                    res.json({message: "A server error occured"});
-                }
-                else {
+        if (err) {
+            res.status(500);
+            res.json({message: "A server error occured"});
+        }
+        else {
+            if (categories != null) {
+                let notUsedCategories = [];
+                let newCategories = [];
+                Quiz.findOne({_id: req.params.quizID}, function (err, quiz) {
                     if (err) {
                         res.status(500);
                         res.json({message: "A server error occured"});
                     }
                     else {
+                        let rounds = quiz.rounds;
+                        rounds.forEach(function(round) {
+                            notUsedCategories.push(round.categoryID)
+                        });
+                        categories.forEach(function(categorie) {
+                            let id = categorie._id
+                            if (!notUsedCategories.includes(id)) {
+                                newCategories.push(categorie);
+                            }
+                        });
+
                         res.status(200);
-                        res.json(categories)
+                        res.json(newCategories)
 
                     }
-                }
-            });
+                });
+            }
         }
     });
 });
@@ -259,7 +280,6 @@ app.get('/quiz/:quizID/categories', function(req, res, next) {
 //Get Round Question
 app.get('/quiz/:quizId/round/:roundNumber/questions', function(req, res, next){
     try {
-        console.log(req.params.quizId, req.params.roundNumber);
         const Quiz = mongoose.model('Quiz');
         const Category = mongoose.model('Category');
         const Question = mongoose.model('Question');
@@ -269,22 +289,49 @@ app.get('/quiz/:quizId/round/:roundNumber/questions', function(req, res, next){
                 res.json({message:err});
             }
             else if (quiz != null) {
-                var categoryId = quiz.rounds.find(x => x.roundNumber == req.params.roundNumber).categoryID;
-                Category.findOne({_id: categoryId}, function (err, categorie) {
+                var round = quiz.rounds.find(x => x.roundNumber == req.params.roundNumber);
+                var categoryId = round.categoryID;
+                Category.findOne({_id: categoryId}, function (err, category) {
                     if (err) {
                         res.status(400);
                         res.json({message:err});
                     }
                     else {
-
-                        Question.find({category: categorie.categoryName}, function (err, questions) {
+                        Question.find({category: category.categoryName}, function (err, questions) {
                             if (err) {
                                 res.status(400)
                                 res.json({message: err});
                             }
                             else {
-                                res.status(200);
-                                res.json({message: questions});
+                                var playedQuestions =round.playedQuestions;
+                                var questionsID =[];
+                                playedQuestions.forEach(function(playedQuestion){
+                                    questionsID.push(playedQuestion.questionID)
+                                })
+                                var newQuestions=[];
+                                questions.forEach(function(question) {
+                                    let id = question._id
+                                    if (!questionsID.includes(id)) {
+                                        newQuestions.push(question);
+                                    }
+                                    else{
+                                        console.log(question)
+                                    }
+                                });
+                                quiz.status = 3;
+                                quiz.save(function (err, char) {
+                                        if (err) {
+                                            res.status(400);
+                                            res.json({
+                                                message: "The answers is not being controled by the quizmaster",
+                                                err
+                                            })
+                                        }
+                                        else {
+                                            res.status(200);
+                                            res.json({message: newQuestions});
+                                    }
+                                });
                             }
                         });
                     }

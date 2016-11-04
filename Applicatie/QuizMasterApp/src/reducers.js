@@ -19,22 +19,28 @@ const LoginState = {
 };
 
 const quizState = {
-    items: GetAllQuizen(1),
+    items: '',
     selectedItem: 0,
     currentPage: 2,
 };
 
 const categorieState = {
-    items: GetAllCategories(4),
+    items: '',
     selectedItem: 0,
     currentPage: 3,
 };
 
 const questionState = {
-    items: 0,
-    message: ''
+    items: '',
+    message: '',
+    questionNumber:0,
+    roundNumber:0,
+    quizID:0
 
 };
+export function closeQuestion(){
+    return {type: "goToCheckPage"}
+}
 
 export function loginAction(username, password) {
     return (dispatch) => {
@@ -78,7 +84,7 @@ export function addRound(quizID, categoryID) {
                 } else {
                     console.log(item);
                     dispatch({type: "succesSetNewRound", cattegory: item});
-                    dispatch({type: "setCattegory", cattegory: item});
+                    dispatch({type: "setCategory", cattegory: item});
                 }
             });
     };
@@ -137,10 +143,23 @@ function headReducer(state = HeadState, action) {
                 };
                 return copyAndUpdateObj(state, update);
         }
-        case 'setCattegory':{
+        case 'setCategory':{
             let update = {
                 'currentPage': 4,
                 'categoryItem': action.cattegory
+            };
+            return copyAndUpdateObj(state, update);
+        }
+
+        case 'goToClosePage': {
+            let update = {
+                'currentPage': 5,
+            };
+            return copyAndUpdateObj(state, update);
+        }
+        case 'goToCheckPage': {
+            let update = {
+                'currentPage': 6,
             };
             return copyAndUpdateObj(state, update);
         }
@@ -162,9 +181,9 @@ export function GetAllCategories(quizID) {
     };
 }
 
-export function GetAllQuestions(quizId = 4, roundId = 1) {
+export function GetAllQuestions(quizID = 4, roundId = 1) {
     return (dispatch) => {
-        quizMasterAPI.getQuestions(quizId, roundId, (err, items) => {
+        quizMasterAPI.getQuestions(quizID, roundId, (err, items) => {
 
             if(err) {
                 dispatch({ type: 'errorGetAllQuestionstems', success:false });
@@ -190,6 +209,22 @@ export function GetAllQuizen(id) {
         });
     };
 }
+export function getNextQuestion(quizID,roundID){
+    return (dispatch) => {
+        quizMasterAPI.getQuestions(quizID, roundID, (err, items) => {
+
+            if(err) {
+                dispatch({ type: 'errorGetAllQuestionstems', success:false });
+            } else {
+                console.log(items);
+                dispatch({ type: 'successGetAllQuestionsItems', success:true, items });
+                dispatch({type: 'setCategory'})
+            }
+        });
+
+    }
+}
+
 
 export function AddQuiz(id){
     //todo de andere functie aanroepen
@@ -210,13 +245,16 @@ export function AddQuiz(id){
     };
 }
 
-export function addQuestion(quizId, roundNumber, question){
+export function addQuestion(quizID, roundNumber, questionID){
     return (dispatch) => {
-        quizMasterAPI.addQuestion(quizId, roundNumber,question, (err, items) => {
+        quizMasterAPI.addQuestion(quizID, roundNumber,questionID, (err, items) => {
             if(err) {
                 dispatch({ type: 'errorSaveQuestions', success:false, message: err });
             } else {
-                dispatch({ type: 'successSaveQuestion', success:true, item });
+                console.log("jsljf", items);
+                dispatch({ type: 'goToClosePage', success:true, quizID: quizID, roundNumber:  roundNumber, questionNumber: items.questionNumber});
+                dispatch({ type: 'successSaveQuestion', success:true, questionNumber: items.questionNumber, items });
+
             }
         });
     };
@@ -265,7 +303,7 @@ function questionsReducer(state = questionState, action) {
         }
         case 'successSaveQuestion':{
             let update = {
-                'items': 2
+                'items': action.questionNumber
             };
             return copyAndUpdateObj(state, update);
         }
@@ -279,6 +317,17 @@ function questionsReducer(state = questionState, action) {
             let update = {
                 'items': action.items
             };
+            return copyAndUpdateObj(state, update);
+        }
+        case 'goToClosePage': {
+
+            let update = {
+                'quizID': action.quizID,
+                'roundNumber': action.roundNumber,
+                'questionNumber': action.questionNumber
+            };
+            console.log(action);
+            console.log(copyAndUpdateObj(state, update));
             return copyAndUpdateObj(state, update);
         }
         default:
@@ -319,5 +368,4 @@ export const mainReducer = Redux.combineReducers({
     quizItems: quizReducer,
     categories: categoriesReducer,
     questions: questionsReducer
-
 });
