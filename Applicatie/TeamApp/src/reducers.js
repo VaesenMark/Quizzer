@@ -17,9 +17,11 @@ export function toggleItemAction(item) {
 
 const mainState = {
     currentScreen: 1,
-    websocket: new WebSocket("ws://localhost:3000"),
     teamId: 0,
-    teamName: ""
+    teamName: "",
+    quizId: 0,
+    roundNumber: 0,
+    questionNumber: 0
 };
 
 function asdfReducer(state = mainState, action) {
@@ -113,12 +115,12 @@ export function updateAnswerAction(answer) {
 }
 export function submitAnswerAction(answer) {
     return (dispatch) => {
-        teamAppAPI.submitAnswer(answer, function(err, result) {
+        teamAppAPI.submitAnswer(answer, quizId, roundNumber, questionNumber, function(err, result) {
             const message = result.message;
             if(err) {
-                dispatch({ type: 'loginFailed', result: "Something went wrong" });
+                dispatch({ type: 'submitFailed', result: "Something went wrong" });
             } else {
-                dispatch({ type: 'loginFinished', result: message });
+                dispatch({ type: 'submitFinished', result: message });
             }
         });
     };
@@ -134,30 +136,23 @@ const initialAnswerInputState = {
 
 function answerInputReducer(state = initialAnswerInputState, action) {
     switch (action.type) {
-        case 'updatePassword': {
+        case 'updateAnswer': {
             let changes = {
-                password: {$set: action.password}
+                answer: {$set: action.answer}
             };
 
             return update(state, changes);
         }
-        case 'updateTeamname': {
+        case 'submitFailed': {
             let changes = {
-                teamname: {$set: action.teamname}
+                message: {$set: action.result}
             };
 
             return update(state, changes);
         }
-        case 'loginFinished': {
+        case 'submitFinished': {
             let changes = {
-                loginMessage: {$set: action.result}
-            };
-
-            return update(state, changes);
-        }
-        case 'loginFailed': {
-            let changes = {
-                loginMessage: {$set: action.result}
+                message: {$set: action.result}
             };
 
             return update(state, changes);

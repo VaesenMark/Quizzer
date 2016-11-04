@@ -2,7 +2,7 @@ import React from 'react';
 import * as ReactRedux from 'react-redux';
 
 import {
-    updatePasswordAction, updateTeamnameAction, submitLoginAction
+    updateAnswerAction, submitAnswerAction
 } from '../reducers';
 
 
