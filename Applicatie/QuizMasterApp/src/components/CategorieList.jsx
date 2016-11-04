@@ -10,8 +10,8 @@ class CategorieListUI extends React.Component {
       super(props);
    }
 
-   getItems(){
-   this.props.doGetItems()
+   getCattegoryItems(){
+   this.props.doGetCattegoryItems(this.props.quiz._id)
    };
 
 
@@ -30,11 +30,12 @@ class CategorieListUI extends React.Component {
 
       return (
           <div>
-             <button id="showItems" onClick={this.getItems.bind(this)}>
+             <button id="showItems" onClick={this.getCattegoryItems.bind(this)}>
                 get Categories
 
              </button>
              {theItems}
+             {this.props.quiz._id}
              <Logout/>
           </div>
       );
@@ -43,13 +44,15 @@ class CategorieListUI extends React.Component {
 
 function mapDispatchToProps(dispatch) {
    return {
-      doGetItems: () => dispatch(GetAllCategories()),
+      doGetCattegoryItems: (quizID) => dispatch(GetAllCategories(quizID)),
    }
 }
 
 function mapStateToProps(state) {
    return {
-      items: state.categories.items
+
+      items: state.categories.items,
+      quiz: state.headState.quizItem
    }
 }
 

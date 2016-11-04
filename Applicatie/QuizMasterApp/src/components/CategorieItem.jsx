@@ -10,7 +10,7 @@ class CategorieItemUI extends React.Component {
    render() {
       let clickHandler = (evt) => {
          evt.preventDefault();
-         this.props.addRound(this.props.item._id)
+         this.props.addRound(this.props.quiz._id, this.props.item)
       }
       return  (
           <div>
@@ -25,12 +25,13 @@ class CategorieItemUI extends React.Component {
 
 function mapDispatchToProps(dispatch) {
    return {
-      addRound: (id) => dispatch(addRound(id))
+      addRound: (quizID, categoryID) => dispatch(addRound(quizID, categoryID))
    }
 }
 
 function mapStateToProps(state) {
    return {
+      quiz: state.headState.quizItem
    }
 }
 

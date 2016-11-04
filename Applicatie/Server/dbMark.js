@@ -7,9 +7,6 @@ require('./MongooseModels/QuizMaster');
 require('./MongooseModels/Quiz');
 
 
-
-
-
 const Category = mongoose.model('Category');
 
 
@@ -28,7 +25,6 @@ category.save(function (err, char) {
 
 
 const Question = mongoose.model('Question');
-
 
 var question = new Question({ question: 'what color is a firetruck?', answer: 'red', category: 'Films' });
 

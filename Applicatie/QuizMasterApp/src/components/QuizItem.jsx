@@ -10,7 +10,7 @@ class QuizItemUI extends React.Component {
    render() {
       let clickHandler = (evt) => {
          evt.preventDefault();
-         this.props.startQuiz(this.props.item._id)
+         this.props.startQuiz(this.props.item)
       }
       return  (
           <div>
@@ -25,7 +25,7 @@ class QuizItemUI extends React.Component {
 
 function mapDispatchToProps(dispatch) {
    return {
-      startQuiz: (id) => dispatch(startQuiz(id))
+      startQuiz: (item) => dispatch(startQuiz(item))
    }
 }
 

@@ -1,7 +1,7 @@
 import React from 'react'
 import * as ReactRedux from 'react-redux';
 import {Logout} from './Logout';
-import {GetAllQuizen} from '../reducers';
+import {GetAllQuizen, AddQuiz} from '../reducers';
 import {QuizItem} from './QuizItem'
 
 
@@ -14,6 +14,9 @@ class ChoseQuizUI extends React.Component {
    this.props.doGetItems()
    };
 
+    addQuiz(){
+        this.props.doAddQuiz()
+    };
 
 
    render() {
@@ -32,9 +35,12 @@ console.log(theItems);
           <div>
              <button id="showItems" onClick={this.getItems.bind(this)}>
                 get Quizen
-
              </button>
-             {theItems}
+              {theItems}
+              <button id="addQuiz" onClick={this.addQuiz.bind(this)}>
+                  addQuiz
+
+              </button>
              <Logout/>
           </div>
       );
@@ -44,6 +50,7 @@ console.log(theItems);
 function mapDispatchToProps(dispatch) {
    return {
       doGetItems: () => dispatch(GetAllQuizen()),
+       doAddQuiz: () => dispatch(AddQuiz())
    }
 }
 

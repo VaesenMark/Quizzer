@@ -10,8 +10,8 @@ class QuestionListUI extends React.Component {
       super(props);
    }
 
-   getItems(){
-   this.props.doGetItems()
+   getQuestionItems(){
+       this.props.doGetItems(this.props.quiz._id, (this.props.quiz.rounds.length+ 1));
    };
 
 
@@ -29,7 +29,7 @@ class QuestionListUI extends React.Component {
       }
       return (
           <div>
-             <button id="showItems" onClick={this.getItems.bind(this)}>
+             <button id="showItems" onClick={this.getQuestionItems.bind(this)}>
                 get Questions
 
              </button>
@@ -42,13 +42,14 @@ class QuestionListUI extends React.Component {
 
 function mapDispatchToProps(dispatch) {
    return {
-      doGetItems: () => dispatch(GetAllQuestions()),
+      doGetItems: (quizId, roundNumber) => dispatch(GetAllQuestions(quizId, roundNumber)),
    }
 }
 
 function mapStateToProps(state) {
    return {
-      items: state.questions.items
+      items: state.questions.items,
+      quiz: state.headState.quizItem,
    }
 }
 

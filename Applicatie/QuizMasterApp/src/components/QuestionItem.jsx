@@ -10,8 +10,8 @@ class QuestionItemUI extends React.Component {
    render() {
       let clickHandler = (evt) => {
          evt.preventDefault();
-         //this.props.addQuestion(this.props.item._id)
-      }
+         this.props.addQuestionToRound(this.props.quiz._id, (this.props.quiz.rounds.length+ 1), this.props.item.question)
+      };
       return  (
           <div>
              <span onClick={clickHandler}>
@@ -25,12 +25,13 @@ class QuestionItemUI extends React.Component {
 
 function mapDispatchToProps(dispatch) {
    return {
-      //addQuestion: (id) => dispatch(addQuestion(id))
+      addQuestionToRound: (quizId, roundNumber, question) => dispatch(addQuestion(quizId, roundNumber, question))
    }
 }
 
 function mapStateToProps(state) {
    return {
+      quiz: state.headState.quizItem,
    }
 }
 

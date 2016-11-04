@@ -4,11 +4,12 @@ import quizMasterAPI from './quizMasterAPI'
 // import initialItemStatuses from './itemStatuses';
 import update from 'immutability-helper';
 
-const HeadState =
-{
+const HeadState = {
     quizMasterID: 0,
     currentPage: 1,
-    quizId: 0
+    quizItem: '',
+    categoryItem: '',
+    questionItem: '',
 }
 
 const LoginState = {
@@ -19,17 +20,20 @@ const LoginState = {
 
 const quizState = {
     items: GetAllQuizen(1),
+    selectedItem: 0,
     currentPage: 2,
 };
 
 const categorieState = {
     items: GetAllCategories(4),
+    selectedItem: 0,
     currentPage: 3,
 };
 
 const questionState = {
-    items: GetAllQuestions(1),
-    currentPage: 4,
+    items: 0,
+    message: ''
+
 };
 
 export function loginAction(username, password) {
@@ -61,16 +65,22 @@ export function logout() {
     return {type: "logout"}
 }
 
-export function startQuiz(id) {
-    return {type: "startQuiz", id: id}
+export function startQuiz(item) {
+    return {type: "startQuiz", item: item}
 }
 
-export function addRound(id) {
-    return {type: "addRound", roundId: id}
-}
-
-export function addQuestion(id) {
-    console.log("addQuestion", id);
+export function addRound(quizID, categoryID) {
+    return (dispatch) => {
+            quizMasterAPI.setnewRound(quizID, categoryID, (err, item) => {
+                if(err) {
+                    dispatch({type: "errorSetNewRound", message: err});
+                } else {
+                    console.log(item);
+                    dispatch({type: "succesSetNewRound", cattegory: item});
+                    dispatch({type: "setCattegory", cattegory: item});
+                }
+            });
+    };
 }
 
 
@@ -122,14 +132,14 @@ function headReducer(state = HeadState, action) {
         case 'startQuiz': {
                 let update = {
                     'currentPage': 3,
-                    'quizId': action.id
+                    'quizItem': action.item
                 };
                 return copyAndUpdateObj(state, update);
         }
-        case 'addRound':{
+        case 'setCattegory':{
             let update = {
                 'currentPage': 4,
-                'roundId': action.roundId
+                'categoryItem': action.cattegory
             };
             return copyAndUpdateObj(state, update);
         }
@@ -138,11 +148,10 @@ function headReducer(state = HeadState, action) {
     }
 }
 
-export function GetAllCategories(id = 4) {
+export function GetAllCategories(quizID) {
     return (dispatch) => {
-        quizMasterAPI.getCategories(id, (err, items) => {
+        quizMasterAPI.getCategories(quizID, (err, items) => {
             if(err) {
-
                 dispatch({ type: 'errorGetAllCategorieItems', success:false });
             } else {
                 console.log(items);
@@ -166,19 +175,66 @@ export function GetAllQuestions(quizId = 4, roundId = 1) {
 }
 
 export function GetAllQuizen(id = 1) {
+
     return (dispatch) => {
+        console.log("test4")
         quizMasterAPI.getQuiz(id, (err, items) => {
+            console.log("test5");
             if(err) {
+                console.log(err);
                 dispatch({ type: 'errorGetAllQuizItems', success:false });
             } else {
+                console.log(items);
                 dispatch({ type: 'successGetAllQuizItems', success:true, items });
             }
         });
     };
 }
 
+export function AddQuiz(){
+    //todo de andere functie aanroepen
+    console.log(HeadState);
+    return (dispatch) => {
+        quizMasterAPI.addQuiz(1, (err, items) => {
+            if(err) {
+                dispatch({ type: 'errorAddQuizItems', message:"quiz can't be created" });
+            } else {
+                quizMasterAPI.getQuiz(1, (err, items) => {
+                    if(err) {
+                        console.log(err);
+                        dispatch({ type: 'errorGetAllQuizItems', message:" The quiz can't be show try again" });
+                    } else {
+                        console.log(items);
+                        dispatch({ type: 'successGetAllQuizItems', success:true, items });
+                    }
+                });
+            }
+        });
+    };
+}
+
+export function addQuestion(quizId, roundNumber, question){
+    return (dispatch) => {
+        quizMasterAPI.addQuestion(quizId, roundNumber,question, (err, items) => {
+            if(err) {
+                dispatch({ type: 'errorSaveQuestions', success:false, message: err });
+            } else {
+                console.log(items);
+                dispatch({ type: 'successSaveQuestion', success:true, item });
+            }
+        });
+    };
+}
+
+
 function quizReducer(state = quizState, action) {
     switch (action.type) {
+        case 'errorAddQuizItems':{
+            let update = {
+                'errMessage': action.message
+            };
+            return copyAndUpdateObj(state, update);
+        }
         case 'errorGetAllQuizItems':{
             let update = {
                 'errMessage': action.message
@@ -191,12 +247,32 @@ function quizReducer(state = quizState, action) {
             };
             return copyAndUpdateObj(state, update);
         }
+        case 'succesSetNewRound':{
+            console.log("test", action.cattegory);
+            return state;//return copyAndUpdateObj(state, update);
+        }
+        case 'errorSetNewRound':{
+            console.log("test", action.message);
+            return state;
+        }
     default:
     return state;
     }
 }
 function questionsReducer(state = questionState, action) {
     switch (action.type) {
+        case 'errorSaveQuestions':{
+            let update = {
+                'message': action.message
+            };
+            return copyAndUpdateObj(state, update);
+        }
+        case 'successSaveQuestion':{
+            let update = {
+                'items': 2
+            };
+            return copyAndUpdateObj(state, update);
+        }
         case 'errorGetAllQuestionsItems':{
             let update = {
                 'errMessage': action.message
