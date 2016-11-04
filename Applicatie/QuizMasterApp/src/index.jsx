@@ -8,7 +8,6 @@ import thunk from 'redux-thunk';
 
 import { App } from './components/App';
 
-
 const logger = (store) => (next) => (action) => {
    return next(action);
 };

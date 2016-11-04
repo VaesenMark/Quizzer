@@ -30,7 +30,7 @@ function mapDispatchToProps(dispatch) {
 
 function mapStateToProps(state) {
    return {
-      id: state.quizMaster.id
+      id: state.headState.quizMasterID
    }
 }
 

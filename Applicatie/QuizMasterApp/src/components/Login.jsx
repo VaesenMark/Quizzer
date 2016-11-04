@@ -32,7 +32,7 @@ class LoginUi extends React.Component {
              <button id="markAsSeen" onClick={this.doLogin.bind(this)}>
                 Login
              </button>
-              {this.props.error}
+              {this.props.loginMessage}
           </div>
       );
    }
@@ -49,10 +49,9 @@ function mapDispatchToProps(dispatch) {
 
 function mapStateToProps(state) {
    return {
-      username: state.quizMaster.username,
-      password: state.quizMaster.password,
-      id: state.quizMaster.id,
-          error: state.quizMaster.error
+      username: state.login.username,
+      password: state.login.password,
+      loginMessage: state.login.error
    }
 }
 
