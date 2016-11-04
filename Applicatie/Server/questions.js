@@ -1,5 +1,4 @@
-db.questions.insert([
-	{  "question": "Who wrote Twilight series of novels?",
+module.exports = questions =	[{  "question": "Who wrote Twilight series of novels?",
 	   "answer":   "Stephenie Meyer",
 	   "category": "Art and Literature"
 	},
@@ -3187,31 +3186,11 @@ db.questions.insert([
 	   "answer":   "Frogmella",
 	   "category": "Film and TV"
 	},
-	{  "question": "What is Miss Piggy's Surname?",
-	   "answer":   "Lee",
-	   "category": "Film and TV"
-	}
-])
+	{
+	"question": "What is Miss Piggy's Surname?",
+	"answer": "Lee",
+	"category": "Film and TV"
+	}]
 
 
 
-db.categories.insert(
-[
-{  "categoryName": "Art and Literature"
-	},
-        {  "categoryName": "General Knowledge"
-	},
-        {  "categoryName": "Geography"
-	},
-        {  "categoryName": "Music"
-	},
-        {  "categoryName": "History"
-	},
-        {  "categoryName": "Science and Nature"
-	},
-        {  "categoryName": "Sport"
-	},
-        {  "categoryName": "Film and TV"
-	},
-]
-)
