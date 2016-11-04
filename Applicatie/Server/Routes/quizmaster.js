@@ -6,6 +6,7 @@ require('../MongooseModels/Question');
 require('../MongooseModels/QuizMaster');
 require('../MongooseModels/Quiz');
 
+
 var express = require('express');
 var fs = require('fs');
 var app = express();
@@ -27,7 +28,6 @@ app.post('/login', function(req, res, next){
 
     });
 });
-
 
 app.get('/:quizmasterID/quiz',  function(req, res, next){
     const Quiz = mongoose.model('Quiz');

@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const autoIncrement = require('mongoose-auto-increment');
 
 const questionSchema = new mongoose.Schema({
-    question: {
+        question: {
         type: String,
         required: true
     },
@@ -13,7 +13,7 @@ const questionSchema = new mongoose.Schema({
     category: {
         type: String,
         required: true
-    }
+    },
 });
 
 questionSchema.plugin(autoIncrement.plugin, {
