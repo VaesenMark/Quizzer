@@ -10,19 +10,25 @@ let quizMasterAPI = {
             })
     },
     getQuiz(id,callback) {
-        console.log(id);
         request
             .get('http://localhost:3000/quizmaster/'+id+'/quiz')
             .end( (err,response) => {
                 callback(err, response.body.message);
             })
     },
+    getTeams(id,callback){
+        console.log("id", id);
+        request
+            .get('http://localhost:3000/quiz/'+id+'/teams')
+            .end( (err,response) => {
+
+                callback(err, response.body);
+            })
+    },
     getCategories(id,callback) {
-        console.log(id);
         request
             .get('http://localhost:3000/quiz/'+id+'/categories')
             .end( (err,response) => {
-                console.log(response.body);
                 callback(err, response.body);
             })
     },
@@ -30,7 +36,6 @@ let quizMasterAPI = {
         request
             .get('http://localhost:3000/quiz/'+quizID+'/round/'+roundID+'/questions')
             .end( (err,response) => {
-                console.log("return api call",response.body);
                 callback(err, response.body.message);
             })
     },
@@ -47,7 +52,6 @@ let quizMasterAPI = {
             .post('http://localhost:3000/quiz/'+quizID+'/round')
             .send({categoryID: category._id})
             .end( (err,response) => {
-                console.log(response);
                 callback(err, response.body);
             })
     },
@@ -56,7 +60,6 @@ let quizMasterAPI = {
                 .post('http://localhost:3000/quiz/'+quizID+'/round/'+roundNumber+'/question')
                 .send({questionID: questionID})
                 .end( (err,response) => {
-                    console.log("response",response);
                     callback(err, response.body);
                 })
         }

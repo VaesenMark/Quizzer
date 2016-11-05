@@ -61,4 +61,5 @@ teamSchema.plugin(autoIncrement.plugin, {
     model: 'Team',
     startAt: 1
 });
-mongoose.model('Team', teamSchema);
+
+module.exports = mongoose.model('Team', teamSchema);

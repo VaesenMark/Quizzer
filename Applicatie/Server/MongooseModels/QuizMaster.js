@@ -11,9 +11,9 @@ const quizMasterSchema = new mongoose.Schema({
         required: true
     }
 });
-
 quizMasterSchema.plugin(autoIncrement.plugin, {
     model: 'QuizMaster',
     startAt: 1
 });
-mongoose.model('QuizMaster', quizMasterSchema);
+
+module.exports = mongoose.model('QuizMaster', quizMasterSchema);

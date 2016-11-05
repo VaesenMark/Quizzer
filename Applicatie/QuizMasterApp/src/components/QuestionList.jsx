@@ -1,7 +1,5 @@
 import React from 'react'
 import * as ReactRedux from 'react-redux';
-import {Logout} from './Logout';
-import {GetAllQuestions} from '../reducers';
 import {QuestionItem} from './QuestionItem'
 
 
@@ -9,11 +7,6 @@ class QuestionListUI extends React.Component {
    constructor(props) {
       super(props);
    }
-
-   getQuestionItems(){
-       this.props.doGetItems(this.props.quiz._id, (this.props.quiz.rounds.length+ 1));
-   };
-
 
 
    render() {
@@ -29,11 +22,7 @@ class QuestionListUI extends React.Component {
       }
       return (
           <div>
-             <button id="showItems" onClick={this.getQuestionItems.bind(this)}>
-                get Questions
-             </button>
              {theItems}
-             <Logout/>
           </div>
       );
    }
@@ -41,7 +30,6 @@ class QuestionListUI extends React.Component {
 
 function mapDispatchToProps(dispatch) {
    return {
-      doGetItems: (quizId, roundNumber) => dispatch(GetAllQuestions(quizId, roundNumber)),
    }
 }
 

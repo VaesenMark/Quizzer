@@ -6,6 +6,9 @@ require('./MongooseModels/Question');
 require('./MongooseModels/QuizMaster');
 require('./MongooseModels/Quiz');
 mongoose.Promise = global.Promise;
+
+
+
 var questions = require('./questions');
 
 const Question = mongoose.model('Question');
@@ -14,9 +17,13 @@ Question.create(questions,function(err){
     if(err) return console.log(err);
     console.log("gelukt");
 });
+<<<<<<< HEAD
 
 
 
+=======
+/*
+>>>>>>> master
 const Category = mongoose.model('Category');
 
 
@@ -109,6 +116,7 @@ team.save(function (err, char) {
     }
 });
 
+<<<<<<< HEAD
 // Team.login('asd1', function(err, data) {
 //     if (err) {
 //         console.log(err);
@@ -121,4 +129,17 @@ team.save(function (err, char) {
 // });
 
 
+=======
+Team.login('asd1', function(err, data) {
+    if (err) {
+        console.log(err);
+        mongoose.connection.close();
+    }
+    else {
+        console.log(data);
+        mongoose.connection.close();
+    }
+});
+*/
+>>>>>>> master
 
