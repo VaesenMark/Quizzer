@@ -52,9 +52,15 @@ export function loginAction(username, password) {
                 if(response.status != 200){
                     dispatch( {type: "loginFailed", message: response.message})
                 }
-                console.log(response);
-                dispatch( {type: "loginSucces", id: response._id})
+                dispatch( {type: "loginSucces", id: response._id});
 
+                quizMasterAPI.getQuiz(response._id, (err, items) => {
+                    if(err) {
+                        dispatch({ type: 'errorGetAllQuizItems', message:" The quiz can't be show try again" });
+                    } else {
+                        dispatch({ type: 'successGetAllQuizItems', success:true, items });
+                    }
+                });
             }
         });
     }
@@ -72,8 +78,35 @@ export function logout() {
     return {type: "logout"}
 }
 
+export function checkTeams(item) {
+    return (dispatch) => {
+        console.log(item);
+        quizMasterAPI.getTeams(item._id, (err, items) => {
+            if(err) {
+                console.log(err);
+                dispatch({ type: 'errorGetTeams', success:false });
+            } else {
+                dispatch({ type: 'succesGetTeams', success:true, items });
+                console.log(item);
+                dispatch({type: "checkTeams", quiz: item});
+            }
+        });
+    };
+}
 export function startQuiz(item) {
-    return {type: "startQuiz", item: item}
+    return (dispatch) => {
+        console.log(item);
+        quizMasterAPI.getCategories(item._id, (err, items) => {
+            if(err) {
+
+                dispatch({ type: 'errorGetCategoriesItems', success:false });
+            } else {
+                console.log("item",item);
+                dispatch({ type: 'successGetCategoriesItems', success:true, items });
+                dispatch({type: "goToCategories", item: item});
+            }
+        });
+    };
 }
 
 export function addRound(quizID, categoryID) {
@@ -82,12 +115,23 @@ export function addRound(quizID, categoryID) {
                 if(err) {
                     dispatch({type: "errorSetNewRound", message: err});
                 } else {
-                    console.log(item);
                     dispatch({type: "succesSetNewRound", cattegory: item});
-                    dispatch({type: "setCategory", cattegory: item});
+                    dispatch({type: "goToQuestions", cattegory: item});
+
+                    quizMasterAPI.getQuestions(quizID, item.roundNumber, (err, items) => {
+
+                        if(err) {
+                            dispatch({ type: 'errorGetAllQuestionsItems', success:false });
+                        } else {
+                            dispatch({ type: 'successGetAllQuestionsItems', success:true, items });}
+                    });
                 }
             });
     };
+    return (dispatch) => {
+
+
+    }
 }
 
 
@@ -129,6 +173,14 @@ function headReducer(state = HeadState, action) {
             return copyAndUpdateObj(state, update);
 
         }
+        case 'checkTeams': {
+            let update = {
+                'currentPage': 3,
+                'quizItem' : action.quiz
+            };
+            return copyAndUpdateObj(state, update);
+
+        }
         case 'logout': {
             let update = {
                 'currentPage': 1,
@@ -136,16 +188,15 @@ function headReducer(state = HeadState, action) {
             };
             return copyAndUpdateObj(state, update);
         }
-        case 'startQuiz': {
+        case 'goToCategories': {
                 let update = {
-                    'currentPage': 3,
-                    'quizItem': action.item
+                    'currentPage': 4,
                 };
                 return copyAndUpdateObj(state, update);
         }
-        case 'setCategory':{
+        case 'goToQuestions':{
             let update = {
-                'currentPage': 4,
+                'currentPage': 5,
                 'categoryItem': action.cattegory
             };
             return copyAndUpdateObj(state, update);
@@ -153,13 +204,13 @@ function headReducer(state = HeadState, action) {
 
         case 'goToClosePage': {
             let update = {
-                'currentPage': 5,
+                'currentPage': 6,
             };
             return copyAndUpdateObj(state, update);
         }
         case 'goToCheckPage': {
             let update = {
-                'currentPage': 6,
+                'currentPage': 7,
             };
             return copyAndUpdateObj(state, update);
         }
@@ -174,51 +225,36 @@ export function GetAllCategories(quizID) {
             if(err) {
                 dispatch({ type: 'errorGetAllCategorieItems', success:false });
             } else {
-                console.log(items);
                 dispatch({ type: 'successGetAllCategorieItems', success:true, items });
             }
         });
     };
 }
 
-export function GetAllQuestions(quizID = 4, roundId = 1) {
-    return (dispatch) => {
-        quizMasterAPI.getQuestions(quizID, roundId, (err, items) => {
 
+export function getNextRound(quiz){
+    return (dispatch) => {
+        quizMasterAPI.getCategories(quiz._id, (err, items) => {
             if(err) {
-                dispatch({ type: 'errorGetAllQuestionstems', success:false });
+                dispatch({ type: 'errorGetAllCategoriesItems', success:false });
             } else {
-                console.log(items);
-                dispatch({ type: 'successGetAllQuestionsItems', success:true, items });
+                dispatch({ type: 'successGetCategoriesItems', success:true, items });
+                console.log(items)
+                dispatch({type: "goToCategories", item: quiz});
             }
         });
-    };
+    }
 }
 
-export function GetAllQuizen(id) {
-
-    return (dispatch) => {
-        quizMasterAPI.getQuiz(id, (err, items) => {
-            if(err) {
-                console.log(err);
-                dispatch({ type: 'errorGetAllQuizItems', success:false });
-            } else {
-                console.log(items);
-                dispatch({ type: 'successGetAllQuizItems', success:true, items });
-            }
-        });
-    };
-}
 export function getNextQuestion(quizID,roundID){
     return (dispatch) => {
         quizMasterAPI.getQuestions(quizID, roundID, (err, items) => {
 
             if(err) {
-                dispatch({ type: 'errorGetAllQuestionstems', success:false });
+                dispatch({ type: 'errorGetAllQuestionsItems', success:false });
             } else {
-                console.log(items);
                 dispatch({ type: 'successGetAllQuestionsItems', success:true, items });
-                dispatch({type: 'setCategory'})
+                dispatch({type: 'goToQuestions'})
             }
         });
 
@@ -227,12 +263,13 @@ export function getNextQuestion(quizID,roundID){
 
 
 export function AddQuiz(id){
-    //todo de andere functie aanroepen
+
     return (dispatch) => {
         quizMasterAPI.addQuiz(id, (err, items) => {
             if(err) {
                 dispatch({ type: 'errorAddQuizItems', message:"quiz can't be created" });
             } else {
+                //todo de andere functie aanroepen
                 quizMasterAPI.getQuiz(id, (err, items) => {
                     if(err) {
                         dispatch({ type: 'errorGetAllQuizItems', message:" The quiz can't be show try again" });
@@ -251,7 +288,6 @@ export function addQuestion(quizID, roundNumber, questionID){
             if(err) {
                 dispatch({ type: 'errorSaveQuestions', success:false, message: err });
             } else {
-                console.log("jsljf", items);
                 dispatch({ type: 'goToClosePage', success:true, quizID: quizID, roundNumber:  roundNumber, questionNumber: items.questionNumber});
                 dispatch({ type: 'successSaveQuestion', success:true, questionNumber: items.questionNumber, items });
 
@@ -282,11 +318,9 @@ function quizReducer(state = quizState, action) {
             return copyAndUpdateObj(state, update);
         }
         case 'succesSetNewRound':{
-            console.log("test", action.cattegory);
             return state;//return copyAndUpdateObj(state, update);
         }
         case 'errorSetNewRound':{
-            console.log("test", action.message);
             return state;
         }
     default:
@@ -326,8 +360,6 @@ function questionsReducer(state = questionState, action) {
                 'roundNumber': action.roundNumber,
                 'questionNumber': action.questionNumber
             };
-            console.log(action);
-            console.log(copyAndUpdateObj(state, update));
             return copyAndUpdateObj(state, update);
         }
         default:
@@ -337,13 +369,13 @@ function questionsReducer(state = questionState, action) {
 
 function categoriesReducer(state = categorieState, action) {
     switch (action.type) {
-        case 'errorGetAllCategorieItems':{
+        case 'errorGetCategoriesItems':{
             let update = {
                 'errMessage': action.message
             };
             return copyAndUpdateObj(state, update);
         }
-        case 'successGetAllCategorieItems':{
+        case 'successGetCategoriesItems':{
             let update = {
                 'items': action.items
             };

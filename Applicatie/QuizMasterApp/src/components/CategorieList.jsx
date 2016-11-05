@@ -1,6 +1,5 @@
 import React from 'react'
 import * as ReactRedux from 'react-redux';
-import {Logout} from './Logout';
 import {GetAllCategories} from '../reducers';
 import {CategorieItem} from './CategorieItem'
 
@@ -10,13 +9,8 @@ class CategorieListUI extends React.Component {
       super(props);
    }
 
-   getCattegoryItems(){
-   this.props.doGetCattegoryItems(this.props.quiz._id)
-   };
-
-
-
    render() {
+      console.log(this.props.quiz);
       let theItems = [];
 
       if (this.props.items.length>1) {
@@ -30,12 +24,8 @@ class CategorieListUI extends React.Component {
 
       return (
           <div>
-             <button id="showItems" onClick={this.getCattegoryItems.bind(this)}>
-                get Categories
-
-             </button>
+             {this.props.quiz._id}
              {theItems}
-             <Logout/>
           </div>
       );
    }
@@ -43,7 +33,6 @@ class CategorieListUI extends React.Component {
 
 function mapDispatchToProps(dispatch) {
    return {
-      doGetCattegoryItems: (quizID) => dispatch(GetAllCategories(quizID)),
    }
 }
 

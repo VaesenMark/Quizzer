@@ -54,7 +54,48 @@ app.use(bodyParser.urlencoded({extended: true}));
 
 ///------- toegevoegd --------
 
+app.get('/quiz/:quizID/teams', function(req, res, next) {
+    const Quiz = mongoose.model('Quiz');
+    const Team = mongoose.model('Team');
+    Quiz.findOne({_id: req.params.quizID}, function (err, quiz) {
 
+        if (err) {
+            res.status(500);
+            res.json({message: err});
+        }
+        else {
+
+            if (quiz.status == 1) {
+                quiz.status = 2;
+            }
+            console.log(quiz);
+            quiz.save(function (err, char) {
+                if (err) {
+
+                    res.status(500);
+                    res.json({message: err})
+                }
+                console.log(quiz);
+                Team.find({quizID: req.params.quizID}, function (err, teams) {
+                    console.log(teams);
+                    if (err) {
+                        res.status(500);
+                        res.json({message: err});
+                    }
+                    else if (teams != null) {
+                        res.status(200);
+                        res.json({message: teams})
+                    }
+                    else {
+                        res.status(400);
+                        res.json({message: "there are no teams for this quiz"})
+                    }
+                })
+            });
+
+        }
+    });
+});
 
 
 
@@ -144,9 +185,6 @@ app.post('/quiz/:quizID/round', function(req, res, next){
                         if (!quiz.rounds.find(x => x.categoryID == req.body.categoryID)) {
                             console.log(category,quiz);
                             quiz.rounds.push({roundNumber: (quiz.rounds.length + 1), categoryID: req.body.categoryID});
-                            if(quiz.status == 1) {
-                                quiz.status = 2;
-                            }
                             quiz.save(function (err, char) {
                                 if (err) {
                                     res.status(500);
@@ -154,7 +192,7 @@ app.post('/quiz/:quizID/round', function(req, res, next){
                                 }
                                 else {
                                     res.status(200);
-                                    res.json({message: "There is a Round add to quiz"});
+                                    res.json({message: "There is a Round add to quiz", roundNumber: quiz.rounds.length});
                                 }
                             });
                         }
@@ -262,6 +300,16 @@ app.get('/quiz/:quizID/categories', function(req, res, next) {
                         res.json({message: "A server error occured"});
                     }
                     else {
+                        quiz.status = 3;
+                        quiz.save(function (err, char) {
+                            if (err) {
+                                res.status(400);
+                                res.json({
+                                    message: "The answers is not being controled by the quizmaster",
+                                    err
+                                })
+                            }
+                        });
                         let rounds = quiz.rounds;
                         rounds.forEach(function(round) {
                             notUsedCategories.push(round.categoryID)
@@ -324,7 +372,6 @@ app.get('/quiz/:quizId/round/:roundNumber/questions', function(req, res, next){
                                         console.log(question)
                                     }
                                 });
-                                quiz.status = 3;
                                 quiz.save(function (err, char) {
                                         if (err) {
                                             res.status(400);

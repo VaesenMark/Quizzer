@@ -1,7 +1,6 @@
 import React from 'react'
 import * as ReactRedux from 'react-redux';
-import {Logout} from './Logout';
-import {GetAllQuizen, AddQuiz} from '../reducers';
+import {AddQuiz} from '../reducers';
 import {QuizItem} from './QuizItem'
 
 
@@ -9,10 +8,6 @@ class ChoseQuizUI extends React.Component {
    constructor(props) {
       super(props);
    }
-
-   getItems(){
-   this.props.doGetItems(this.props.id)
-   };
 
     addQuiz(){
         this.props.doAddQuiz(this.props.id)
@@ -30,18 +25,13 @@ class ChoseQuizUI extends React.Component {
              />
          )
       }
-console.log(theItems);
       return (
           <div>
-             <button id="showItems" onClick={this.getItems.bind(this)}>
-                get Quizen
-             </button>
               {theItems}
               <button id="addQuiz" onClick={this.addQuiz.bind(this)}>
                   addQuiz
 
               </button>
-             <Logout/>
           </div>
       );
    }
@@ -49,7 +39,6 @@ console.log(theItems);
 
 function mapDispatchToProps(dispatch) {
    return {
-      doGetItems: (id) => dispatch(GetAllQuizen(id)),
        doAddQuiz: (id) => dispatch(AddQuiz(id))
    }
 }

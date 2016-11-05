@@ -1,6 +1,6 @@
 import React from 'react'
 import * as ReactRedux from 'react-redux';
-import {startQuiz} from '../reducers';
+import {checkTeams} from '../reducers';
 
 class QuizItemUI extends React.Component {
    constructor(props) {
@@ -9,8 +9,9 @@ class QuizItemUI extends React.Component {
 
    render() {
       let clickHandler = (evt) => {
+         console.log(this.props.item);
          evt.preventDefault();
-         this.props.startQuiz(this.props.item)
+         this.props.checkTeams(this.props.item)
       }
       return  (
           <div>
@@ -25,7 +26,7 @@ class QuizItemUI extends React.Component {
 
 function mapDispatchToProps(dispatch) {
    return {
-      startQuiz: (item) => dispatch(startQuiz(item))
+      checkTeams: (item) => dispatch(checkTeams(item))
    }
 }
 
