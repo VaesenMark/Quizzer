@@ -3,7 +3,7 @@ var webpack = require('webpack');
 module.exports = {
    devtool: 'source-map',               // the dev-server should create JS source-map files.
    entry: [
-      'webpack-dev-server/client?http://localhost:8080',
+      'webpack-dev-server/client?http://localhost:8081',
       'webpack/hot/only-dev-server',
       './src/index.jsx'
    ],
@@ -25,7 +25,8 @@ module.exports = {
    devServer: {
       contentBase: './dist',             // Dev Server serves from 'dist' directory. Both generated bundles and
                                          // static files (html,css, images) must live in this directory.
-      hot: true                          // Use the hot module replacement plugin (used by React Hot Loader).
+      hot: false  ,
+      port: 8081                       // Use the hot module replacement plugin (used by React Hot Loader).
    },
    plugins: [
       new webpack.HotModuleReplacementPlugin()

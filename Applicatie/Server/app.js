@@ -1,7 +1,3 @@
-var express = require('express');
-var fs = require('fs');
-var bodyParser = require('body-parser');
-
 const mongoose = require('mongoose');
 require('./MongooseModels/connection');
 require('./MongooseModels/Team');
@@ -10,46 +6,99 @@ require('./MongooseModels/Question');
 require('./MongooseModels/QuizMaster');
 require('./MongooseModels/Quiz');
 
+var express = require('express');
 
-
-var expressSession = require('express-session');
-var SESSION_SECRET = "ThisIsACoolSecret!@#$%";
-
-store = new expressSession.MemoryStore();
+var sessionParser = require('express-session')({
+    secret:"secret",
+    resave: true,
+    saveUninitialized: true
+});
 
 var cors = require('cors');
 
+var ws = require('ws');
+var bodyParser = require('body-parser');
+var http = require('http');
+var path = require('path');
+
 var app = express();
 
-const expressWs = require('express-ws')(app);
 
-// TEMPORARY
-var path = require('path');
-app.use(express.static(path.join(__dirname, 'client-side')));
 
-app.use(expressSession({
-    store: store,
-    secret: SESSION_SECRET,
-    resave: true,
-    saveUninitialized: true
-}));
+var server = http.createServer(app);
+var wss = new ws.Server({server: server});
 
-var cookie = require('cookie');
-var cookieParser = require('cookie-parser');
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({extended: true}));
+
+
+app.use((req, res, next) => {
+    res.header('Access-Control-Allow-Credentials', true);
+    res.header('Access-Control-Allow-Origin', req.headers.origin);
+    res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
+    res.header('Access-Control-Allow-Headers', 'X-Requested-With, X-HTTP-Method-Override, Content-Type, Accept, Cookie');
+    next();
+});
+
+
+app.use(sessionParser);
+
+
+function acceptOrRefuseConnection(info) {
+    return true;
+}
 
 // var quizmaster = require('./Routes/quizmaster');
 // var scorebord = require('./Routes/scorebord');
 // var team = require('./Routes/team');
 // var quiz = require('./Routes/quiz');
-
-app.use(cors());
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({extended: true}));
 // app.use('/quizmaster', quizmaster);
 // app.use('/scorebord', scorebord);
 // app.use('/team', team);
 // app.use('/quiz', quiz);
 
+
+
+wss.on("connection", function connection(req) {
+    sessionParser(req.upgradeReq, {}, function(){
+        console.log("New websocket connection:");
+        var sess = req.upgradeReq.session;
+        console.log("working = " + sess.working);
+    });
+
+    req.sendJSON = function(data) {
+        var jsonStr = JSON.stringify(data);
+        this.send(jsonStr);
+    };
+});
+
+
+
+app.post('/testmark', function(req, res, next) {
+    console.log('testmark');
+
+    // teamApplianceJudged(71, true);
+
+    // for(let client of wss.clients) {
+    //     // client.sendJSON({
+    //     //     messageType: "NewTeamApplianceMade",
+    //     //     quizId: quizId
+    //     // });
+    //     sessionParser(client.upgradeReq, {}, function(asd){
+    //         console.log('asd', asd);
+    //         console.log("New websocket connection:");
+    //         var sess = client.upgradeReq.session;
+    //         console.log(sess);
+    //     });
+    // }
+
+    // for(let client of theWebSocketServer.clients) {
+    //
+    //     client.sendJSON({
+    //         message: "ApplianceAccepted"
+    //     });
+    // }
+});
 
 
 ///------- toegevoegd --------
@@ -100,6 +149,8 @@ app.get('/quiz/:quizID/teams', function(req, res, next) {
 
 
 // ------ Quiz Routes ------
+
+
 
 //Start quiz
 app.post('/quiz', function(req, res, next) {
@@ -373,16 +424,16 @@ app.get('/quiz/:quizId/round/:roundNumber/questions', function(req, res, next){
                                     }
                                 });
                                 quiz.save(function (err, char) {
-                                        if (err) {
-                                            res.status(400);
-                                            res.json({
-                                                message: "The answers is not being controled by the quizmaster",
-                                                err
-                                            })
-                                        }
-                                        else {
-                                            res.status(200);
-                                            res.json({message: newQuestions});
+                                    if (err) {
+                                        res.status(400);
+                                        res.json({
+                                            message: "The answers is not being controled by the quizmaster",
+                                            err
+                                        })
+                                    }
+                                    else {
+                                        res.status(200);
+                                        res.json({message: newQuestions});
                                     }
                                 });
                             }
@@ -555,6 +606,7 @@ app.get('/quiz/:quizId', function(req, res, next){
 //Submit answer
 app.post('/quiz/:quizId/round/:roundNumber/question/:questionNumber/teamanswer/:teamId',function(req, res, next) {
     try {
+        console.log('sadfasdf');
         const Quiz = mongoose.model('Quiz');
         Quiz.findOne(
             {
@@ -570,7 +622,7 @@ app.post('/quiz/:quizId/round/:roundNumber/question/:questionNumber/teamanswer/:
                         res.json({message: "Unknown quiz"});
                         return;
                     }
-
+console.log('aaass');
                     // TODO check if team has already submitted a question
                     quiz.rounds.find(x => x.roundNumber == req.params.roundNumber)
                         .playedQuestions.find(x => x.questionNumber == req.params.questionNumber)
@@ -582,7 +634,7 @@ app.post('/quiz/:quizId/round/:roundNumber/question/:questionNumber/teamanswer/:
                                 throw new Error(err);
                             }
                             // TODO notify quizmaster
-
+                            console.log('sadfsdaf');
                             res.json({message: "Question inserted"});
                         }
                         catch(exception) {
@@ -606,7 +658,7 @@ app.post('/quiz/:quizId/round/:roundNumber/question/:questionNumber/teamanswer/:
         res.json({message: "A server error occured"});
     }
 
-    res.send("vraag van quiz35 " + req.params.quizId + " in ronde " + req.params.roundNumber + " en vraag  " + req.params.questionNumber + " als antwoord " + req.body.answer+" van team "+ req.params.teamId);
+
 });
 
 //Change answer
@@ -685,7 +737,7 @@ app.post('/team/login', function(req, res, next) {
         Quiz.findOne(
             {
                 password: req.body.password,
-                status: 1
+                status: 2
             },
             function (err, quiz) {
                 try {
@@ -734,11 +786,14 @@ app.post('/team/login', function(req, res, next) {
                                         req.session.quizId = quiz._id;
                                         // req.session.save(req.session.quizId);
                                         console.log('quizzz', quiz._id);
-                                        console.log('teammm', team._id);
-                                        newTeamCreated(req.session);
-                                        console.log('ses1: ', req.session.teamId);
+                                        // console.log('teammm', team._id);
+                                        // newTeamAppliance(quiz._id);
+                                        // console.log('ses1: ', req.session.teamId);
                                         //TODO test notify quizmaster
                                         console.log('aaaaaaa');
+
+
+
                                         res.json({message: "Team successfully logged in. Waiting for the quizmaster to approve it", teamId : team._id, quizId: quiz._id});
                                     }
                                     catch(exception) {
@@ -775,6 +830,7 @@ app.post('/team/login', function(req, res, next) {
 
 // Get team
 app.get('/team/:teamId', function(req, res, next) {
+    console.log('kaas');
     try {
         const Team = mongoose.model('Team');
         Team.findOne(
@@ -791,6 +847,7 @@ app.get('/team/:teamId', function(req, res, next) {
                         res.json({message: "Team not found"});
                         return;
                     }
+
                     res.json(team);
                 }
                 catch(exception) {
@@ -811,6 +868,10 @@ app.get('/team/:teamId', function(req, res, next) {
 
 // Edit team
 app.put('/team/:teamId', function(req, res, next) {
+    console.log('teamname', req.body.teamName);
+    console.log('roundPoints', req.body.roundPoints);
+    console.log('approved', req.body.approved);
+    console.log('quizID', req.body.quizID);
     try {
         const Team = mongoose.model('Team');
         Team.update(
@@ -832,6 +893,42 @@ app.put('/team/:teamId', function(req, res, next) {
                         res.status(404);
                         res.json({message: "Team not found"});
                     }
+                    res.json({message: "Teamname changed. Waiting for the quizmaster to approve it", teamId: req.params.teamId, quizId: req.body.quizID});
+                }
+                catch(exception) {
+                    console.log(exception);
+                    res.status(500);
+                    res.json({message: "A server error occured"});
+                }
+            }
+        );
+    }
+    catch(exception) {
+        console.log(exception);
+        res.status(500);
+        res.json({message: "A server error occured"});
+    }
+});
+
+// Get question
+app.get('/question/:questionId', function(req, res, next) {
+    try {
+        const Question = mongoose.model('Question');
+        Question.findOne(
+            {
+                _id: req.params.questionId
+            },
+            function(err, question) {
+                try {
+                    if (err) {
+                        throw new Error(err);
+                    }
+                    if(!question) {
+                        res.status(404);
+                        res.json({message: "Question not found"});
+                        return;
+                    }
+                    res.json(question);
                 }
                 catch(exception) {
                     console.log(exception);
@@ -904,58 +1001,45 @@ app.get('/scoreboard/logout', function(req, res, next){
 
 
 
-// ------ Websockets ------
 
-let ns = 1;
 
-app.ws('/', function(ws, req) {
-    console.log('connected');
-    req.session.blaat = ns;
-    ns++;
-    var cookies = cookie.parse(ws.upgradeReq.headers.cookie);
-    var sid = cookieParser.signedCookie(cookies["connect.sid"], secret);
-    //get the session object
-    store.get(sid, function (err, ss) {
-        //create the session object and append on upgradeReq
-        store.createSession(ws.upgradeReq, ss);
-        //setup websocket bindings
-        ws.on('message', function incoming(message) {
-            console.log();
-            console.log('received: %s', message);
-        });
 
-    });
-});
 
-function newTeamCreated(session) {
+
+
+
+function newTeamAppliance(quizId) {
     // Notify quizmaster to get new list of team appliances
-    console.log(session);
-    for(let client of expressWs.getWss().clients) {
-        if(client.upgradeReq.session.quizMasterId && client.upgradeReq.session.quizId == quizId) {
-            client.send({message: "NewTeamAppliance"});
-        }
-        console.log('ses2: ', client.upgradeReq.session);
-        if(client.upgradeReq.session.teamId) {
-            console.log('bla');
-            client.send({message: "NewTeamAppliance"});
-        }
+    // for(let client of theWebSocketServer.clients) {
+    //     client.sendJSON({
+    //         messageType: "NewTeamApplianceMade",
+    //         quizId: quizId
+    //     });
+    // }
+    for(let client of wss.clients) {
+        // client.sendJSON({
+        //     messageType: "NewTeamApplianceMade",
+        //     quizId: quizId
+        // });
+        sessionParser(client.upgradeReq, {}, function(){
+            console.log("kuuuuuuuuuuuuuuut:");
+            var sess = client.upgradeReq.session;
+            console.log(sess);
+        });
     }
+
 }
 
 function teamApplianceJudged(teamId, accepted) {
     // team id mogelijk?
     // Notify team of judgement
-    let message;
-    if(accepted) {
-        message = "ApplianceAccepted";
-    }
-    else {
-        message = "ApplianceDenied";
-    }
-    for(let client of expressWs.getWss().clients) {
-        if(client.upgradeReq.session.teamId == teamId) {
-            client.send({message: message});
-        }
+    for(let client of wss.clients) {
+        console.log('bla');
+        client.sendJSON({
+            messageType: "TeamAppliance",
+            teamId: teamId,
+            accepted: accepted
+        });
     }
 }
 
@@ -988,28 +1072,26 @@ function questionClosed(quizId, questionNumber) {
     }
 }
 
-function questionStarted(quizId, questionNumber) {
+function questionStarted(quizId, questionNumber, questionId) {
     // Notify team of started question
-    for(let client of expressWs.getWss().clients) {
-        if(client.upgradeReq.session.teamId && client.upgradeReq.session.quizId == quizId) {
-            client.send({message: "QuestionStarted", questionNumber: questionNumber});
-        }
+    for(let client of wss.clients) {
+        client.sendJSON({
+            messageType: "QuestionStarted",
+            quiId: quizId,
+            questionId: questionId,
+            questionNumber, questionNumber
+        });
     }
 }
 
-function answerJudged(quizId, questionId, accepted) {
+function answerJudged(teamId, questionId, accepted) {
     // Notify team of judged answer
-    let message;
-    if(accepted) {
-        message = "answerAccepted"
-    }
-    else {
-        message = "answerDenied";
-    }
-    for(let client of expressWs.getWss().clients) {
-        if(client.upgradeReq.session.teamId && client.upgradeReq.session.quizId == quizId && client.upgradeReq.session.questionId == questionId) {
-            client.send({message: message});
-        }
+    for(let client of wss.clients) {
+        client.sendJSON({
+            teamId: teamId,
+            questionId: questionId,
+            accepted: accepted
+        });
     }
 }
 
@@ -1023,4 +1105,8 @@ function quizEnded(quizId) {
 }
 
 
-app.listen(3000);
+// server.on('request', app);
+server.listen( 3000,
+    function() {
+        console.log("The Server is lisening on port 3000.")
+    });

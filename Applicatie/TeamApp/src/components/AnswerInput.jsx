@@ -16,16 +16,17 @@ class QuestionInputUI extends React.Component {
     }
 
     submitAnswer() {
-        this.props.submitAnswer()
+        this.props.submitAnswer(this.props.answer)
     }
 
     render() {
         return (
             <div>
                 Question {this.props.questionNumber}: {this.props.question}
+                <br/>
                 <input type="text" id="answer" value={this.props.answer} onChange={this.updateAnswer.bind(this)} />
                 <br/>
-                {this.props.receivedMessage}
+                {this.props.message}
                 <br/>
                 <button onClick={this.submitAnswer.bind(this)}>Submit</button>
             </div>
@@ -36,10 +37,10 @@ class QuestionInputUI extends React.Component {
 
 function mapStateToProps(state) {
     return {
-        questionNumber: state.login.password,
-        question: state.login.teamname,
-        answer: state.login.loginMessage,
-        receivedMessage: state.login.receivedMessage
+        questionNumber: state.base.questionNumber,
+        question: state.base.question,
+        answer: state.answer.answer,
+        message: state.answer.message
     }
 }
 
@@ -47,7 +48,7 @@ function mapStateToProps(state) {
 function mapDispatchToProps(dispatch) {
     return {
         updateAnswer: (answer) => dispatch(updateAnswerAction(answer)),
-        submitAnswer: (answer, quizId, roundNumber, questionNumber, teamId) => dispatch(submitAnswerAction(answer))
+        submitAnswer: (answer) => dispatch(submitAnswerAction(answer))
     }
 }
 

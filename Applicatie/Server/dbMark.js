@@ -17,7 +17,13 @@ Question.create(questions,function(err){
     if(err) return console.log(err);
     console.log("gelukt");
 });
+<<<<<<< HEAD
+
+
+
+=======
 /*
+>>>>>>> master
 const Category = mongoose.model('Category');
 
 
@@ -35,20 +41,20 @@ category.save(function (err, char) {
 });
 
 
-const Question = mongoose.model('Question');
-
-var question = new Question({ question: 'what color is a firetruck?', answer: 'red', category: 'Films' });
-
-
-question.save(function (err, char) {
-    if (err) {
-        console.log(err);
-        mongoose.connection.close();
-    }
-    else {
-        mongoose.connection.close();
-    }
-});
+// const Question = mongoose.model('Question');
+//
+// var question = new Question({ question: 'what color is a firetruck?', answer: 'red', category: 'Films' });
+//
+//
+// question.save(function (err, char) {
+//     if (err) {
+//         console.log(err);
+//         mongoose.connection.close();
+//     }
+//     else {
+//         mongoose.connection.close();
+//     }
+// });
 
 
 const QuizMaster = mongoose.model('QuizMaster');
@@ -74,11 +80,11 @@ const Quiz = mongoose.model('Quiz');
 var quiz = new Quiz({ password: 'asd1', quizMasterID: 1, status: "1"  });
 
 quiz.rounds.push({ roundNumber: 1, categoryID: 1 });
-quiz.rounds.push({ roundNumber: 2, categoryID: 2 });
-
+// quiz.rounds.push({ roundNumber: 2, categoryID: 2 });
+//
 quiz.rounds[0].playedQuestions.push({ questionNumber: 1, questionID: 1 });
 
-quiz.rounds[0].playedQuestions[0].teamAnswers.push({ teamID: 1, answer: 'Red', approved: false });
+// quiz.rounds[0].playedQuestions[0].teamAnswers.push({ teamID: 1, answer: 'Red', approved: false });
 
 quiz.save(function (err, char) {
     if (err) {
@@ -110,6 +116,20 @@ team.save(function (err, char) {
     }
 });
 
+<<<<<<< HEAD
+// Team.login('asd1', function(err, data) {
+//     if (err) {
+//         console.log(err);
+//         mongoose.connection.close();
+//     }
+//     else {
+//         console.log(data);
+//         mongoose.connection.close();
+//     }
+// });
+
+
+=======
 Team.login('asd1', function(err, data) {
     if (err) {
         console.log(err);
@@ -121,4 +141,5 @@ Team.login('asd1', function(err, data) {
     }
 });
 */
+>>>>>>> master
 

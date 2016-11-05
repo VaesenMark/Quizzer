@@ -25,3 +25,7 @@ const mainComponent =
       </ReactRedux.Provider>;
 
 ReactDOM.render( mainComponent, document.getElementById('react-root') );
+
+export const store = theStore;
+
+
