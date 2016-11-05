@@ -21,7 +21,7 @@
 //     });
 // });
 //
-// function newTeamCreated(quizId) {
+// function newTeamAppliance(quizId) {
 //     // Notify quizmaster to get new list of team appliances
 //     for(let client of expressWs.getWss().clients) {
 //         if(client.upgradeReq.session.quizMasterId && client.upgradeReq.session.quizId == quizId) {
@@ -41,4 +41,4 @@
 //
 // }
 //
-// module.exports = {router, newTeamCreated};
+// module.exports = {router, newTeamAppliance};

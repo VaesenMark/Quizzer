@@ -71,7 +71,7 @@ app.post('/login', function(req, res, next) {
                                         req.session.quizId = quiz._id;
                                         res.json({message: "Team successfully logged in. Waiting for the quizmaster to approve it"});
                                         //TODO test notify quizmaster
-                                        // websocket.newTeamCreated(quiz._id);
+                                        // websocket.newTeamAppliance(quiz._id);
                                     }
                                     catch(exception) {
                                         console.log(exception);

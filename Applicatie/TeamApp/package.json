@@ -2,7 +2,7 @@
   "name": "teamapp",
   "version": "1.0.0",
   "description": "Quizzer TeamApp",
-  "main": "index.js",
+  "base": "index.js",
   "author": "Mark Vaesen en Dennis Gijsbers",
   "license": "ISC",
   "devDependencies": {
@@ -28,10 +28,13 @@
     "react-bootstrap": "^0.30.6",
     "react-dom": "^15.3.2",
     "react-redux": "^4.4.5",
+    "react-websocket": "^1.1.6",
     "redux": "^3.6.0",
     "redux-thunk": "^2.1.0",
+    "redux-ws": "^0.2.0",
     "superagent": "^2.3.0",
-    "url-parse": "^1.1.6"
+    "url-parse": "^1.1.6",
+    "ws": "^1.1.1"
   },
   "scripts": {
     "start": "./node_modules/.bin/webpack-dev-server --inline"
