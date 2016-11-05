@@ -60,7 +60,7 @@ function mapDispatchToProps(dispatch) {
 
 function mapStateToProps(state) {
    return {
-      currentPage: state.headState.currentPage
+      currentPage: state.MainState.currentPage
    }
 }
 

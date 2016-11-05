@@ -32,8 +32,8 @@ function mapDispatchToProps(dispatch) {
 
 function mapStateToProps(state) {
    return {
-      quiz: state.headState.quizItem,
-      roundNumber: state.round.roundNumber
+      quiz: state.MainState.quizItem,
+      roundNumber: state.RoundState.roundNumber
    }
 }
 

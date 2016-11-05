@@ -32,6 +32,7 @@ class CheckAnswersUI extends React.Component {
            </button>
        }
       return (<div>
+              {this.props.message}
              quizid: {this.props.quizID}
             roundnunmber:  {this.props.roundNumber}
              number:{this.props.questionNumber}
@@ -53,10 +54,11 @@ function mapDispatchToProps(dispatch) {
 
 function mapStateToProps(state) {
    return {
-       quiz: state.headState.quizItem,
-      roundNumber:  state.questions.roundNumber,
-      questionNumber: state.questions.questionNumber,
-       answers: state.playedQuestion.answers,
+       quiz: state.MainState.quizItem,
+      roundNumber:  state.QuestionsState.roundNumber,
+      questionNumber: state.QuestionsState.questionNumber,
+       answers: state.PlayedQuestionState.answers,
+       message: state.PlayedQuestionState.message,
    }
 }
 

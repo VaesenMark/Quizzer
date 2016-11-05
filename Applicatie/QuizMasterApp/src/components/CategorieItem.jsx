@@ -32,7 +32,7 @@ function mapDispatchToProps(dispatch) {
 
 function mapStateToProps(state) {
    return {
-      quiz: state.headState.quizItem
+      quiz: state.MainState.quizItem
    }
 }
 

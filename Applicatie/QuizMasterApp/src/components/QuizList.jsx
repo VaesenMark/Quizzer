@@ -45,8 +45,8 @@ function mapDispatchToProps(dispatch) {
 
 function mapStateToProps(state) {
    return {
-      items: state.quizItems.items,
-       id: state.headState.quizMasterID
+      items: state.QuizItemsState.items,
+       id: state.MainState.quizMasterID
    }
 }
 

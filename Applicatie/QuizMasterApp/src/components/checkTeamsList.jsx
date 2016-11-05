@@ -52,8 +52,8 @@ function mapDispatchToProps(dispatch) {
 
 function mapStateToProps(state) {
     return {
-        quiz: state.headState.quizItem,
-        teams : state.team.teams
+        quiz: state.MainState.quizItem,
+        teams : state.TeamState.teams
     }
 }
 

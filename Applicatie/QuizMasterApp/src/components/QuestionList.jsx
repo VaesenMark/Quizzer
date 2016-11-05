@@ -35,8 +35,8 @@ function mapDispatchToProps(dispatch) {
 
 function mapStateToProps(state) {
    return {
-      items: state.questions.items,
-      quiz: state.headState.quizItem,
+      items: state.QuestionsState.items,
+      quiz: state.MainState.quizItem,
    }
 }
 
