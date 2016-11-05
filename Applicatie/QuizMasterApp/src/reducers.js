@@ -21,13 +21,12 @@ const LoginState = {
 const quizState = {
     items: '',
     selectedItem: 0,
-    currentPage: 2,
 };
 
-const categorieState = {
+const roundState = {
     items: '',
     selectedItem: 0,
-    currentPage: 3,
+    roundNumber: 1,
 };
 
 const questionState = {
@@ -110,12 +109,14 @@ export function startQuiz(item) {
 }
 
 export function addRound(quizID, categoryID) {
+
     return (dispatch) => {
             quizMasterAPI.setnewRound(quizID, categoryID, (err, item) => {
                 if(err) {
                     dispatch({type: "errorSetNewRound", message: err});
                 } else {
-                    dispatch({type: "succesSetNewRound", cattegory: item});
+                    console.log(item.roundNumber);
+                    dispatch({type: "succesSetNewRound", roundNumber: item.roundNumber});
                     dispatch({type: "goToQuestions", cattegory: item});
 
                     quizMasterAPI.getQuestions(quizID, item.roundNumber, (err, items) => {
@@ -285,9 +286,11 @@ export function AddQuiz(id){
 export function addQuestion(quizID, roundNumber, questionID){
     return (dispatch) => {
         quizMasterAPI.addQuestion(quizID, roundNumber,questionID, (err, items) => {
+            console.log("err", err, "items", items);
             if(err) {
                 dispatch({ type: 'errorSaveQuestions', success:false, message: err });
             } else {
+
                 dispatch({ type: 'goToClosePage', success:true, quizID: quizID, roundNumber:  roundNumber, questionNumber: items.questionNumber});
                 dispatch({ type: 'successSaveQuestion', success:true, questionNumber: items.questionNumber, items });
 
@@ -317,9 +320,7 @@ function quizReducer(state = quizState, action) {
             };
             return copyAndUpdateObj(state, update);
         }
-        case 'succesSetNewRound':{
-            return state;//return copyAndUpdateObj(state, update);
-        }
+
         case 'errorSetNewRound':{
             return state;
         }
@@ -367,7 +368,7 @@ function questionsReducer(state = questionState, action) {
     }
 }
 
-function categoriesReducer(state = categorieState, action) {
+function roundReducer(state = roundState, action) {
     switch (action.type) {
         case 'errorGetCategoriesItems':{
             let update = {
@@ -378,6 +379,12 @@ function categoriesReducer(state = categorieState, action) {
         case 'successGetCategoriesItems':{
             let update = {
                 'items': action.items
+            };
+            return copyAndUpdateObj(state, update);
+        }
+        case 'succesSetNewRound':{
+            let update = {
+                'roundNumber': action.roundNumber
             };
             return copyAndUpdateObj(state, update);
         }
@@ -398,6 +405,6 @@ export const mainReducer = Redux.combineReducers({
     headState: headReducer,
     login: LoginReducer,
     quizItems: quizReducer,
-    categories: categoriesReducer,
+    round: roundReducer,
     questions: questionsReducer
 });
