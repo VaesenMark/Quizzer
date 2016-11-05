@@ -22,7 +22,7 @@ let quizMasterAPI = {
             .get('http://localhost:3000/quiz/'+id+'/teams')
             .end( (err,response) => {
 
-                callback(err, response.body);
+                callback(err, response.body.teams);
             })
     },
     getCategories(id,callback) {
@@ -62,7 +62,14 @@ let quizMasterAPI = {
                 .end( (err,response) => {
                     callback(err, response.body);
                 })
-        }
+        },
+    approveTeam(quizID,teamID){
+        request
+            .post('http://localhost:3000/quiz/'+quizID+'/team/'+teamID)
+            .end( (err,response) => {
+                callback(err, response.body);
+            })
+    }
 };
 
 export default quizMasterAPI

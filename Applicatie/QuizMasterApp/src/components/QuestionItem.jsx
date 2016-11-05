@@ -11,7 +11,7 @@ class QuestionItemUI extends React.Component {
       let clickHandler = (evt) => {
          evt.preventDefault();
 
-         this.props.addQuestionToRound(this.props.quiz._id, (this.props.quiz.rounds.length+ 1), this.props.item._id)
+         this.props.addQuestionToRound(this.props.quiz._id, (this.props.roundNumber), this.props.item._id)
       };
       return  (
           <div>
@@ -33,6 +33,7 @@ function mapDispatchToProps(dispatch) {
 function mapStateToProps(state) {
    return {
       quiz: state.headState.quizItem,
+      roundNumber: state.round.roundNumber
    }
 }
 

@@ -16,7 +16,7 @@ class ChoseQuizUI extends React.Component {
 
    render() {
       let theItems = [];
-      if (this.props.items.length>1) {
+      if (this.props.items.length>= 1) {
          theItems = this.props.items.map((itm, idx) =>
              <QuizItem item={itm}
                    key = {itm._id}

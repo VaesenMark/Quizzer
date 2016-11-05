@@ -13,7 +13,7 @@ class CategorieListUI extends React.Component {
       console.log(this.props.quiz);
       let theItems = [];
 
-      if (this.props.items.length>1) {
+      if (this.props.items.length >= 1) {
          theItems = this.props.items.map((itm, idx) =>
              <CategorieItem item={itm}
                    key = {itm._id}
@@ -39,7 +39,7 @@ function mapDispatchToProps(dispatch) {
 function mapStateToProps(state) {
    return {
 
-      items: state.categories.items,
+      items: state.round.items,
       quiz: state.headState.quizItem
    }
 }

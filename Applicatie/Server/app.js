@@ -117,15 +117,14 @@ app.get('/quiz/:quizID/teams', function(req, res, next) {
             if (quiz.status == 1) {
                 quiz.status = 2;
             }
-            console.log(quiz);
             quiz.save(function (err, char) {
                 if (err) {
 
                     res.status(500);
                     res.json({message: err})
                 }
-                console.log(quiz);
                 Team.find({quizID: req.params.quizID}, function (err, teams) {
+                    console.log("_____________________________________")
                     console.log(teams);
                     if (err) {
                         res.status(500);
@@ -133,7 +132,7 @@ app.get('/quiz/:quizID/teams', function(req, res, next) {
                     }
                     else if (teams != null) {
                         res.status(200);
-                        res.json({message: teams})
+                        res.json({teams: teams})
                     }
                     else {
                         res.status(400);
@@ -200,12 +199,13 @@ app.get('/quiz/:quizId/teams', function(req, res, next){
         else{
             console.log(teams.length);
             if(teams.length <= 0){
-                res.status(200);
+                res.status(400);
                 res.json({message: "The're are no teams signed in for this quiz"});
             }
             else{
-                res.status(404)
-                res.json({message:teams});
+                res.status(200)
+                console.log(teams);
+                res.json({teams:teams});
             }
         }
     });
@@ -232,9 +232,7 @@ app.post('/quiz/:quizID/round', function(req, res, next){
                 }
                 else {
                     if(category != null) {
-                        console.log("test",req.body.categoryID, !quiz.rounds.find(x => x.categoryID == req.body.categoryID));
                         if (!quiz.rounds.find(x => x.categoryID == req.body.categoryID)) {
-                            console.log(category,quiz);
                             quiz.rounds.push({roundNumber: (quiz.rounds.length + 1), categoryID: req.body.categoryID});
                             quiz.save(function (err, char) {
                                 if (err) {
@@ -282,21 +280,15 @@ app.post('/quiz/:quizId/round/:roundNumber/question', function(req, res, next){
             if(quiz.rounds.length == req.params.roundNumber) {
                 let round = quiz.rounds.find(x => x.roundNumber == req.params.roundNumber);
                 var questionNumber = round.playedQuestions.length +1;
-                console.log("round",round);
                 if(questionNumber <= 12) {
-                    console.log(round.playedQuestions.length == 0);
-                    console.log("test",round.playedQuestions);
-                    console.log(round.playedQuestions.find(x => x.questionID !== req.body.categoryID));
                     if (round.playedQuestions.length == 0 ||round.playedQuestions.find(x => x.questionID != req.body.categoryID)) {
                         round.playedQuestions.push({
                             questionNumber: questionNumber,
                             questionID: parseInt(req.body.questionID)
                         });
-                        console.log(quiz);
                         quiz.save(function (err, char) {
                             if (err) {
                                 res.status(500);
-                                console.log(err)
                                 res.json({message: err})
                             }
                             else {
@@ -325,7 +317,6 @@ app.post('/quiz/:quizId/round/:roundNumber/question', function(req, res, next){
         }
         else
         {
-            console.log("err");
             res.status(500)
             res.json({message: "error"})
 
@@ -420,7 +411,7 @@ app.get('/quiz/:quizId/round/:roundNumber/questions', function(req, res, next){
                                         newQuestions.push(question);
                                     }
                                     else{
-                                        console.log(question)
+                                        //todo else?
                                     }
                                 });
                                 quiz.save(function (err, char) {
@@ -477,7 +468,6 @@ app.get('/quiz/:quizId/categories', function(req, res, next){
         });
     }
     catch (exception) {
-        console.log(exception);
         res.status(500);
         res.json({message: "A server error occured"});
     }
@@ -497,7 +487,6 @@ app.get('/quiz/:quizId/round/:roundNumber/question/:questionNumber/teamanswer',f
         else if(quiz != null) {
             try {
                 var round = quiz.rounds.find(x => x.roundNumber == req.params.roundNumber);
-                console.log(quiz, req.params.roundNumber);
                 if (round != null) {
                     const playedQuestions = round.playedQuestions.find(x=> x.questionID == req.params.questionNumber);
                     res.status(200);
@@ -510,7 +499,6 @@ app.get('/quiz/:quizId/round/:roundNumber/question/:questionNumber/teamanswer',f
                 }
             }
             catch (exception) {
-                console.log(exception);
                 res.status(500);
                 res.json({message: "A server error occured"});
             }
@@ -556,7 +544,6 @@ app.put('/quiz/:quizId/round/:roundNumber/question/:questionNumber/teamanswer/:t
                             }
                         }
                         catch (exception) {
-                            console.log(exception);
                             res.status(500);
                             res.json({message: "A server error occured"});
                         }
@@ -565,7 +552,6 @@ app.put('/quiz/:quizId/round/:roundNumber/question/:questionNumber/teamanswer/:t
             })
     }
     catch (exception) {
-        console.log(exception);
         res.status(500);
         res.json({message: "A server error occured"});
     }
@@ -606,7 +592,6 @@ app.get('/quiz/:quizId', function(req, res, next){
 //Submit answer
 app.post('/quiz/:quizId/round/:roundNumber/question/:questionNumber/teamanswer/:teamId',function(req, res, next) {
     try {
-        console.log('sadfasdf');
         const Quiz = mongoose.model('Quiz');
         Quiz.findOne(
             {
@@ -622,7 +607,6 @@ app.post('/quiz/:quizId/round/:roundNumber/question/:questionNumber/teamanswer/:
                         res.json({message: "Unknown quiz"});
                         return;
                     }
-console.log('aaass');
                     // TODO check if team has already submitted a question
                     quiz.rounds.find(x => x.roundNumber == req.params.roundNumber)
                         .playedQuestions.find(x => x.questionNumber == req.params.questionNumber)
@@ -634,7 +618,6 @@ console.log('aaass');
                                 throw new Error(err);
                             }
                             // TODO notify quizmaster
-                            console.log('sadfsdaf');
                             res.json({message: "Question inserted"});
                         }
                         catch(exception) {
@@ -673,14 +656,12 @@ app.put('/quiz/:quizId/round/:roundNumber/question/:questionNumber/teamanswer/:t
 //Quizmaster login
 app.post('/quizmaster/login', function(req, res, next){
     const QuizMaster = mongoose.model('QuizMaster');
-    console.log(req.body.username);
     QuizMaster.findOne({username: req.body.username, password: req.body.password}, function (err, quizMaster) {
         if (err || quizMaster == null) {
             res.status(400);
             res.json({message: "Quizmaster have given the wrong userName or Password"})
         }
         else {
-            console.log(quizMaster);
             res.status(200);
             res.json(quizMaster);
         }

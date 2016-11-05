@@ -18,12 +18,11 @@ class CheckAnswersUI extends React.Component {
            Next Question
        </button>;
        if(this.props.questionNumber >= 12){
-           nextRound = <div><button id="markAsSeen" onClick={this.nextRound.bind(this)}>
+           nextRound = <button id="markAsSeen" onClick={this.nextRound.bind(this)}>
                Next Round
-           </button></div>
+           </button>
        }
       return (<div>
-             <h1>test</h1>
              quizid: {this.props.quizID}
             roundnun  mber:  {this.props.roundNumber}
              number:{this.props.questionNumber}
