@@ -103,6 +103,31 @@ app.post('/testmark', function(req, res, next) {
 
 ///------- toegevoegd --------
 
+
+app.get('/quiz/:quizID/round/:roundNumber/question/:questionNumber', function(req, res, next) {
+    const Quiz = mongoose.model('Quiz');
+    Quiz.findOne({_id: req.params.quizID}, function (err, quiz) {
+
+        if (err) {
+            res.status(500);
+            res.json({message: err});
+        }
+        else if(quiz != null) {
+            let round = quiz.rounds.find(x => x.roundNumber == req.params.roundNumber);
+            var result = round.playedQuestions.find(x=> x.questionNumber == req.params.questionNumber).teamAnswers;
+
+            res.status(200);
+            res.json({answers: result})
+        }
+
+        else{
+            res.status(500);
+            res.json({message: "error on the server"});
+        }
+    });
+});
+
+
 app.get('/quiz/:quizID/teams', function(req, res, next) {
     const Quiz = mongoose.model('Quiz');
     const Team = mongoose.model('Team');
@@ -514,9 +539,8 @@ app.get('/quiz/:quizId/round/:roundNumber/question/:questionNumber/teamanswer',f
 
 });
 
-//Accept/Deny team answer
-app.put('/quiz/:quizId/round/:roundNumber/question/:questionNumber/teamanswer/:teamId',function(req, res){
-    //todo subitems??
+//Accept team answer
+app.put('/quiz/:quizId/round/:roundNumber/question/:questionNumber/team/:teamId',function(req, res){
     try {
         const Quiz = mongoose.model('Quiz');
         Quiz.findOne(
@@ -531,7 +555,7 @@ app.put('/quiz/:quizId/round/:roundNumber/question/:questionNumber/teamanswer/:t
                     const teamAnswers = quiz.rounds.find(x => x.roundNumber == req.params.roundNumber)
                         .playedQuestions.find(x => x.questionNumber == req.params.questionNumber)
                         .teamAnswers.find(x=> x.teamID == req.params.teamId);
-                    teamAnswers.approved = req.body.approved;
+                    teamAnswers.approved = true;
                     quiz.save(function (err, char) {
                         try {
                             if (err) {

@@ -9,9 +9,7 @@ class CheckTeamItemsUI extends React.Component {
     render() {
 
         return  (
-
             <h1>test</h1>
-
         )
     }
 }
@@ -25,7 +23,9 @@ function mapDispatchToProps(dispatch) {
 
 function mapStateToProps(state) {
     return {
-        quiz: state.headState.quizItem
+        quiz: state.headState.quizItem,
+        roundNumber:  state.questions.roundNumber,
+        questionNumber: state.questions.questionNumber,
     }
 }
 

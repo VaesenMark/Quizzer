@@ -47,6 +47,14 @@ let quizMasterAPI = {
                 callback(err, response.body.message);
             })
     },
+    getPlayedQuestionsAnswers(quizID, roundNumber, questionNumber, callback){
+        request
+            .get('http://localhost:3000/quiz/'+quizID+'/round/'+roundNumber+'/question/'+questionNumber)
+            .end( (err,response) => {
+                console.log(response);
+                callback(err, response.body);
+            })
+    },
     setnewRound(quizID, category,callback){
         request
             .post('http://localhost:3000/quiz/'+quizID+'/round')
@@ -66,6 +74,13 @@ let quizMasterAPI = {
     approveTeam(quizID,teamID){
         request
             .post('http://localhost:3000/quiz/'+quizID+'/team/'+teamID)
+            .end( (err,response) => {
+                callback(err, response.body);
+            })
+    },
+    approveTeamAnswer(quizID,roundNumber,questionNumber,teamID){
+        request
+            .put('http://localhost:3000/quiz/'+quizID+'/round/'+roundNumber+'/questionnumber/'+questionNumber+"/team/"+teamID)
             .end( (err,response) => {
                 callback(err, response.body);
             })

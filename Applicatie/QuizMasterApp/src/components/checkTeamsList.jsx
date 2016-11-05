@@ -9,20 +9,16 @@ class CheckTeamsListUI extends React.Component {
     }
 
     render() {
-        let theItems = [];
+        let theItems = <checkTeamsItem
+            key = {1}
+            name = "test"
+        />
         console.log("items", this.props.teams);
-        if (this.props.teams.length>0) {
-            theItems = this.props.teams.map((itm, idx) =>
-                <checkTeamsItem
-                    key = {itm._id}
-                    name = {itm.categoryName}
-                />
-            )
-        }
+
         console.log("items12", theItems, this.props.teams.length);
 
         return (<div>
-                <h1>test</h1>
+                <h1>test12</h1>
                 {theItems}
                 <button id="markAsSeen" onClick={this.startQuiz.bind(this)}>
                     Start quiz

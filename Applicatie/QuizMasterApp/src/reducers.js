@@ -38,13 +38,27 @@ const questionState = {
 
 };
 
+const playedQuestionsState ={
+    answers: ''
+}
 
 const teamState = {
     teams: '',
 }
 
-export function closeQuestion(){
-    return {type: "goToCheckPage"}
+export function closeQuestion(quizID, roundID, roundNumber){
+    return (dispatch) => {
+        quizMasterAPI.getPlayedQuestionsAnswers(quizID, roundID, roundNumber, (err, item) => {
+            if(err) {
+                dispatch({type: "errorPlayedQuestion", message: err});
+            }
+            else {
+                dispatch({type: "succesPlayedQuestions", answers: item});
+                dispatch({type: "goToCheckPage"});
+            }
+        });
+    }
+
 }
 
 export function loginAction(username, password) {
@@ -135,12 +149,26 @@ export function addRound(quizID, categoryID) {
                 }
             });
     };
-    return (dispatch) => {
-
-
-    }
 }
 
+
+
+function PlayedQuestionReducer(state = playedQuestionsState, action) {
+    switch (action.type) {
+        case 'succesPlayedQuestions': {
+            console.log(action.answers);
+            let update = {
+                'answers': action.answers
+            };
+            console.log(copyAndUpdateObj(state, update));
+            return copyAndUpdateObj(state, update);
+
+        }
+
+        default:
+            return state;
+    }
+}
 
 function LoginReducer(state = LoginState, action) {
     switch (action.type) {
@@ -278,6 +306,16 @@ export function approveTeam(quizID,teamID){
     });
 }
 
+export function approveAnswerTeam(quizID,roundNumber,questionNumber,teamID){
+    quizMasterAPI.approveTeamAnswer(quizID,roundNumber,questionNumber,teamID, (err, items) => {
+//todo implementeren
+        if(err) {
+            dispatch({ type: 'errorTeamAnswerApprove', success:false });
+        } else {
+            dispatch({ type: 'successTeamANswerApprove', success:true, items });
+        }
+    });
+}
 
 export function AddQuiz(id){
 
@@ -437,5 +475,6 @@ export const mainReducer = Redux.combineReducers({
     quizItems: quizReducer,
     round: roundReducer,
     questions: questionsReducer,
-    team: teamReducer
+    team: teamReducer,
+    playedQuestion: PlayedQuestionReducer
 });
