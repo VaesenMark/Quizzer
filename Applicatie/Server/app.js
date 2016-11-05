@@ -79,18 +79,18 @@ app.post('/testmark', function(req, res, next) {
 
     // teamApplianceJudged(71, true);
 
-    // for(let client of wss.clients) {
-    //     // client.sendJSON({
-    //     //     messageType: "NewTeamApplianceMade",
-    //     //     quizId: quizId
-    //     // });
-    //     sessionParser(client.upgradeReq, {}, function(asd){
-    //         console.log('asd', asd);
-    //         console.log("New websocket connection:");
-    //         var sess = client.upgradeReq.session;
-    //         console.log(sess);
-    //     });
-    // }
+    for(let client of wss.clients) {
+        // client.sendJSON({
+        //     messageType: "NewTeamApplianceMade",
+        //     quizId: quizId
+        // });
+        sessionParser(client.upgradeReq, {}, function(asd){
+            console.log('asd', asd);
+            console.log("New websocket connection:");
+            var sess = client.upgradeReq.session;
+            console.log(sess);
+        });
+    }
 
     // for(let client of theWebSocketServer.clients) {
     //
