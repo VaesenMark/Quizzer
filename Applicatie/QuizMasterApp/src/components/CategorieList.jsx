@@ -3,7 +3,6 @@ import * as ReactRedux from 'react-redux';
 import {GetAllCategories} from '../reducers';
 import {CategorieItem} from './CategorieItem'
 
-
 class CategorieListUI extends React.Component {
    constructor(props) {
       super(props);
@@ -42,11 +41,6 @@ function mapStateToProps(state) {
       items: state.round.items,
       quiz: state.headState.quizItem
    }
-}
-
-
-function Item(props) {
-
 }
 
 

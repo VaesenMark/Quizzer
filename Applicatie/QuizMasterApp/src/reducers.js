@@ -99,7 +99,6 @@ export function logout() {
 
 export function goToCheckTeams(item) {
     return (dispatch) => {
-        console.log(item);
         quizMasterAPI.getTeams(item._id, (err, items) => {
             if(err) {
                 console.log(err);
@@ -112,6 +111,7 @@ export function goToCheckTeams(item) {
         });
     };
 }
+
 export function startQuiz(item) {
     return (dispatch) => {
         console.log(item);
@@ -296,14 +296,26 @@ export function getNextQuestion(quizID,roundID){
     }
 }
 export function approveTeam(quizID,teamID){
-    quizMasterAPI.approveTeam(quizID,teamID, (err, items) => {
-
-        if(err) {
-            dispatch({ type: 'errorTeamApprove', success:false });
-        } else {
-            dispatch({ type: 'successTeamApprove', success:true, items });
-        }
-    });
+    console.log(quizID,teamID);
+    return (dispatch) => {
+        quizMasterAPI.approveTeam(quizID, teamID, (err, items) => {
+            if (err) {
+                console.log(err);
+                dispatch({type: 'errorTeamApprove', success: false});
+            } else {
+                dispatch({type: 'successTeamApprove', success: true, teams: items});
+                quizMasterAPI.getTeams(quizID, (err, items) => {
+                    if(err) {
+                        console.log(err);
+                        dispatch({ type: 'errorGetTeams', success:false });
+                    } else {
+                        console.log("teams", items);
+                        dispatch({ type: 'succesGetTeams', success:true, teams: items });
+                    }
+                });
+            }
+        });
+    }
 }
 
 export function approveAnswerTeam(quizID,roundNumber,questionNumber,teamID){
@@ -456,6 +468,14 @@ function teamReducer(state = teamState, action) {
             };
             return copyAndUpdateObj(state, update);
         }
+        case 'successTeamApprove':{
+            console.log(action.teams);
+            let update = {
+                'teams': action.teams
+            };
+            return copyAndUpdateObj(state, update);
+        }
+
         default:
             return state;
     }

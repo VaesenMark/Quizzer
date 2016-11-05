@@ -103,6 +103,37 @@ app.post('/testmark', function(req, res, next) {
 
 ///------- toegevoegd --------
 
+app.put('/quiz/:quizID/team/:teamID', function(req, res, next) {
+    const Team = mongoose.model('Team');
+    Team.findOne({_id: req.params.teamID}, function (err, team) {
+
+        if (err) {
+            res.status(500);
+            res.json({message: err});
+        }
+        else{
+            if(team.quizID == req.params.quizID) {
+                team.approved = true;
+                team.save(function (err, char) {
+                    if (err) {
+
+                        res.status(500);
+                        res.json({message: err})
+                    }
+                    else {
+                        res.status(200);
+                        res.json({message: "This is the wron team by the wrong wuiz"});
+                    }
+                });
+            }
+            else{
+                res.status(500);
+                res.json({message: "This is the wron team by the wrong quiz"});
+            }
+
+        }
+    })
+});
 
 app.get('/quiz/:quizID/round/:roundNumber/question/:questionNumber', function(req, res, next) {
     const Quiz = mongoose.model('Quiz');

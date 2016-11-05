@@ -33,7 +33,7 @@ class CheckAnswersUI extends React.Component {
        }
       return (<div>
              quizid: {this.props.quizID}
-            roundnun  mber:  {this.props.roundNumber}
+            roundnunmber:  {this.props.roundNumber}
              number:{this.props.questionNumber}
               {nextRound}
               {theItems}
@@ -45,7 +45,6 @@ class CheckAnswersUI extends React.Component {
 
 function mapDispatchToProps(dispatch) {
    return {
-      //getAnswers: (quizID, roundNumber, questionID) => dispatch(getAnswersquizID(), roundNumber, questionID),
       getNextQuestion: (quizID, RoundNumber) => dispatch(getNextQuestion(quizID, RoundNumber)),
        getNextRound: (quiz) => dispatch(getNextRound(quiz)),
 
