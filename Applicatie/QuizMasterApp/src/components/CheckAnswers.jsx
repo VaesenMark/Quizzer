@@ -23,7 +23,6 @@ class CheckAnswersUI extends React.Component {
            </button>
        }
       return (<div>
-             <h1>test</h1>
              quizid: {this.props.quizID}
             roundnun  mber:  {this.props.roundNumber}
              number:{this.props.questionNumber}

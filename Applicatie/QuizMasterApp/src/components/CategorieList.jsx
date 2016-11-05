@@ -13,7 +13,7 @@ class CategorieListUI extends React.Component {
       console.log(this.props.quiz);
       let theItems = [];
 
-      if (this.props.items.length>1) {
+      if (this.props.items.length >= 1) {
          theItems = this.props.items.map((itm, idx) =>
              <CategorieItem item={itm}
                    key = {itm._id}

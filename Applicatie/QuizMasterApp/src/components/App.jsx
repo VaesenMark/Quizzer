@@ -6,7 +6,7 @@ import {CategorieList} from './CategorieList';
 import {QuestionList} from './QuestionList';
 import {CheckAnswers} from './CheckAnswers';
 import {CloseQuestion} from './CloseQuestion';
-import {CheckTeams} from './checkTeams';
+import {CheckTeamList} from './checkTeamsList';
 import {Logout} from './Logout';
 
 class AppUI extends React.Component {
@@ -23,7 +23,7 @@ class AppUI extends React.Component {
 
       }
       else if(this.props.currentPage == 3){
-         content = <div><CheckTeams/><Logout/></div>
+         content = <div><CheckTeamList/><Logout/></div>
 
       }
       else if(this.props.currentPage == 4){

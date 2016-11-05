@@ -37,6 +37,12 @@ const questionState = {
     quizID:0
 
 };
+
+
+const teamState = {
+    teams: '',
+}
+
 export function closeQuestion(){
     return {type: "goToCheckPage"}
 }
@@ -77,7 +83,7 @@ export function logout() {
     return {type: "logout"}
 }
 
-export function checkTeams(item) {
+export function goToCheckTeams(item) {
     return (dispatch) => {
         console.log(item);
         quizMasterAPI.getTeams(item._id, (err, items) => {
@@ -85,8 +91,8 @@ export function checkTeams(item) {
                 console.log(err);
                 dispatch({ type: 'errorGetTeams', success:false });
             } else {
-                dispatch({ type: 'succesGetTeams', success:true, items });
-                console.log(item);
+                console.log("teams", items);
+                dispatch({ type: 'succesGetTeams', success:true, teams: items });
                 dispatch({type: "checkTeams", quiz: item});
             }
         });
@@ -261,6 +267,16 @@ export function getNextQuestion(quizID,roundID){
 
     }
 }
+export function approveTeam(quizID,teamID){
+    quizMasterAPI.approveTeam(quizID,teamID, (err, items) => {
+
+        if(err) {
+            dispatch({ type: 'errorTeamApprove', success:false });
+        } else {
+            dispatch({ type: 'successTeamApprove', success:true, items });
+        }
+    });
+}
 
 
 export function AddQuiz(id){
@@ -393,6 +409,20 @@ function roundReducer(state = roundState, action) {
     }
 }
 
+function teamReducer(state = teamState, action) {
+    switch (action.type) {
+        case 'succesGetTeams':{
+            console.log(action.teams);
+            let update = {
+                'teams': action.teams
+            };
+            return copyAndUpdateObj(state, update);
+        }
+        default:
+            return state;
+    }
+}
+
 //===========================================================================
 //  Combining the reducers and their state into a single reducer managing
 //  a single state
@@ -406,5 +436,6 @@ export const mainReducer = Redux.combineReducers({
     login: LoginReducer,
     quizItems: quizReducer,
     round: roundReducer,
-    questions: questionsReducer
+    questions: questionsReducer,
+    team: teamReducer
 });
