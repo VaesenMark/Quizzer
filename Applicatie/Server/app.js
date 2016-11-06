@@ -25,8 +25,7 @@ var path = require('path');
 var app = express();
 
 
-var server = http.createServer(app);
-var wss = new ws.Server({server: server});
+var httpServer = http.createServer(app);
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
@@ -59,102 +58,7 @@ function acceptOrRefuseConnection(info) {
 
 
 
-wss.on("connection", function connection(req) {
-    console.log('connected');
 
-
-    req.on('message', function(msg) {
-        console.log("MESSAGE", msg);
-
-        msg = JSON.parse(msg);
-
-        switch(msg.messageType) {
-
-            // Quizmaster App
-            case "TeamApplianceJudged":
-                // Quizmaster closes the question, notidy the team of it
-                console.log('schaap4');
-                for(let client of wss.clients) {
-                    console.log('bla');
-                    client.sendJSON({
-                        messageType: "TeamApplianceJudged",
-                        teamId: msg.teamId,
-                        accepted: msg.accepted
-                    });
-                }
-                break;
-
-            case "CloseQuestion":
-                // Quizmaster closes the quest, notidy the team of it
-                console.log('schaap');
-                for(let client of wss.clients) {
-                    client.sendJSON({
-                        messageType: "QuestionClosed",
-                        quizId: msg.quizId
-                    });
-                }
-                break;
-            case "AnswerAccepted":
-                // Quizmaster accepts the answer, notify team of it
-                console.log('schaap2');
-                for(let client of wss.clients) {
-                    client.sendJSON({
-                        messageType: "AnswerAccepted",
-                        teamId: msg.teamId
-                    });
-                }
-                break;
-            case "QuestionStarted":
-                // Quizmaster accepts the answer, notify team of it
-                console.log('schaap2');
-                for(let client of wss.clients) {
-                    client.sendJSON({
-                        messageType: "QuestionStarted",
-                        quizId: msg.quizId,
-                        questionNumber: msg.questionNumber,
-                        roundNumber: msg.roundNumber
-                    });
-                }
-                break;
-
-
-            // TeamApp
-            case "TeamLoggedIn":
-                // Team logged in, notify quizmaster of it
-                console.log('schaap3');
-                for(let client of wss.clients) {
-                    client.sendJSON({
-                        messageType: "NewTeamAppliance",
-                        quizId: msg.quizId
-                    });
-                }
-                break;
-            case "AnswerSubmitted":
-                // Team logged in, notify quizmaster of it
-                console.log('schaap8');
-                for(let client of wss.clients) {
-                    client.sendJSON({
-                        messageType: "AnswerSubmitted",
-                        quizId: msg.quizId,
-                        roundNumber: msg.roundNumber,
-                        questionNumber: msg.questionNumber
-                    });
-                }
-                break;
-
-
-
-
-            default:
-
-        }
-    });
-
-    req.sendJSON = function(data) {
-        var jsonStr = JSON.stringify(data);
-        this.send(jsonStr);
-    };
-});
 
 
 
@@ -248,7 +152,6 @@ app.put('/quiz/:quizID/team/:teamID', function(req, res, next) {
                                 res.json({message: err})
                             }
                             else {
-                                teamApplianceJudged(team._id, team.approved);
                                 res.status(200);
                                 res.json({message: "Team accepted"});
                             }
@@ -1506,107 +1409,16 @@ app.get('/scoreboard/scoreboardAnswers', function(req, res, next) {
         res.status(500);
         res.json({message: "A server error occured"});
     }
-    quizId
-        roundNumber
-            questionNumber
 });
 
 
 
-
-
-
-
-
-
-
-
-// function newTeamAppliance(quizId) {
-//     for(let client of wss.clients) {
-//         console.log('NewTeamAppliance');
-//         client.sendJSON({
-//             messageType: "NewTeamAppliance",
-//             quizId: quizId
-//         });
-//     }
-// }
-
-function teamApplianceJudged(teamId, accepted) {
-    // team id mogelijk?
-    // Notify team of judgement
-    for(let client of wss.clients) {
-        console.log('bla');
-        client.sendJSON({
-            messageType: "TeamAppliance",
-            teamId: teamId,
-            accepted: accepted
-        });
-    }
-}
-
-function questionStarted(questionNumber, roundNumber, quizId) {
-    console.log('eeeeeyyyyyy2',quizId);
-    // Nofity team to go to first question
-    for(let client of wss.clients) {
-        client.sendJSON({
-            messageType: "QuestionStarted",
-            quizId: quizId,
-            questionNumber: questionNumber,
-            roundNumber: roundNumber
-        });
-    }
-}
-
-function answerSubmitted(quizId, roundNumber, questionNumber) {
-    console.log('wat');
-    // Nofity quizmaster to retreive all new answers
-    for(let client of wss.clients) {
-        client.sendJSON({
-            messageType: "AnswerSubmitted",
-            quizId: quizId,
-            roundNumber: roundNumber,
-            questionNumber: questionNumber
-        });
-    }
-}
-
-// function questionStarted(quizId, questionNumber, questionId) {
-//     // Notify team of started question
-//     for(let client of wss.clients) {
-//         client.sendJSON({
-//             messageType: "QuestionStarted",
-//             quiId: quizId,
-//             questionId: questionId,
-//             questionNumber, questionNumber
-//         });
-//     }
-// }
-
-function answerJudged(teamId, questionId, accepted) {
-    // Notify team of judged answer
-    for(let client of wss.clients) {
-        client.sendJSON({
-            teamId: teamId,
-            questionId: questionId,
-            accepted: accepted
-        });
-    }
-}
-
-function quizEnded(quizId) {
-    // Notify all teams connected to quiz
-    for(let client of expressWs.getWss().clients) {
-        if(client.upgradeReq.session.teamId && client.upgradeReq.session.quizId == quizId) {
-            client.send({message: "QuizClosed"});
-        }
-    }
-}
-
-
-// server.on('request', app);
-server.listen( 3000,
+httpServer.listen( 3000,
     function() {
         console.log("The Server is lisening on port 3000.")
     });
 
-module.exports = app;
+
+module.exports = httpServer;
+
+require('./websockets');

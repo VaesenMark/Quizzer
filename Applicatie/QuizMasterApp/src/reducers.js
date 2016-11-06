@@ -307,6 +307,7 @@ export function getNextRound(quiz){
                 else {
                     dispatch({type: 'successGetCategoriesItems', success: true, items: response});
                     dispatch({type: "goToCategories", item: quiz});
+                    dispatch({type: 'clearAnswers'});
                 }
             }
         });
@@ -426,7 +427,7 @@ export function addQuestion(quizID, roundNumber, questionID){
                     dispatch({type: "errorSaveQuestions", message: response.message});
                 }
                 else {
-                    websockett.sendJSON({messageType: "QuestionStarted", quizId: quizID, questionNumber: response.questionNumber, roundNumber: roundNumber});
+                    websockett.sendJSON({messageType: "QuestionStarted", quizId: quizID, questionNumber: response.questionNumber, roundNumber: roundNumber, questionId: questionID});
                     dispatch({type: 'successSaveQuestion', success: true, questionNumber: response.questionNumber, response});
                     dispatch({
                         type: 'goToClosePage',

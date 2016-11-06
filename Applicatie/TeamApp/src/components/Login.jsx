@@ -23,10 +23,6 @@ class LoginUI extends React.Component {
         this.props.submitLogin(this.props.password, this.props.teamname)
     }
 
-    tempAcceptAppliance() {
-        this.props.tempAcceptAppliance()
-    }
-
     render() {
         return (
             <div>
@@ -40,7 +36,6 @@ class LoginUI extends React.Component {
                 {this.props.loginMessage}
                 <br/>
                 <button onClick={this.submitLogin.bind(this)}>OK</button>
-                <button onClick={this.tempAcceptAppliance.bind(this)}>Next screen (temp)</button>
             </div>
         );
     }
@@ -60,8 +55,7 @@ function mapDispatchToProps(dispatch) {
     return {
         updatePassword: (password) => dispatch(updatePasswordAction(password)),
         updateTeamname: (teamname) => dispatch(updateTeamnameAction(teamname)),
-        submitLogin: (password, teamname) => dispatch(submitLoginAction(password, teamname)),
-        tempAcceptAppliance: () => dispatch(tempAcceptApplianceAction())
+        submitLogin: (password, teamname) => dispatch(submitLoginAction(password, teamname))
     }
 }
 

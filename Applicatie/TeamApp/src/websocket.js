@@ -26,11 +26,11 @@ websocket.onmessage = function(eventInfo) {
             }
             break;
 
-        // New question started
+        // New question just started
         case "QuestionStarted":
             if (message.quizId == store.getState().base.quizId) {
                 console.log('suc');
-                store.dispatch(questionStartedAction(message.questionNumber, message.roundNumber));
+                store.dispatch(questionStartedAction(message.questionNumber, message.roundNumber, message.questionId));
             }
             break;
 

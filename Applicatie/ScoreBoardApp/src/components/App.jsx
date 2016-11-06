@@ -31,7 +31,6 @@ class AppUI extends React.Component {
         return (
             <div>
                 <h1>Scoreboard</h1>
-                <WS/>
                 {screenContent}
             </div>
         );

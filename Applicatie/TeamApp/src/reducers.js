@@ -11,10 +11,6 @@ import {store} from './index'
 export function applianceAcceptedAction() {
     return {type: "applianceAccepted"};
 }
-// temp accept button
-export function tempAcceptApplianceAction() {
-    return {type: "applianceAccepted"};
-}
 
 export function questionClosedAction() {
     return {type: "questionClosed"};
@@ -25,13 +21,6 @@ export function questionClosedAction() {
 // Reducer:
 
 const baseState = {
-    // currentScreen: 3,
-    // quizId: 1,
-    // teamId: 1,
-    // teamName: "rets",
-    // roundNumber: 1,
-    // questionNumber: 1,
-    // question: "Wat is blaat"
     currentScreen: 1,
     quizId: 0,
     teamId: 0,
@@ -194,16 +183,16 @@ export function submitAnswerAction(answer) {
         });
     };
 }
-export function questionStartedAction(questionNumber, roundNumber) {
+export function questionStartedAction(questionNumber, roundNumber, questionId) {
     return (dispatch) => {
         console.log('ques1',questionNumber);
-        teamAppAPI.getQuestion(questionNumber, function(err, result) {
+        teamAppAPI.getQuestion(questionId, function(err, result) {
             const question = result.question;
             let obj = {questionNumber: questionNumber, question: question, roundNumber: roundNumber};
             if(err) {
                 dispatch({ type: 'getQuestionFailed', result: "Something went wrong" });
             } else {
-                console.log('bla');
+                dispatch({ type: 'clearAnswer'});
                 dispatch({ type: 'getQuestionSuccess', result: obj });
             }
         });
@@ -256,6 +245,14 @@ function answerInputReducer(state = initialAnswerInputState, action) {
         case 'AnswerAccepted': {
             let changes = {
                 accepted: {$set: true}
+            };
+
+            return update(state, changes);
+        }
+        case 'clearAnswer': {
+            console.log('action',action);
+            let changes = {
+                answer: {$set: ""}
             };
 
             return update(state, changes);

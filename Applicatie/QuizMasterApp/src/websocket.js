@@ -1,8 +1,6 @@
 import {store} from './index';
 import {newAnswerAvailable, newTeamApplianceAvailable} from './reducers'
 
-console.log('hoi');
-
 const websocket = new WebSocket('ws://localhost:3000');
 
 websocket.onmessage = function(eventInfo) {
@@ -10,9 +8,10 @@ websocket.onmessage = function(eventInfo) {
 
     var message = JSON.parse(eventInfo.data);
 
-    // Team appliance accepted/denied
+
     console.log('message', message);
     switch (message.messageType) {
+        // New answer available
         case "AnswerSubmitted":
             console.log('88888888888');
             console.log('88888',message);
@@ -21,6 +20,7 @@ websocket.onmessage = function(eventInfo) {
                 store.dispatch(newAnswerAvailable(message.quizId, message.roundNumber, message.questionNumber));
             }
             break;
+        // Team appliance available
         case "NewTeamAppliance":
 
             console.log('storeQuizId',message.quizId == store.getState().MainState.quizItem._id);
