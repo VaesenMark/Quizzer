@@ -96,6 +96,33 @@ app.post('/testmark', function(req, res, next) {
 });
 
 
+
+//Get quizzes
+app.get('/quiz', function(req, res, next) {
+    const Quiz = mongoose.model('Quiz');
+
+    Quiz.find({}, function (err, quizzes) {
+        if (err) {
+            res.status(500);
+            res.json({message: err})
+        }
+        else {
+            if (quizzes === null) {
+                res.status(404);
+                res.json({message:"No quizzes found"})
+            }
+            else {
+                res.status(200);
+                res.json(quizzes);
+            }
+        }
+    });
+});
+
+
+
+
+
 ///------- toegevoegd --------
 
 app.put('/quiz/:quizID/team/:teamID', function(req, res, next) {
