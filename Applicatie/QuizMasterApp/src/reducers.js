@@ -138,7 +138,6 @@ export function startQuiz(item) {
                     dispatch({type: "errorGetCategoriesItems", message: response.message});
                 }
                 else {
-                    console.log(response);
                     dispatch({type: 'successGetCategoriesItems', success: true, items: response});
                     dispatch({type: "goToCategories", item: item});
                 }
@@ -158,7 +157,6 @@ export function addRound(quizID, categoryID) {
                         dispatch({type: "errorSetNewRound", message: response.message});
                     }
                     else {
-                        console.log(item.roundNumber);
                         dispatch({type: "succesSetNewRound", roundNumber: response.roundNumber});
                         dispatch({type: "goToQuestions", cattegory: response});
 
@@ -226,7 +224,7 @@ export function getNextQuestion(quizID,roundID){
                     dispatch({type: "errorGetAllQuestionsItems", message: response.message});
                 }
                 else {
-                    dispatch({type: 'successGetAllQuestionsItems', success: true, response});
+                    dispatch({type: 'successGetAllQuestionsItems', success: true, items: response});
                     dispatch({type: 'goToQuestions'})
                 }
             }
@@ -285,7 +283,7 @@ export function approveAnswerTeam(quizID,roundNumber,questionNumber,teamID){
 export function AddQuiz(ID){
 
     return (dispatch) => {
-        quizMasterAPI.addQuiz(ID, (err, items) => {
+        quizMasterAPI.addQuiz(ID, (err, response) => {
             if(err) {
                 dispatch({ type: 'errorAddQuizItems', message:"quiz can't be created" });
             } else {
@@ -322,13 +320,13 @@ export function addQuestion(quizID, roundNumber, questionID){
                     dispatch({type: "errorSaveQuestions", message: response.message});
                 }
                 else {
-                    dispatch({type: 'successSaveQuestion', success: true, questionNumber: response.questionNumber, items});
+                    dispatch({type: 'successSaveQuestion', success: true, questionNumber: response.questionNumber, response});
                     dispatch({
                         type: 'goToClosePage',
                         success: true,
                         quizID: quizID,
                         roundNumber: roundNumber,
-                        questionNumber: items.questionNumber
+                        questionNumber: response.questionNumber
                     });
                 }
 
