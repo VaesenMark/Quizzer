@@ -4,7 +4,6 @@ import {Login} from './Login';
 import {QuestionInput} from './AnswerInput';
 import {AnswerJudgement} from './AnswerJudgement';
 import WaitingRoomUI from './WaitingRoom';
-import {WS} from './Websocket'
 
 class AppUI extends React.Component {
     constructor(props) {
@@ -42,7 +41,6 @@ class AppUI extends React.Component {
         }
         return (
             <div>
-                <WS/>
                 {screenContent}
             </div>
         );

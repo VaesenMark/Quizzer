@@ -1,7 +1,8 @@
 import * as Redux from 'redux';
 import teamAppAPI from './teamAppAPI'
-
+import {websockett} from './websocket'
 import update from 'immutability-helper';
+import {store} from './index'
 
 
 // Action Creators:
@@ -109,6 +110,7 @@ export function submitLoginAction(password, teamname) {
             if(err) {
                 dispatch({ type: 'loginFailed', result: "Something went wrong" });
             } else {
+                websockett.sendJSON({messageType: "TeamLoggedIn", quizId: result.quizId });
                 console.log('suc', result);
                 dispatch({ type: 'loginFinished', result });
             }
@@ -185,6 +187,8 @@ export function submitAnswerAction(answer) {
             if(err) {
                 dispatch({ type: 'submitFailed', result: "Something went wrong" });
             } else {
+                console.log('pppppp',store.getState().base.quizId);
+                websockett.sendJSON({messageType: "AnswerSubmitted", quizId: store.getState().base.quizId, roundNumber: store.getState().base.roundNumber, questionNumber: store.getState().base.questionNumber});
                 dispatch({ type: 'submitFinished', result: message });
             }
         });

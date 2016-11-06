@@ -1,10 +1,6 @@
 import React from 'react';
 import * as ReactRedux from 'react-redux';
 
-import {
-    updateAnswerAction, submitAnswerAction
-} from '../reducers';
-
 
 class AnswerJudgementUI extends React.Component {
     constructor(props) {

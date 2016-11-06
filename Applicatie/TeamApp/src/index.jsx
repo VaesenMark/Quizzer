@@ -28,4 +28,6 @@ ReactDOM.render( mainComponent, document.getElementById('react-root') );
 
 export const store = theStore;
 
+import './websocket'
+
 

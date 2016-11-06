@@ -1,4 +1,3 @@
-import * as ReactRedux from 'react-redux';
 import React from 'react';
 
 

@@ -306,6 +306,7 @@ export function approveTeam(quizID,teamID){
                                 dispatch({type: "errorGetAllQuestionsItems", message: response.message});
                             }
                             else {
+                                websockett.sendJSON({messageType: "TeamApplianceJudged", teamId: teamID, accepted: true});
                                 dispatch({type: 'succesGetTeams', success: true, teams: response});
                             }
                         }
@@ -377,6 +378,7 @@ export function addQuestion(quizID, roundNumber, questionID){
                     dispatch({type: "errorSaveQuestions", message: response.message});
                 }
                 else {
+                    websockett.sendJSON({messageType: "QuestionStarted", quizId: quizID, questionNumber: response.questionNumber, roundNumber: roundNumber});
                     dispatch({type: 'successSaveQuestion', success: true, questionNumber: response.questionNumber, response});
                     dispatch({
                         type: 'goToClosePage',

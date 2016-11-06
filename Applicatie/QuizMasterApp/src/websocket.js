@@ -14,12 +14,15 @@ websocket.onmessage = function(eventInfo) {
     console.log('message', message);
     switch (message.messageType) {
         case "AnswerSubmitted":
+            console.log('88888888888');
+            console.log('88888',message);
             if (message.quizId == store.getState().MainState.quizItem._id) {
                 console.log('222');
                 store.dispatch(newAnswerAvailable(message.quizId, message.roundNumber, message.questionNumber));
             }
             break;
         case "NewTeamAppliance":
+
             console.log('storeQuizId',message.quizId == store.getState().MainState.quizItem._id);
             if (message.quizId == store.getState().MainState.quizItem._id) {
                 console.log('222');

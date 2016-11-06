@@ -61,11 +61,30 @@ function acceptOrRefuseConnection(info) {
 wss.on("connection", function connection(req) {
     console.log('connected');
 
+
     req.on('message', function(msg) {
         console.log("MESSAGE", msg);
+
         msg = JSON.parse(msg);
+
         switch(msg.messageType) {
+
+            // Quizmaster App
+            case "TeamApplianceJudged":
+                // Quizmaster closes the question, notidy the team of it
+                console.log('schaap4');
+                for(let client of wss.clients) {
+                    console.log('bla');
+                    client.sendJSON({
+                        messageType: "TeamApplianceJudged",
+                        teamId: msg.teamId,
+                        accepted: msg.accepted
+                    });
+                }
+                break;
+
             case "CloseQuestion":
+                // Quizmaster closes the quest, notidy the team of it
                 console.log('schaap');
                 for(let client of wss.clients) {
                     client.sendJSON({
@@ -75,6 +94,7 @@ wss.on("connection", function connection(req) {
                 }
                 break;
             case "AnswerAccepted":
+                // Quizmaster accepts the answer, notify team of it
                 console.log('schaap2');
                 for(let client of wss.clients) {
                     client.sendJSON({
@@ -83,6 +103,47 @@ wss.on("connection", function connection(req) {
                     });
                 }
                 break;
+            case "QuestionStarted":
+                // Quizmaster accepts the answer, notify team of it
+                console.log('schaap2');
+                for(let client of wss.clients) {
+                    client.sendJSON({
+                        messageType: "QuestionStarted",
+                        quizId: msg.quizId,
+                        questionNumber: msg.questionNumber,
+                        roundNumber: msg.roundNumber
+                    });
+                }
+                break;
+
+
+            // TeamApp
+            case "TeamLoggedIn":
+                // Team logged in, notify quizmaster of it
+                console.log('schaap3');
+                for(let client of wss.clients) {
+                    client.sendJSON({
+                        messageType: "NewTeamAppliance",
+                        quizId: msg.quizId
+                    });
+                }
+                break;
+            case "AnswerSubmitted":
+                // Team logged in, notify quizmaster of it
+                console.log('schaap8');
+                for(let client of wss.clients) {
+                    client.sendJSON({
+                        messageType: "AnswerSubmitted",
+                        quizId: msg.quizId,
+                        roundNumber: msg.roundNumber,
+                        questionNumber: msg.questionNumber
+                    });
+                }
+                break;
+
+
+
+
             default:
 
         }
@@ -172,7 +233,6 @@ app.put('/quiz/:quizID/team/:teamID', function(req, res, next) {
                             res.json({message: err})
                         }
                         else {
-                            teamApplianceJudged(team._id,team.approved);
                             res.status(200);
                             res.json({message: "Team accepted"});
                         }
@@ -446,7 +506,6 @@ app.post('/quiz/:quizId/round/:roundNumber/question', function(req, res, next){
                                     res.json({message: err})
                                 }
                                 else {
-                                    questionStarted(questionNumber, req.params.roundNumber, req.params.quizId);
                                     res.status(200);
                                     res.json({
                                         message: "There is a question add to quiz/round " + req.params.roundNumber,
@@ -823,7 +882,6 @@ app.post('/quiz/:quizId/round/:roundNumber/question/:questionNumber/teamanswer/:
                                 throw new Error(err);
                             }
 
-                            answerSubmitted(quiz._id, req.params.roundNumber, req.params.questionNumber);
                             res.json({message: "Answer submitted"});
                         }
                         catch(exception) {
@@ -986,7 +1044,6 @@ app.post('/team/login', function(req, res, next) {
                                         }
                                         // req.session.teamId = team._id;
                                         // req.session.quizId = quiz._id;
-                                        newTeamAppliance(quiz._id);
                                         console.log('aaaaaaa');
 
 
@@ -1273,15 +1330,15 @@ app.get('/scoreboard/scoreboardAnswers', function(req, res, next) {
 
 
 
-function newTeamAppliance(quizId) {
-    for(let client of wss.clients) {
-        console.log('NewTeamAppliance');
-        client.sendJSON({
-            messageType: "NewTeamAppliance",
-            quizId: quizId
-        });
-    }
-}
+// function newTeamAppliance(quizId) {
+//     for(let client of wss.clients) {
+//         console.log('NewTeamAppliance');
+//         client.sendJSON({
+//             messageType: "NewTeamAppliance",
+//             quizId: quizId
+//         });
+//     }
+// }
 
 function teamApplianceJudged(teamId, accepted) {
     // team id mogelijk?
