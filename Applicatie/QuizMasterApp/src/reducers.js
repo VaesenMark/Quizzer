@@ -165,6 +165,32 @@ export function closeQuiz(quizID, quizMasterID){
     }
 }
 
+export function closeAndEndTheQuiz(quizID, quizMasterID){
+    return (dispatch) => {
+
+        quizMasterAPI.closeQuiz(quizID, quizMasterID, (err, response)=> {
+            if (err) {
+                dispatch({type: 'errorCloseQuiz', message: " The quiz can't be closed"});
+            }
+            else {
+                dispatch({type: 'succesCloseQuiz', message: " The quiz is be closed"});
+                quizMasterAPI.getQuiz(quizMasterID, (err, response) => {
+                    if (err) {
+                        dispatch({type: 'errorGetAllQuizItems', message: " The quiz can't be show try again"});
+                    } else {
+                        if (response.status >= minerrStatuscode) {
+                            dispatch({type: "errorGetAllQuizItems", message: response.message});
+                        }
+                        else {
+                            dispatch({type: 'successGetAllQuizItems', success: true, items: response});
+                            dispatch({type: 'goToQuiz'});
+                        }
+                    }
+                });
+            }
+        })
+    }
+}
 
 export function editUsername(username) {
     return {type: "editUserName", username: username}
@@ -646,6 +672,12 @@ function headReducer(state = MainState, action) {
             };
             return copyAndUpdateObj(state, update);
 
+        }
+        case 'goToQuiz':{
+            let update = {
+                'currentPage': 2,
+            };
+            return copyAndUpdateObj(state, update);
         }
         case 'saveSelectedQuizId': {
             let update = {

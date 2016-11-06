@@ -1,6 +1,6 @@
 import React from 'react'
 import * as ReactRedux from 'react-redux';
-import {getNextQuestion, getNextRound} from '../reducers';
+import {getNextQuestion, getNextRound, closeAndEndTheQuiz} from '../reducers';
 import{PlayedQuestionItem} from './playedQuestionItems'
 
 class CheckAnswersUI extends React.Component {
@@ -11,6 +11,9 @@ class CheckAnswersUI extends React.Component {
       this.props.getNextQuestion(this.props.quiz._id, this.props.roundNumber);
    }
 
+    closeTheQuiz(){
+        this.props.closeAndEndTheQuiz(this.props.quiz._id, this.props.quizMasterID );
+    }
 
 
    render() {
@@ -27,14 +30,17 @@ class CheckAnswersUI extends React.Component {
                />
            )
        }
-
-       var nextRound = <button id="markAsSeen" onClick={this.nextQuestion.bind(this)}>
+       var closeQuiz = '';
+       var nextQuestion = <button id="markAsSeen" onClick={this.nextQuestion.bind(this)}>
            Next Question
        </button>;
        if(this.props.questionNumber >= 12){
-           nextRound = <button id="markAsSeen" onClick={this.nextRound.bind(this)}>
-               Next Round
-           </button>
+           closeQuiz = <button id="selectButton" onClick={this.closeTheQuiz.bind(this)}>Close quiz</button>
+           if(this.props.items.length > 1) {
+               nextQuestion = <button id="markAsSeen" onClick={this.nextRound.bind(this)}>
+                   Next Round
+               </button>
+           }
        }
       return (<div>
               <h1>Judge answers</h1>
@@ -42,9 +48,10 @@ class CheckAnswersUI extends React.Component {
              quizid: {this.props.quizID}
             roundnunmber:  {this.props.roundNumber}
              number:{this.props.questionNumber}
-
+          {this.props.items.length}
               {theItems}
-              {nextRound}
+              {nextQuestion}
+              {closeQuiz}
           </div>
       );
    }
@@ -55,17 +62,20 @@ function mapDispatchToProps(dispatch) {
    return {
       getNextQuestion: (quizID, RoundNumber) => dispatch(getNextQuestion(quizID, RoundNumber)),
        getNextRound: (quiz) => dispatch(getNextRound(quiz)),
+       closeAndEndTheQuiz: (quizID, quizMasterID) =>dispatch(closeAndEndTheQuiz(quizID, quizMasterID))
 
    }
 }
 
 function mapStateToProps(state) {
    return {
+       quizMasterID: state.MainState.quizMasterID,
        quiz: state.MainState.quizItem,
-      roundNumber:  state.QuestionsState.roundNumber,
-      questionNumber: state.QuestionsState.questionNumber,
+       roundNumber:  state.QuestionsState.roundNumber,
+       questionNumber: state.QuestionsState.questionNumber,
        message: state.PlayedQuestionState.message,
-       playedQuestions: state.PlayedQuestionState.answers
+       playedQuestions: state.PlayedQuestionState.answers,
+       items: state.RoundState.items,
    }
 }
 
