@@ -14,11 +14,14 @@ class QuestionItemUI extends React.Component {
          this.props.addQuestionToRound(this.props.quiz._id, (this.props.roundNumber), this.props.item._id)
       };
       return  (
-          <div>
-             <span onClick={clickHandler}>
+          <div span="QuestionItem">
+             <button onClick={clickHandler}>
+            select
+             </button>
              {this.props.question}
-             </span>
+             <br/>{this.props.message}
           </div>
+
       )
    }
 }
