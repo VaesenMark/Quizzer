@@ -53,7 +53,8 @@ function mapDispatchToProps(dispatch) {
 function mapStateToProps(state) {
     return {
         quiz: state.MainState.quizItem,
-        teams : state.TeamState.teams
+        teams : state.TeamState.teams,
+        message: state.RoundState.message
     }
 }
 

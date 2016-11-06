@@ -9,7 +9,6 @@ class CategorieListUI extends React.Component {
    }
 
    render() {
-      console.log(this.props.quiz);
       let theItems = [];
 
       if (this.props.items.length >= 1) {
@@ -23,7 +22,7 @@ class CategorieListUI extends React.Component {
 
       return (
           <div>
-             {this.props.quiz._id}
+             {this.props.message}
              {theItems}
           </div>
       );
@@ -39,7 +38,8 @@ function mapStateToProps(state) {
    return {
 
       items: state.RoundState.items,
-      quiz: state.MainState.quizItem
+      quiz: state.MainState.quizItem,
+      message: state.RoundState.message
    }
 }
 

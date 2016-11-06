@@ -24,7 +24,6 @@ var path = require('path');
 var app = express();
 
 
-
 var server = http.createServer(app);
 var wss = new ws.Server({server: server});
 
@@ -104,329 +103,391 @@ app.post('/testmark', function(req, res, next) {
 ///------- toegevoegd --------
 
 app.put('/quiz/:quizID/team/:teamID', function(req, res, next) {
-    const Team = mongoose.model('Team');
-    Team.findOne({_id: req.params.teamID}, function (err, team) {
+    //todo er zijn al 6 teams
+    try {
+        const Team = mongoose.model('Team');
+        Team.findOne({_id: req.params.teamID}, function (err, team) {
 
-        if (err) {
-            res.status(500);
-            res.json({message: err});
-        }
-        else{
-            if(team.quizID == req.params.quizID) {
-                team.approved = true;
-                team.save(function (err, char) {
+            if (err) {
+                res.status(500);
+                res.json({message: err});
+            }
+            else {
+                if (team.quizID == req.params.quizID) {
+                    team.approved = true;
+                    team.save(function (err, char) {
+                        if (err) {
+
+                            res.status(500);
+                            res.json({message: err})
+                        }
+                        else {
+                            res.status(200);
+                            res.json({message: "This is a wrong team by the wrong quiz"});
+                        }
+                    });
+                }
+                else {
+                    res.status(500);
+                    res.json({message: "This is the wrong team by the wrong quiz"});
+                }
+
+            }
+        });
+    }
+    catch (exception) {
+        console.log(exception);
+        res.status(500);
+        res.json({message: "A server error occured"});
+    }
+});
+
+app.get('/quiz/:quizID/round/:roundNumber/question/:questionNumber', function(req, res, next) {
+    try {
+        const Quiz = mongoose.model('Quiz');
+        Quiz.findOne({_id: req.params.quizID}, function (err, quiz) {
+
+            if (err) {
+                res.status(500);
+                res.json({message: err});
+            }
+            else if (quiz != null) {
+                let round = quiz.rounds.find(x => x.roundNumber == req.params.roundNumber);
+                var result = round.playedQuestions.find(x=> x.questionNumber == req.params.questionNumber).teamAnswers;
+
+                res.status(200);
+                res.json({answers: result})
+            }
+
+            else {
+                res.status(500);
+                res.json({message: "error on the server"});
+            }
+        });
+    }
+    catch
+        (exception) {
+        console.log(exception);
+        res.status(500);
+        res.json({message: "A server error occured"});
+    }
+});
+
+app.get('/quiz/:quizID/teams', function(req, res, next) {
+    try {
+        const Quiz = mongoose.model('Quiz');
+        const Team = mongoose.model('Team');
+        Quiz.findOne({_id: req.params.quizID}, function (err, quiz) {
+
+            if (err) {
+                res.status(500);
+                res.json({message: err});
+            }
+            else {
+
+                if (quiz.status == 1) {
+                    quiz.status = 2;
+                }
+                quiz.save(function (err, char) {
                     if (err) {
 
                         res.status(500);
                         res.json({message: err})
                     }
-                    else {
-                        res.status(200);
-                        res.json({message: "This is the wron team by the wrong wuiz"});
-                    }
+                    Team.find({quizID: req.params.quizID}, function (err, teams) {
+                        console.log("_____________________________________")
+                        console.log(teams);
+                        if (err) {
+                            res.status(500);
+                            res.json({message: err});
+                        }
+                        else if (teams != null) {
+                            res.status(200);
+                            res.json({teams: teams})
+                        }
+                        else {
+                            res.status(400);
+                            res.json({message: "there are no teams for this quiz"})
+                        }
+                    })
                 });
+
             }
-            else{
-                res.status(500);
-                res.json({message: "This is the wron team by the wrong quiz"});
-            }
-
-        }
-    })
-});
-
-app.get('/quiz/:quizID/round/:roundNumber/question/:questionNumber', function(req, res, next) {
-    const Quiz = mongoose.model('Quiz');
-    Quiz.findOne({_id: req.params.quizID}, function (err, quiz) {
-
-        if (err) {
-            res.status(500);
-            res.json({message: err});
-        }
-        else if(quiz != null) {
-            let round = quiz.rounds.find(x => x.roundNumber == req.params.roundNumber);
-            var result = round.playedQuestions.find(x=> x.questionNumber == req.params.questionNumber).teamAnswers;
-
-            res.status(200);
-            res.json({answers: result})
-        }
-
-        else{
-            res.status(500);
-            res.json({message: "error on the server"});
-        }
-    });
-});
-
-
-app.get('/quiz/:quizID/teams', function(req, res, next) {
-    const Quiz = mongoose.model('Quiz');
-    const Team = mongoose.model('Team');
-    Quiz.findOne({_id: req.params.quizID}, function (err, quiz) {
-
-        if (err) {
-            res.status(500);
-            res.json({message: err});
-        }
-        else {
-
-            if (quiz.status == 1) {
-                quiz.status = 2;
-            }
-            quiz.save(function (err, char) {
-                if (err) {
-
-                    res.status(500);
-                    res.json({message: err})
-                }
-                Team.find({quizID: req.params.quizID}, function (err, teams) {
-                    console.log("_____________________________________")
-                    console.log(teams);
-                    if (err) {
-                        res.status(500);
-                        res.json({message: err});
-                    }
-                    else if (teams != null) {
-                        res.status(200);
-                        res.json({teams: teams})
-                    }
-                    else {
-                        res.status(400);
-                        res.json({message: "there are no teams for this quiz"})
-                    }
-                })
-            });
-
-        }
-    });
+        });
+    }
+    catch (exception) {
+        console.log(exception);
+        res.status(500);
+        res.json({message: "A server error occured"});
+    }
 });
 
 
 
 // ------ Quiz Routes ------
 
-
-
 //Start quiz
 app.post('/quiz', function(req, res, next) {
-    const Quiz = mongoose.model('Quiz');
-    const QuizMaster = mongoose.model('QuizMaster');
+    try {
+        const Quiz = mongoose.model('Quiz');
+        const QuizMaster = mongoose.model('QuizMaster');
 
-    QuizMaster.findOne({_id: req.body.quizMasterID}, function (err, quizMaster) {
-        if (err) {
-            res.status(500);
-            res.json({message: err})
-        }
-        else {
-            console.log(quizMaster);
-            if (quizMaster != null) {
-                var quiz = new Quiz({password: createRandomString(8), quizMasterID: req.body.quizMasterID, status: 1});
-                quiz.save(function (err, char) {
-                    if (err) {
-                        res.status(500);
-                        res.json({message: err})
-                    }
-                    else {
-                        res.status(200);
-                        res.json({message: "The're is a new quiz created"})
-                    }
+        QuizMaster.findOne({_id: req.body.quizMasterID}, function (err, quizMaster) {
+            if (err) {
+                res.status(500);
+                res.json({message: err})
+            }
+            else {
+                console.log(quizMaster);
+                if (quizMaster != null) {
+                    var quiz = new Quiz({
+                        password: createRandomString(8),
+                        quizMasterID: req.body.quizMasterID,
+                        status: 1
+                    });
+                    quiz.save(function (err, char) {
+                        if (err) {
+                            res.status(500);
+                            res.json({message: err})
+                        }
+                        else {
+                            res.status(200);
+                            res.json({message: "The're is a new quiz created"})
+                        }
 
-                });
+                    });
+                }
+                else {
+                    res.status(400);
+                    res.json({message: "There is quizmaster wo not exists"})
+                }
             }
-            else{
-                res.status(400);
-                res.json({message:"There is quizmaster wo not exists"})
-            }
-        }
-    });
+        });
+    }
+    catch (exception) {
+        console.log(exception);
+        res.status(500);
+        res.json({message: "A server error occured"});
+    }
 });
-
 
 //Get teams appliances
 app.get('/quiz/:quizId/teams', function(req, res, next){
-    //Todo  informatie van teams krijgen
-    const Team = mongoose.model('Team');
+    try {
+        //Todo  informatie van teams krijgen
+        const Team = mongoose.model('Team');
 
-    Team.find({quizID: req.params.quizId}, function (err, teams){
-        if(err){
-            res.status(500)
-            res.json({message: err});
-        }
-        else{
-            console.log(teams.length);
-            if(teams.length <= 0){
-                res.status(400);
-                res.json({message: "The're are no teams signed in for this quiz"});
+        Team.find({quizID: req.params.quizId}, function (err, teams) {
+            if (err) {
+                res.status(500)
+                res.json({message: err});
             }
-            else{
-                res.status(200)
-                console.log(teams);
-                res.json({teams:teams});
+            else {
+                console.log(teams.length);
+                if (teams.length <= 0) {
+                    res.status(400);
+                    res.json({message: "The're are no teams signed in for this quiz"});
+                }
+                else {
+                    res.status(200)
+                    console.log(teams);
+                    res.json({teams: teams});
+                }
             }
-        }
-    });
+        });
+    }
+    catch (exception) {
+        console.log(exception);
+        res.status(500);
+        res.json({message: "A server error occured"});
+    }
 });
-
-
 
 //Create Round
 app.post('/quiz/:quizID/round', function(req, res, next){
-    const Quiz = mongoose.model('Quiz');
-    const Category = mongoose.model('Category');
+    try {
+        const Quiz = mongoose.model('Quiz');
+        const Category = mongoose.model('Category');
 
-    Quiz.findOne({_id: req.params.quizID}, function (err, quiz) {
-        if (err) {
-            res.status(500);
-            res.json({message: err});
-        }
-        else if(quiz != null) {
-            // Check if entered categoryId exists
-            Category.findOne({_id: req.body.categoryID}, function (err, category) {
-                if (err) {
-                    res.status(500);
-                    res.json({message: err});
-                }
-                else {
-                    if(category != null) {
-                        if (!quiz.rounds.find(x => x.categoryID == req.body.categoryID)) {
-                            quiz.rounds.push({roundNumber: (quiz.rounds.length + 1), categoryID: req.body.categoryID});
-                            quiz.save(function (err, char) {
-                                if (err) {
-                                    res.status(500);
-                                    res.json({message: err});
-                                }
-                                else {
-                                    res.status(200);
-                                    res.json({message: "There is a Round add to quiz", roundNumber: quiz.rounds.length});
-                                }
-                            });
+        Quiz.findOne({_id: req.params.quizID}, function (err, quiz) {
+            if (err) {
+                res.status(500);
+                res.json({message: err});
+            }
+            else if (quiz != null) {
+                // Check if entered categoryId exists
+                Category.findOne({_id: req.body.categoryID}, function (err, category) {
+                    if (err) {
+                        res.status(500);
+                        res.json({message: err});
+                    }
+                    else {
+                        if (category != null) {
+                            if (!quiz.rounds.find(x => x.categoryID == req.body.categoryID)) {
+                                quiz.rounds.push({
+                                    roundNumber: (quiz.rounds.length + 1),
+                                    categoryID: req.body.categoryID
+                                });
+                                quiz.save(function (err, char) {
+                                    if (err) {
+                                        res.status(500);
+                                        res.json({message: err});
+                                    }
+                                    else {
+                                        res.status(200);
+                                        res.json({
+                                            message: "There is a Round add to quiz",
+                                            roundNumber: quiz.rounds.length
+                                        });
+                                    }
+                                });
+                            }
+                            else {
+                                res.status(400);
+                                res.json({message: "This category is al being use for this quiz"});
+                            }
                         }
-                        else{
-                            res.status(400);
-                            res.json({message: "This category is al being use for this quiz"});
+                        else {
+                            res.status(404);
+                            res.json({message: "There is no category"});
                         }
                     }
-                    else{
-                        res.status(404);
-                        res.json({message: "There is no category"});
-                    }
-                }
-            })
-        }
-        else{
-            res.json({message: "The quiz can't be found"});
-            res.status(404);
-        }
-    });
-
+                })
+            }
+            else {
+                res.json({message: "The quiz can't be found"});
+                res.status(404);
+            }
+        });
+    }
+    catch (exception) {
+        console.log(exception);
+        res.status(500);
+        res.json({message: "A server error occured"});
+    }
 });
 
 
 //Create Round Question
 app.post('/quiz/:quizId/round/:roundNumber/question', function(req, res, next){
-    const Quiz = mongoose.model('Quiz');
-    Quiz.findOne({_id: req.params.quizId}, function (err, quiz) {
-        if (err) {
-            res.status(400);
-            res.json({message: err});
-        }
-        else if(quiz != null) {
-            //todo kijken of vraag bij de categorie hoort
-            //is het mogelijk om vragen in vorige ronde toe te voegen?
-            if(quiz.rounds.length == req.params.roundNumber) {
-                let round = quiz.rounds.find(x => x.roundNumber == req.params.roundNumber);
-                var questionNumber = round.playedQuestions.length +1;
-                if(questionNumber <= 12) {
-                    if (round.playedQuestions.length == 0 ||round.playedQuestions.find(x => x.questionID != req.body.categoryID)) {
-                        round.playedQuestions.push({
-                            questionNumber: questionNumber,
-                            questionID: parseInt(req.body.questionID)
-                        });
-                        quiz.save(function (err, char) {
-                            if (err) {
-                                res.status(500);
-                                res.json({message: err})
-                            }
-                            else {
-                                res.status(200);
-                                res.json({message: "There is a question add to quiz/round " + req.params.roundNumber, questionNumber: questionNumber});
-                            }
-                        });
+    try {
+        const Quiz = mongoose.model('Quiz');
+        Quiz.findOne({_id: req.params.quizId}, function (err, quiz) {
+            if (err) {
+                res.status(400);
+                res.json({message: err});
+            }
+            else if (quiz != null) {
+                //todo kijken of vraag bij de categorie hoort
+                //is het mogelijk om vragen in vorige ronde toe te voegen?
+                if (quiz.rounds.length == req.params.roundNumber) {
+                    let round = quiz.rounds.find(x => x.roundNumber == req.params.roundNumber);
+                    var questionNumber = round.playedQuestions.length + 1;
+                    if (questionNumber <= 12) {
+                        if (round.playedQuestions.length == 0 || round.playedQuestions.find(x => x.questionID != req.body.categoryID)) {
+                            round.playedQuestions.push({
+                                questionNumber: questionNumber,
+                                questionID: parseInt(req.body.questionID)
+                            });
+                            quiz.save(function (err, char) {
+                                if (err) {
+                                    res.status(500);
+                                    res.json({message: err})
+                                }
+                                else {
+                                    res.status(200);
+                                    res.json({
+                                        message: "There is a question add to quiz/round " + req.params.roundNumber,
+                                        questionNumber: questionNumber
+                                    });
+                                }
+                            });
+                        }
+                        else {
+                            res.status(404);
+                            res.json({message: "This Question is played in this round "});
+                        }
                     }
-                    else{
+
+                    else {
                         res.status(404);
-                        res.json({message:"This Question is played in this round "});
+                        res.json({message: "There are 12 questions in this round "});
                     }
                 }
+                else {
+                    res.status(400)
+                    res.json({message: "U are not in the recent round"})
 
-                else{
-                    res.status(404);
-                    res.json({message:"There are 12 questions in this round "});
                 }
             }
-            else
-            {
-                res.status(400)
-                res.json({message: "U are not in the recent round"})
+            else {
+                res.status(500)
+                res.json({message: "error"})
 
             }
-        }
-        else
-        {
-            res.status(500)
-            res.json({message: "error"})
-
-        }
-    });
+        });
+    }
+    catch (exception) {
+        console.log(exception);
+        res.status(500);
+        res.json({message: "A server error occured"});
+    }
 });
 
 app.get('/quiz/:quizID/categories', function(req, res, next) {
-    const Category = mongoose.model('Category');
-    const Quiz = mongoose.model('Quiz');
-    Category.find({}, function (err, categories) {
-        if (err) {
-            res.status(500);
-            res.json({message: "A server error occured"});
-        }
-        else {
-            if (categories != null) {
-                let notUsedCategories = [];
-                let newCategories = [];
-                Quiz.findOne({_id: req.params.quizID}, function (err, quiz) {
-                    if (err) {
-                        res.status(500);
-                        res.json({message: "A server error occured"});
-                    }
-                    else {
-                        quiz.status = 3;
-                        quiz.save(function (err, char) {
-                            if (err) {
-                                res.status(400);
-                                res.json({
-                                    message: "The answers is not being controled by the quizmaster",
-                                    err
-                                })
-                            }
-                        });
-                        let rounds = quiz.rounds;
-                        rounds.forEach(function(round) {
-                            notUsedCategories.push(round.categoryID)
-                        });
-                        categories.forEach(function(categorie) {
-                            let id = categorie._id
-                            if (!notUsedCategories.includes(id)) {
-                                newCategories.push(categorie);
-                            }
-                        });
-
-                        res.status(200);
-                        res.json(newCategories)
-
-                    }
-                });
+    try {
+        const Category = mongoose.model('Category');
+        const Quiz = mongoose.model('Quiz');
+        Category.find({}, function (err, categories) {
+            if (err) {
+                res.status(500);
+                res.json({message: "A server error occured"});
             }
-        }
-    });
+            else {
+                if (categories != null) {
+                    let notUsedCategories = [];
+                    let newCategories = [];
+                    Quiz.findOne({_id: req.params.quizID}, function (err, quiz) {
+                        if (err) {
+                            res.status(500);
+                            res.json({message: "A server error occured"});
+                        }
+                        else {
+                            quiz.status = 3;
+                            quiz.save(function (err, char) {
+                                if (err) {
+                                    res.status(400);
+                                    res.json({
+                                        message: "The answers is not being controled by the quizmaster",
+                                        err
+                                    })
+                                }
+                            });
+                            let rounds = quiz.rounds;
+                            rounds.forEach(function (round) {
+                                notUsedCategories.push(round.categoryID)
+                            });
+                            categories.forEach(function (categorie) {
+                                let id = categorie._id
+                                if (!notUsedCategories.includes(id)) {
+                                    newCategories.push(categorie);
+                                }
+                            });
+
+                            res.status(200);
+                            res.json(newCategories)
+
+                        }
+                    });
+                }
+            }
+        });
+    }
+    catch (exception) {
+        console.log(exception);
+        res.status(500);
+        res.json({message: "A server error occured"});
+    }
 });
 
 //Get Round Question
@@ -533,40 +594,45 @@ app.get('/quiz/:quizId/categories', function(req, res, next){
 // Get round question team answers
 //    res.send("Set nieuwe vraag voor quiz "+req.params.quizId+" in ronde "+req.params.roundNumber+" en vraag  "+req.body.questionNumber+" ");
 app.get('/quiz/:quizId/round/:roundNumber/question/:questionNumber/teamanswer',function(req, res, next) {
-    const Quiz = mongoose.model('Quiz');
+   try {
+       const Quiz = mongoose.model('Quiz');
 
-    Quiz.findOne({_id: req.params.quizId}, function (err, quiz) {
-        if (err) {
-            res.status(500);
-            res.json({message: "A server error occured"});
-        }
-        else if(quiz != null) {
-            try {
-                var round = quiz.rounds.find(x => x.roundNumber == req.params.roundNumber);
-                if (round != null) {
-                    const playedQuestions = round.playedQuestions.find(x=> x.questionID == req.params.questionNumber);
-                    res.status(200);
-                    res.json({result: playedQuestions.teamAnswers})
+       Quiz.findOne({_id: req.params.quizId}, function (err, quiz) {
+           if (err) {
+               res.status(500);
+               res.json({message: "A server error occured"});
+           }
+           else if (quiz != null) {
+               try {
+                   var round = quiz.rounds.find(x => x.roundNumber == req.params.roundNumber);
+                   if (round != null) {
+                       const playedQuestions = round.playedQuestions.find(x=> x.questionID == req.params.questionNumber);
+                       res.status(200);
+                       res.json({result: playedQuestions.teamAnswers})
 
-                }
-                else{
-                    res.status(400);
-                    res.json({message: "This round is not being created"})
-                }
-            }
-            catch (exception) {
-                res.status(500);
-                res.json({message: "A server error occured"});
-            }
+                   }
+                   else {
+                       res.status(400);
+                       res.json({message: "This round is not being created"})
+                   }
+               }
+               catch (exception) {
+                   res.status(500);
+                   res.json({message: "A server error occured"});
+               }
 
-        }
-        else
-        {
-            res.status(404);
-            res.json({message: "The're no quiz"});
-        }
-    });
-
+           }
+           else {
+               res.status(404);
+               res.json({message: "The're no quiz"});
+           }
+       });
+   }
+   catch (exception) {
+       console.log(exception);
+       res.status(500);
+       res.json({message: "A server error occured"});
+   }
 
 });
 
@@ -614,34 +680,35 @@ app.put('/quiz/:quizId/round/:roundNumber/question/:questionNumber/team/:teamId'
 
 //Close quiz
 app.put('/quiz/close/:quizId',function(req, res) {
-    const Quiz = mongoose.model('Quiz');
+    try {
+        const Quiz = mongoose.model('Quiz');
 
-    Quiz.findOne({_id: req.params.quizId}, function (err, quiz) {
-        if (err) {
-            res.send(err);
-        }
-        else if (quiz != null) {
-            quiz.update({status : 4});
-            //todo status 4?
-            quiz.save(function (err, char) {
-                if (err) {
-                    res.send(err);
-                }
-                else {
-                    res.send("The quiz is ended");
-                }
-            });
-        }
-        else {
-            res.send("There go something wrong. Try again!! The quiz is still open");
-        }
-    });
-});
-
-// ??
-//Scoreboard app
-app.get('/quiz/:quizId', function(req, res, next){
-    res.send("get informatie van quiz " +req.params.quizId);
+        Quiz.findOne({_id: req.params.quizId}, function (err, quiz) {
+            if (err) {
+                res.send(err);
+            }
+            else if (quiz != null) {
+                quiz.update({status: 4});
+                //todo status 4?
+                quiz.save(function (err, char) {
+                    if (err) {
+                        res.send(err);
+                    }
+                    else {
+                        res.send("The quiz is ended");
+                    }
+                });
+            }
+            else {
+                res.send("There go something wrong. Try again!! The quiz is still open");
+            }
+        });
+    }
+    catch (exception) {
+        console.log(exception);
+        res.status(500);
+        res.json({message: "A server error occured"});
+    }
 });
 
 //Submit answer
@@ -699,46 +766,57 @@ app.post('/quiz/:quizId/round/:roundNumber/question/:questionNumber/teamanswer/:
 
 });
 
-//Change answer
-app.put('/quiz/:quizId/round/:roundNumber/question/:questionNumber/teamanswer/:teamId',function(req, res, next) {
-    res.send("vraag van quiz35 " + req.params.quizId + " in ronde " + req.params.roundNumber + " en vraag  " + req.params.questionNumber + " heeft nu antwoord " + req.body.answer+" van team "+ req.params.teamId);
-});
-
 
 
 // ------ Quizmaster Routes ------
 
 //Quizmaster login
 app.post('/quizmaster/login', function(req, res, next){
-    const QuizMaster = mongoose.model('QuizMaster');
-    QuizMaster.findOne({username: req.body.username, password: req.body.password}, function (err, quizMaster) {
-        if (err || quizMaster == null) {
-            res.status(400);
-            res.json({message: "Quizmaster have given the wrong userName or Password"})
-        }
-        else {
-            res.status(200);
-            res.json(quizMaster);
-        }
+    try {
+        const QuizMaster = mongoose.model('QuizMaster');
+        QuizMaster.findOne({username: req.body.username, password: req.body.password}, function (err, quizMaster) {
+            if (err || quizMaster == null) {
+                res.status(400);
+                res.json({message: "Quizmaster have given the wrong userName or Password"})
+            }
+            else {
+                res.status(200);
+                res.json(quizMaster);
+            }
 
-    });
+        });
+    }
+    catch (exception) {
+        console.log(exception);
+        res.status(500);
+        res.json({message: "A server error occured"});
+    }
 });
 
 app.get('/quizmaster/:quizmasterID/quiz',  function(req, res, next){
-    const Quiz = mongoose.model('Quiz');
-    Quiz.find({quizMasterID: req.params.quizmasterID, status: {
-        $lt: 4
-    }}, function (err, quiz) {
-        if(err){
-            res.status(500);
-            res.json({message: err})
-        }
-        else{
-            res.status(200);
-            res.json({message: quiz})
-        }
+    try {
+        const Quiz = mongoose.model('Quiz');
+        Quiz.find({
+            quizMasterID: req.params.quizmasterID, status: {
+                $lt: 4
+            }
+        }, function (err, quiz) {
+            if (err) {
+                res.status(500);
+                res.json({message: err})
+            }
+            else {
+                res.status(200);
+                res.json({message: quiz})
+            }
 
-    });
+        });
+    }
+    catch (exception) {
+        console.log(exception);
+        res.status(500);
+        res.json({message: "A server error occured"});
+    }
 });
 
 //quizmaster logout
@@ -866,7 +944,6 @@ app.post('/team/login', function(req, res, next) {
 
 // Get team
 app.get('/team/:teamId', function(req, res, next) {
-    console.log('kaas');
     try {
         const Team = mongoose.model('Team');
         Team.findOne(

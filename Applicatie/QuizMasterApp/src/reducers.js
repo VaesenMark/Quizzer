@@ -267,7 +267,6 @@ export function approveTeam(quizID,teamID){
 export function approveAnswerTeam(quizID,roundNumber,questionNumber,teamID){
     return (dispatch) => {
         quizMasterAPI.approveTeamAnswer(quizID, roundNumber, questionNumber, teamID, (err, response) => {
-//todo implementeren
             if (err) {
                 dispatch({type: 'errorTeamAnswerApprove', success: false, message: err});
             } else {
@@ -355,6 +354,7 @@ function quizReducer(state = quizState, action) {
     }
         case 'successGetAllQuizItems':{
             let update = {
+                'message': '',
                 'items': action.items
             };
             return copyAndUpdateObj(state, update);
@@ -381,6 +381,7 @@ function questionsReducer(state = questionState, action) {
         }
         case 'successSaveQuestion':{
             let update = {
+                'message': '',
                 'items': action.questionNumber
             };
             return copyAndUpdateObj(state, update);
@@ -393,6 +394,7 @@ function questionsReducer(state = questionState, action) {
         }
         case 'successGetAllQuestionsItems':{
             let update = {
+                'message': '',
                 'items': action.items
             };
             return copyAndUpdateObj(state, update);
@@ -421,12 +423,14 @@ function roundReducer(state = roundState, action) {
         }
         case 'successGetCategoriesItems':{
             let update = {
+                'message': '',
                 'items': action.items
             };
             return copyAndUpdateObj(state, update);
         }
         case 'succesSetNewRound':{
             let update = {
+                'message': '',
                 'roundNumber': action.roundNumber
             };
             return copyAndUpdateObj(state, update);
@@ -446,12 +450,14 @@ function teamReducer(state = teamState, action) {
         }
         case 'succesGetTeams':{
             let update = {
+                'message': '',
                 'teams': action.teams
             };
             return copyAndUpdateObj(state, update);
         }
         case 'succesTeamApprove':{
             let update = {
+                'message': '',
                 'teams': action.teams
             };
             return copyAndUpdateObj(state, update);
@@ -472,31 +478,32 @@ function PlayedQuestionReducer(state = playedQuestionsState, action) {
     switch (action.type) {
         case 'succesPlayedQuestions': {
             let update = {
+                'message': '',
                 'answers': action.answers
             };
             return copyAndUpdateObj(state, update);
         }
-
         case 'errorPlayedQuestions': {
             let update = {
                 'message': action.message
             };
             return copyAndUpdateObj(state, update);
-        },
+        }
         case 'errorTeamAnswerApprove': {
             let update = {
                 'message': action.message
             };
             return copyAndUpdateObj(state, update);
-        },
+        }
         case 'successTeamAnswerApprove': {
             //todo implementeren
             /*let update = {
+             'message': '',
                 'message': action.message
             };
             */
             return state;
-        },
+        }
         default:
             return state;
     }
@@ -536,6 +543,7 @@ function headReducer(state = MainState, action) {
             let update = {
                 'currentPage': 2,
                 'quizMasterID': action.id
+
             };
             return copyAndUpdateObj(state, update);
 

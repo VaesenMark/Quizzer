@@ -15,6 +15,7 @@ class CategorieItemUI extends React.Component {
       }
       return  (
           <div>
+             {this.props.message}
              <span onClick={clickHandler}>
              {this.props.name}
              </span>
@@ -32,7 +33,8 @@ function mapDispatchToProps(dispatch) {
 
 function mapStateToProps(state) {
    return {
-      quiz: state.MainState.quizItem
+      quiz: state.MainState.quizItem,
+      message: state.QuizItemsState.message
    }
 }
 

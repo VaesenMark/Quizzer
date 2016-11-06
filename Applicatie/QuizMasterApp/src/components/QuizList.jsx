@@ -27,6 +27,7 @@ class ChoseQuizUI extends React.Component {
       }
       return (
           <div>
+              {this.props.message}
               {theItems}
               <button id="addQuiz" onClick={this.addQuiz.bind(this)}>
                   addQuiz
@@ -46,7 +47,8 @@ function mapDispatchToProps(dispatch) {
 function mapStateToProps(state) {
    return {
       items: state.QuizItemsState.items,
-       id: state.MainState.quizMasterID
+       id: state.MainState.quizMasterID,
+       message: state.QuizItemsState.message
    }
 }
 

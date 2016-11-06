@@ -16,6 +16,7 @@ class PlayedQuestionItemsUI extends React.Component {
         }
         return  (
             <div>
+                {this.props.message}
                 <span onClick={clickHandler}>
                  {this.props.answer}
                  </span>
@@ -37,6 +38,7 @@ function mapStateToProps(state) {
         quiz: state.MainState.quizItem,
         roundNumber:  state.QuestionsState.roundNumber,
         questionNumber: state.QuestionsState.questionNumber,
+        message: state.PlayedQuestionState.message
     }
 }
 

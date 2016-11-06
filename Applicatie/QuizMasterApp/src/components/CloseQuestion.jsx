@@ -34,6 +34,7 @@ function mapStateToProps(state) {
        quiz: state.MainState.quizItem,
        roundNumber:  state.QuestionsState.roundNumber,
        questionNumber: state.QuestionsState.questionNumber,
+       message: state.PlayedQuestionState.message
    }
 }
 
