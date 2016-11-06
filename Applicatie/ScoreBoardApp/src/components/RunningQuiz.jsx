@@ -12,11 +12,15 @@ class RunningQuizUI extends React.Component {
     }
 
     render() {
-        let theItems = this.props.teamSubmissions.map((itm, idx) =>
-            <TeamSubmission teamName={itm.teamName}
-                            submittedAnswer={itm.submittedAnswer}
-                            answerApproved={itm.answerApproved}/>
-        );
+        let theItems = [];
+        if (this.props.teamSubmissions) {
+            theItems = this.props.teamSubmissions.map((itm, idx) =>
+                <TeamSubmission teamName={itm.teamName}
+                                submittedAnswer={itm.submittedAnswer}
+                                answerApproved={itm.answerApproved}
+                                key={itm.teamName}/>
+            );
+        }
         return (
             <div>
                 <div className="topbar">
@@ -26,7 +30,7 @@ class RunningQuizUI extends React.Component {
                     {theItems}
                 </div>
                 <div className="bottomBar">
-                    Quizz password: {this.props.quizPassword}, Round: roundNumber, Question: {this.props.questionNumber}/12
+                    Quizz password: {this.props.quizPassword}, Round: {this.props.roundNumber}, Question: {this.props.questionNumber}/12
                 </div>
             </div>
         );
