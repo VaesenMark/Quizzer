@@ -14,6 +14,7 @@ let quizMasterAPI = {
         request
             .get('http://localhost:3000/quizmaster/'+id+'/quiz')
             .end( (err,response) => {
+                console.log(response.body);
                 callback(err, response.body.message);
             })
     },
@@ -79,6 +80,7 @@ let quizMasterAPI = {
         request
             .put('http://localhost:3000/quiz/'+quizID+'/team/'+teamID)
             .end( (err,response) => {
+                console.log(err, response.body);
                 callback(err, response.body);
             })
     },

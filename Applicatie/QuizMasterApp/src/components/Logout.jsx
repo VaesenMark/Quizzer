@@ -14,7 +14,7 @@ class LogoutUI extends React.Component {
 
    render() {
       return (<div>
-             <button id="markAsSeen" onClick={this.doLogout.bind(this)}>
+             <button id="button" onClick={this.doLogout.bind(this)}>
                 Logout
              </button>
           </div>

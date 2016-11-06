@@ -17,11 +17,12 @@ class CheckTeamItemsUI extends React.Component {
        let button = '';
        console.log(this.props.approved);
        if(!this.props.approved){
-           button = <button id="markAsSeen" onClick={this.approveTeam.bind(this)}>approve</button>
+           button = <button id="button" onClick={this.approveTeam.bind(this)}>approve</button>
        }
+
       return  (
           <div>{this.props.message}
-<h1>{this.props.name} -  {button}</h1></div>
+          <h1>{this.props.name} -  {button}</h1></div>
       )
    }
 }
@@ -36,7 +37,7 @@ function mapDispatchToProps(dispatch) {
 function mapStateToProps(state) {
    return {
       quiz: state.MainState.quizItem,
-     message: state.TeamState.message
+
    }
 }
 

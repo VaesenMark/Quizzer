@@ -136,32 +136,52 @@ app.put('/quiz/:quizID/team/:teamID', function(req, res, next) {
     //todo er zijn al 6 teams
     try {
         const Team = mongoose.model('Team');
-        Team.findOne({_id: req.params.teamID}, function (err, team) {
+        Team.find({quizID: req.params.quizID, approved: true}, function (err, team) {
             try {
                 if (err) {
                     res.status(500);
                     res.json({message: err});
                 }
+                else if (team.length >= 6) {
+                    res.status(400);
+                    res.json({message: "There are 6 team in this quiz"});
+                }
                 else {
-                    if (team.quizID == req.params.quizID) {
-                        team.update({approved: true});
-                        team.save(function (err, char) {
+                    Team.findOne({_id: req.params.teamID}, function (err, team) {
+                        try {
                             if (err) {
-
                                 res.status(500);
-                                res.json({message: err})
+                                res.json({message: err});
                             }
                             else {
-                                res.status(200);
-                                res.json({message: "Team accepted"});
-                            }
-                        });
-                    }
-                    else {
-                        res.status(500);
-                        res.json({message: "This is the wrong team by the wrong quiz"});
-                    }
+                                if (team.quizID == req.params.quizID) {
+                                    team.approved = true;
+                                    team.update({approved: true});
+                                    team.save(function (err, char) {
+                                        if (err) {
 
+                                            res.status(500);
+                                            res.json({message: err})
+                                        }
+                                        else {
+                                            res.status(200);
+                                            res.json({message: "Team accepted"});
+                                        }
+                                    });
+                                }
+                                else {
+                                    res.status(500);
+                                    res.json({message: "This is the wrong team by the wrong quiz"});
+                                }
+
+                            }
+                        }
+                        catch (exception) {
+                            console.log(exception);
+                            res.status(500);
+                            res.json({message: "A server error occured"});
+                        }
+                    });
                 }
             }
             catch (exception) {

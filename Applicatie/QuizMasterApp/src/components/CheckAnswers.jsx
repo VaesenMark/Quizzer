@@ -20,6 +20,7 @@ class CheckAnswersUI extends React.Component {
        let theItems = [];
        console.log('render');
        console.log(this.props.playedQuestions);
+       console.log("questions", this.props.question);
        if (this.props.playedQuestions.length>=1) {
            theItems = this.props.playedQuestions.map((itm, idx) =>
                <PlayedQuestionItem item={itm}
@@ -31,24 +32,26 @@ class CheckAnswersUI extends React.Component {
            )
        }
        var closeQuiz = '';
-       var nextQuestion = <button id="markAsSeen" onClick={this.nextQuestion.bind(this)}>
+       var nextQuestion = <button id="button" onClick={this.nextQuestion.bind(this)}>
            Next Question
        </button>;
        if(this.props.questionNumber >= 12){
            closeQuiz = <button id="selectButton" onClick={this.closeTheQuiz.bind(this)}>Close quiz</button>
            if(this.props.items.length > 1) {
-               nextQuestion = <button id="markAsSeen" onClick={this.nextRound.bind(this)}>
+               nextQuestion = <button id="button" onClick={this.nextRound.bind(this)}>
                    Next Round
                </button>
            }
        }
       return (<div>
               <h1>Judge answers</h1>
+              <h1>vraag: {this.props.question.question}</h1>
+              <h2>antwoord: {this.props.question.answer}</h2>
               {this.props.message}
-             quizid: {this.props.quizID}
-            roundnunmber:  {this.props.roundNumber}
-             number:{this.props.questionNumber}
-          {this.props.items.length}
+              quizid: {this.props.quiz._id} -
+              ronde:  {this.props.roundNumber} -
+              vraag:{this.props.questionNumber}/12
+          <br/>
               {theItems}
               {nextQuestion}
               {closeQuiz}
@@ -76,6 +79,7 @@ function mapStateToProps(state) {
        message: state.PlayedQuestionState.message,
        playedQuestions: state.PlayedQuestionState.answers,
        items: state.RoundState.items,
+       question: state.QuestionsState.recentQuestion
    }
 }
 

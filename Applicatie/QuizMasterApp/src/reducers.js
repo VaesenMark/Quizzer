@@ -39,6 +39,7 @@ const questionState = {
     roundNumber:0,
     quizID:0,
     message:'',
+    recentQuestion: ''
 };
 
 const playedQuestionsState ={
@@ -133,7 +134,8 @@ export function loginAction(username, password) {
 
                     quizMasterAPI.getQuiz(response._id, (err, response) => {
                         if (err) {
-                            dispatch({type: 'errorGetAllQuizItems', message: " The quiz can't be show try again"});
+                            console.log(err)
+                            dispatch({type: 'errorGetAllQuizItems', message: response});
                         } else {
                             dispatch({type: 'successGetAllQuizItems', success: true, items: response});
                         }
@@ -155,7 +157,7 @@ export function closeQuiz(quizID, quizMasterID){
                 dispatch({type: 'succesCloseQuiz', message: " The quiz is be closed"});
                 quizMasterAPI.getQuiz(quizMasterID, (err, response) => {
                     if (err) {
-                        dispatch({type: 'errorGetAllQuizItems', message: " The quiz can't be show try again"});
+                        dispatch({type: 'errorGetAllQuizItems', message: err});
                     } else {
                         dispatch({type: 'successGetAllQuizItems', success: true, items: response});
                     }
@@ -176,7 +178,7 @@ export function closeAndEndTheQuiz(quizID, quizMasterID){
                 dispatch({type: 'succesCloseQuiz', message: " The quiz is be closed"});
                 quizMasterAPI.getQuiz(quizMasterID, (err, response) => {
                     if (err) {
-                        dispatch({type: 'errorGetAllQuizItems', message: " The quiz can't be show try again"});
+                        dispatch({type: 'errorGetAllQuizItems', message: err});
                     } else {
                         if (response.status >= minerrStatuscode) {
                             dispatch({type: "errorGetAllQuizItems", message: response.message});
@@ -339,20 +341,25 @@ export function approveTeam(quizID,teamID){
     console.log(quizID,teamID);
     return (dispatch) => {
         quizMasterAPI.approveTeam(quizID, teamID, (err, response) => {
+            console.log(response);
             if (err) {
-                dispatch({type: 'errorTeamApprove', success: false, message: err});
+                dispatch({type: 'errorTeamApprove', success: false, message: response.message});
+                console.log("test1",response.status, response.message);
             } else {
+                console.log(response.status);
                 if (response.status >= minerrStatuscode) {
-                    dispatch({type: "errorGetAllQuestionsItems", message: response.message});
+                    console.log(response.status, response.message);
+                    dispatch({type: "errorTeamApprove", message: response.message});
                 }
                 else {
                     dispatch({type: 'succesTeamApprove', success: true, teams: response});
                     quizMasterAPI.getTeams(quizID, (err, response) => {
                         if (err) {
                             dispatch({type: 'errorGetTeams', success: false, message: err});
+                            console.log("test2",response.status, response.message);
                         } else {
                             if (response.status >= minerrStatuscode) {
-                                dispatch({type: "errorGetAllQuestionsItems", message: response.message});
+                                dispatch({type: "errorTeamApprove", message: response.message});
                             }
                             else {
                                 websockett.sendJSON({messageType: "TeamApplianceJudged", teamId: teamID, accepted: true});
@@ -401,7 +408,7 @@ export function AddQuiz(ID){
                     //todo de andere functie aanroepen
                     quizMasterAPI.getQuiz(ID, (err, response) => {
                         if (err) {
-                            dispatch({type: 'errorGetAllQuizItems', message: " The quiz can't be show try again"});
+                            dispatch({type: 'errorGetAllQuizItems', message: err});
                         } else {
                             if (response.status >= minerrStatuscode) {
                                 dispatch({type: "errorGetAllQuizItems", message: response.message});
@@ -417,9 +424,9 @@ export function AddQuiz(ID){
     };
 }
 
-export function addQuestion(quizID, roundNumber, questionID){
+export function addQuestion(quizID, roundNumber, question){
     return (dispatch) => {
-        quizMasterAPI.addQuestion(quizID, roundNumber,questionID, (err, response) => {
+        quizMasterAPI.addQuestion(quizID, roundNumber,question._id, (err, response) => {
             if(err) {
                 dispatch({ type: 'errorSaveQuestions', success:false, message: err });
             } else {
@@ -427,8 +434,8 @@ export function addQuestion(quizID, roundNumber, questionID){
                     dispatch({type: "errorSaveQuestions", message: response.message});
                 }
                 else {
-                    websockett.sendJSON({messageType: "QuestionStarted", quizId: quizID, questionNumber: response.questionNumber, roundNumber: roundNumber, questionId: questionID});
-                    dispatch({type: 'successSaveQuestion', success: true, questionNumber: response.questionNumber, response});
+                    websockett.sendJSON({messageType: "QuestionStarted", quizId: quizID, questionNumber: response.questionNumber, roundNumber: roundNumber, questionId: question._id});
+                    dispatch({type: 'successSaveQuestion', success: true, questionNumber: response.questionNumber, item: question});
                     dispatch({
                         type: 'goToClosePage',
                         success: true,
@@ -499,10 +506,13 @@ function questionsReducer(state = questionState, action) {
             return copyAndUpdateObj(state, update);
         }
         case 'successSaveQuestion':{
+            console.log(action.item);
             let update = {
                 'message': '',
-                'items': action.questionNumber
+                'items': action.questionNumber,
+                'recentQuestion': action.item
             };
+            console.log(copyAndUpdateObj(state, update))
             return copyAndUpdateObj(state, update);
         }
         case 'errorGetAllQuestionsItems':{
