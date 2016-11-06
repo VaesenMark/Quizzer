@@ -34,7 +34,8 @@ export default class Websocket extends React.Component {
                         break;
                     case "QuestionStarted":
                         if (message.quizId == store.getState().base.quizId) {
-                                me.props.questionStarted(message.questionId, message.roundNumber, message.questionNumber);
+                            console.log('suc');
+                                me.props.questionStarted(message.questionNumber, message.roundNumber);
                         }
                         break;
                     case "AnswerJudged":
@@ -66,7 +67,7 @@ function mapDispatchToProps(dispatch) {
     return {
         applianceAccepted: () => dispatch(applianceAcceptedAction()),
         applianceDenied: () => dispatch(applianceDeniedAction()),
-        questionStarted: () => dispatch(questionStartedAction()),
+        questionStarted: (questionNumber, roundNumber) => dispatch(questionStartedAction(questionNumber, roundNumber)),
         answerJudged: () => dispatch(answerJudgedAction())
     }
 }

@@ -30,8 +30,10 @@ class LoginUI extends React.Component {
     render() {
         return (
             <div>
-                Password:
+                <h2>Login</h2>
+                Quiz password:
                 <input type="text" id="password" value={this.props.password} onChange={this.updatePassword.bind(this)} />
+                <br/>
                 TeamName:
                 <input type="text" id="teamname" value={this.props.teamname} onChange={this.updateTeamname.bind(this)} />
                 <br/>

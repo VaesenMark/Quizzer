@@ -53,10 +53,12 @@ function baseReducer(state = baseState, action) {
             return update(state, changes);
         }
         case 'getQuestionSuccess': {
+            console.log('action',action);
             let changes = {
-                questionId: {$set: action.questionId},
-                roundNumber: {$set: action.roundNumber},
-                questionNumber: {$set: action.questionNumber}
+                question: {$set: action.result.question},
+                roundNumber: {$set: action.result.roundNumber},
+                questionNumber: {$set: action.result.questionNumber},
+                currentScreen: {$set: 3},
             };
 
             return update(state, changes);
@@ -176,14 +178,16 @@ export function submitAnswerAction(answer) {
         });
     };
 }
-export function questionStartedAction(questionId, roundNumber, questionNumber) {
+export function questionStartedAction(questionNumber, roundNumber) {
     return (dispatch) => {
-        teamAppAPI.getQuestion(questionId, function(err, result) {
+        console.log('ques1',questionNumber);
+        teamAppAPI.getQuestion(questionNumber, function(err, result) {
             const question = result.question;
-            let obj = {questionId: questionId, question: question, roundNumber: roundNumber, questionNumber: questionNumber};
+            let obj = {questionNumber: questionNumber, question: question, roundNumber: roundNumber};
             if(err) {
                 dispatch({ type: 'getQuestionFailed', result: "Something went wrong" });
             } else {
+                console.log('bla');
                 dispatch({ type: 'getQuestionSuccess', result: obj });
             }
         });

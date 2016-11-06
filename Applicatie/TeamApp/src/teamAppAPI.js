@@ -54,9 +54,10 @@ let teamAppAPI = {
             })
 
     },
-    getQuestion(questionId, callback) {
+    getQuestion(questionNumber, callback) {
+        console.log('ques2',questionNumber);
         request
-            .get(`http://localhost:3000/question/${questionId}`)
+            .get(`http://localhost:3000/question/${questionNumber}`)
             // .set('Content-Type', 'application/json')
             .end( (err,response) => {
                 console.log('err opvragen question', err);

@@ -22,7 +22,14 @@ class QuestionInputUI extends React.Component {
     render() {
         return (
             <div>
-                Question {this.props.questionNumber}: {this.props.question}
+                <h2>Answer this question</h2>
+                <br/>
+                Question {this.props.questionNumber}/12
+                <br/>
+                {this.props.question}
+                <br/>
+                <br/>
+                Your answer:
                 <br/>
                 <input type="text" id="answer" value={this.props.answer} onChange={this.updateAnswer.bind(this)} />
                 <br/>

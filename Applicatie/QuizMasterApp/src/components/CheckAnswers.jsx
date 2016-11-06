@@ -16,7 +16,7 @@ class CheckAnswersUI extends React.Component {
    render() {
        let theItems = [];
        if (this.props.answers.length > 1) {
-
+            console.log('hoi',this.props.answers);
        }
        theItems=<PlayedQuestionItem item={null}
                                key = {1}

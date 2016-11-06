@@ -10,7 +10,7 @@ const MainState = {
     currentPage: 1,
     quizItem: '',
     categoryItem: '',
-    questionItem: '',
+    questionItem: ''
 }
 
 const LoginState = {
@@ -50,6 +50,52 @@ const teamState = {
     message:'',
 }
 
+// Websocket functions
+export function newAnswerAvailable(quizID, roundNumber, questionNumber){
+    console.log('11');
+    return (dispatch) => {
+        quizMasterAPI.getPlayedQuestionsAnswers(quizID, roundNumber, questionNumber, (err, response) => {
+            console.log('22');
+            if(err) {
+                console.log('33');
+                console.log('Error getting answers');
+            }
+            else {
+                console.log('44');
+                if(response.status >= minerrStatuscode){
+                    console.log('55');
+                    console.log('Error getting answers');
+                }
+                else {
+                    console.log('66');
+                    console.log('response',response);
+                    dispatch({type: "succesPlayedQuestions", answers: response});
+                }
+            }
+        });
+    }
+}
+
+export function newTeamApplianceAvailable(quizId){
+    console.log('1111');
+    return (dispatch) => {
+        quizMasterAPI.getTeams(quizId, (err, response) => {
+            if(err) {
+                dispatch({ type: 'errorGetTeams', success:false, message: err });
+            } else {
+                if(response.status >= minerrStatuscode){
+                    dispatch({type: "errorGetTeams", message: response.message});
+                }
+                else{
+                    dispatch({ type: 'succesGetTeams', success:true, teams: response });
+                }
+            }
+        });
+    };
+}
+
+
+// Normal functions
 export function closeQuestion(quizID, roundID, roundNumber){
     return (dispatch) => {
         quizMasterAPI.getPlayedQuestionsAnswers(quizID, roundID, roundNumber, (err, response) => {
@@ -479,7 +525,7 @@ function PlayedQuestionReducer(state = playedQuestionsState, action) {
         case 'succesPlayedQuestions': {
             let update = {
                 'message': '',
-                'answers': action.answers
+                'answers': action.answers.answers
             };
             return copyAndUpdateObj(state, update);
         }
@@ -544,6 +590,13 @@ function headReducer(state = MainState, action) {
                 'currentPage': 2,
                 'quizMasterID': action.id
 
+            };
+            return copyAndUpdateObj(state, update);
+
+        }
+        case 'saveSelectedQuizId': {
+            let update = {
+                'quizId': action.quizId
             };
             return copyAndUpdateObj(state, update);
 

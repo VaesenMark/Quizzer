@@ -145,8 +145,9 @@ app.put('/quiz/:quizID/team/:teamID', function(req, res, next) {
                             res.json({message: err})
                         }
                         else {
+                            teamApplianceJudged(team._id,team.approved);
                             res.status(200);
-                            res.json({message: "This is a wrong team by the wrong quiz"});
+                            res.json({message: "Team accepted"});
                         }
                     });
                 }
@@ -486,6 +487,7 @@ app.get('/quiz/:quizID/categories', function(req, res, next) {
                                     })
                                 }
                             });
+
                             let rounds = quiz.rounds;
                             rounds.forEach(function (round) {
                                 notUsedCategories.push(round.categoryID)
@@ -785,8 +787,9 @@ app.post('/quiz/:quizId/round/:roundNumber/question/:questionNumber/teamanswer/:
                             if (err) {
                                 throw new Error(err);
                             }
-                            // TODO notify quizmaster
-                            res.json({message: "Question inserted"});
+
+                            answerSubmitted(quiz._id, req.params.roundNumber, req.params.questionNumber);
+                            res.json({message: "Answer submitted"});
                         }
                         catch(exception) {
                             console.log(exception);
@@ -942,14 +945,9 @@ app.post('/team/login', function(req, res, next) {
                                         if (err) {
                                             throw new Error(err);
                                         }
-                                        req.session.teamId = team._id;
-                                        req.session.quizId = quiz._id;
-                                        // req.session.save(req.session.quizId);
-                                        console.log('quizzz', quiz._id);
-                                        // console.log('teammm', team._id);
-                                        // newTeamAppliance(quiz._id);
-                                        // console.log('ses1: ', req.session.teamId);
-                                        //TODO test notify quizmaster
+                                        // req.session.teamId = team._id;
+                                        // req.session.quizId = quiz._id;
+                                        newTeamAppliance(quiz._id);
                                         console.log('aaaaaaa');
 
 
@@ -1071,6 +1069,7 @@ app.put('/team/:teamId', function(req, res, next) {
 
 // Get question
 app.get('/question/:questionId', function(req, res, next) {
+    console.log('1');
     try {
         const Question = mongoose.model('Question');
         Question.findOne(
@@ -1078,6 +1077,7 @@ app.get('/question/:questionId', function(req, res, next) {
                 _id: req.params.questionId
             },
             function(err, question) {
+                console.log('2',question);
                 try {
                     if (err) {
                         throw new Error(err);
@@ -1235,25 +1235,13 @@ app.get('/scoreboard/scoreboardAnswers', function(req, res, next) {
 
 
 function newTeamAppliance(quizId) {
-    // Notify quizmaster to get new list of team appliances
-    // for(let client of theWebSocketServer.clients) {
-    //     client.sendJSON({
-    //         messageType: "NewTeamApplianceMade",
-    //         quizId: quizId
-    //     });
-    // }
     for(let client of wss.clients) {
-        // client.sendJSON({
-        //     messageType: "NewTeamApplianceMade",
-        //     quizId: quizId
-        // });
-        sessionParser(client.upgradeReq, {}, function(){
-            console.log("kuuuuuuuuuuuuuuut:");
-            var sess = client.upgradeReq.session;
-            console.log(sess);
+        console.log('NewTeamAppliance');
+        client.sendJSON({
+            messageType: "NewTeamAppliance",
+            quizId: quizId
         });
     }
-
 }
 
 function teamApplianceJudged(teamId, accepted) {
@@ -1269,23 +1257,29 @@ function teamApplianceJudged(teamId, accepted) {
     }
 }
 
-function roundStarted(roundNumber, quizId) {
+function questionStarted(questionNumber, roundNumber, quizId) {
+    console.log('eeeeeyyyyyy2',quizId);
     // Nofity team to go to first question
-    for(let client of expressWs.getWss().clients) {
-        if(client.upgradeReq.session.teamId && client.upgradeReq.session.quizId == quizId) {
-            client.send({message: "RoundStarted", roundNumber: roundNumber});
-        }
+    for(let client of wss.clients) {
+        client.sendJSON({
+            messageType: "QuestionStarted",
+            quizId: quizId,
+            questionNumber: questionNumber,
+            roundNumber: roundNumber
+        });
     }
 }
 
-function answerSubmitted(quizId) {
+function answerSubmitted(quizId, roundNumber, questionNumber) {
     console.log('wat');
     // Nofity quizmaster to retreive all new answers
-    for(let client of expressWs.getWss().clients) {
-        console.log('asdfasdf');
-        if(client.upgradeReq.session.quizmasterId && client.upgradeReq.session.quizId == quizId) {
-            client.send({message: "RetreiveAllAnswers"});
-        }
+    for(let client of wss.clients) {
+        client.sendJSON({
+            messageType: "AnswerSubmitted",
+            quizId: quizId,
+            roundNumber: roundNumber,
+            questionNumber: questionNumber
+        });
     }
 }
 
@@ -1298,17 +1292,17 @@ function questionClosed(quizId, questionNumber) {
     }
 }
 
-function questionStarted(quizId, questionNumber, questionId) {
-    // Notify team of started question
-    for(let client of wss.clients) {
-        client.sendJSON({
-            messageType: "QuestionStarted",
-            quiId: quizId,
-            questionId: questionId,
-            questionNumber, questionNumber
-        });
-    }
-}
+// function questionStarted(quizId, questionNumber, questionId) {
+//     // Notify team of started question
+//     for(let client of wss.clients) {
+//         client.sendJSON({
+//             messageType: "QuestionStarted",
+//             quiId: quizId,
+//             questionId: questionId,
+//             questionNumber, questionNumber
+//         });
+//     }
+// }
 
 function answerJudged(teamId, questionId, accepted) {
     // Notify team of judged answer
