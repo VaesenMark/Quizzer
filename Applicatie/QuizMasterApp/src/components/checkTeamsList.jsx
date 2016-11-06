@@ -32,7 +32,7 @@ class CheckTeamsListUI extends React.Component {
         console.log("items12", theItems, this.props.teams.length);
 
         return (<div>
-                <h1>test</h1>
+                <h1>{this.props.quiz.password}</h1>
 
                 <button id="markAsSeen" onClick={this.startQuiz.bind(this)}>
                     Start quiz

@@ -131,11 +131,11 @@ export function loginAction(username, password) {
                 else {
                     dispatch({type: "loginSucces", id: response._id});
 
-                    quizMasterAPI.getQuiz(response._id, (err, items) => {
+                    quizMasterAPI.getQuiz(response._id, (err, response) => {
                         if (err) {
                             dispatch({type: 'errorGetAllQuizItems', message: " The quiz can't be show try again"});
                         } else {
-                            dispatch({type: 'successGetAllQuizItems', success: true, items});
+                            dispatch({type: 'successGetAllQuizItems', success: true, items: response});
                         }
                     });
                 }
@@ -143,6 +143,28 @@ export function loginAction(username, password) {
         });
     }
 }
+
+export function closeQuiz(quizID, quizMasterID){
+    return (dispatch) => {
+
+        quizMasterAPI.closeQuiz(quizID, quizMasterID, (err, response)=> {
+            if (err) {
+                dispatch({type: 'errorCloseQuiz', message: " The quiz can't be closed"});
+            }
+            else {
+                dispatch({type: 'succesCloseQuiz', message: " The quiz is be closed"});
+                quizMasterAPI.getQuiz(quizMasterID, (err, response) => {
+                    if (err) {
+                        dispatch({type: 'errorGetAllQuizItems', message: " The quiz can't be show try again"});
+                    } else {
+                        dispatch({type: 'successGetAllQuizItems', success: true, items: response});
+                    }
+                });
+            }
+        })
+    }
+}
+
 
 export function editUsername(username) {
     return {type: "editUserName", username: username}
@@ -350,7 +372,7 @@ export function AddQuiz(ID){
                 }
                 else {
                     //todo de andere functie aanroepen
-                    quizMasterAPI.getQuiz(ID, (err, items) => {
+                    quizMasterAPI.getQuiz(ID, (err, response) => {
                         if (err) {
                             dispatch({type: 'errorGetAllQuizItems', message: " The quiz can't be show try again"});
                         } else {
@@ -358,7 +380,7 @@ export function AddQuiz(ID){
                                 dispatch({type: "errorGetAllQuizItems", message: response.message});
                             }
                             else {
-                                dispatch({type: 'successGetAllQuizItems', success: true, items});
+                                dispatch({type: 'successGetAllQuizItems', success: true, items: response});
                             }
                         }
                     });
@@ -398,6 +420,18 @@ export function addQuestion(quizID, roundNumber, questionID){
 
 function quizReducer(state = quizState, action) {
     switch (action.type) {
+        case 'errorCloseQuiz':{
+            let update = {
+                'message': action.message
+            };
+            return copyAndUpdateObj(state, update);
+        }
+        case 'succesCloseQuiz':{
+            let update = {
+                'message': action.message
+            };
+            return copyAndUpdateObj(state, update);
+        }
         case 'errorAddQuizItems':{
             let update = {
                 'message': action.message

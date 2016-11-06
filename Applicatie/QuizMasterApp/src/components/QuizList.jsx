@@ -28,7 +28,9 @@ class ChoseQuizUI extends React.Component {
       return (
           <div>
               {this.props.message}
+              <div id="QuizList" >
               {theItems}
+              </div>
               <button id="addQuiz" onClick={this.addQuiz.bind(this)}>
                   addQuiz
 

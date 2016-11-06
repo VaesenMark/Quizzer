@@ -14,11 +14,13 @@ class CategorieItemUI extends React.Component {
          this.props.addRound(this.props.quiz._id, this.props.item)
       }
       return  (
-          <div>
+          <div className="CategoryItem">
              {this.props.message}
-             <span onClick={clickHandler}>
+
+             <button onClick={clickHandler}>
+             select
+             </button>
              {this.props.name}
-             </span>
           </div>
       )
    }

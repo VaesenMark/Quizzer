@@ -90,6 +90,15 @@ let quizMasterAPI = {
                 console.log('tttt2',response);
                 callback(err, response.body);
             })
+    },
+    closeQuiz(quizID, quizMasterID, callback){
+        request
+            .put('http://localhost:3000/quiz/close')
+            .send({quizID: quizID, quizMasterID: quizMasterID })
+            .end( (err,response) => {
+                console.log(response, quizMasterID);
+                callback(err, response.body);
+            })
     }
 };
 
