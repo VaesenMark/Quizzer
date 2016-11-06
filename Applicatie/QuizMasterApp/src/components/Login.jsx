@@ -49,9 +49,9 @@ function mapDispatchToProps(dispatch) {
 
 function mapStateToProps(state) {
    return {
-      username: state.login.username,
-      password: state.login.password,
-      loginMessage: state.login.error
+      username: state.LoginState.username,
+      password: state.LoginState.password,
+      message: state.LoginState.message
    }
 }
 

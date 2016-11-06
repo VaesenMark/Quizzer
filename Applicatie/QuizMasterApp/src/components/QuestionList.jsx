@@ -22,6 +22,7 @@ class QuestionListUI extends React.Component {
       }
       return (
           <div>
+             {this.props.message}
              {theItems}
           </div>
       );
@@ -35,8 +36,9 @@ function mapDispatchToProps(dispatch) {
 
 function mapStateToProps(state) {
    return {
-      items: state.questions.items,
-      quiz: state.headState.quizItem,
+      items: state.QuestionsState.items,
+      quiz: state.MainState.quizItem,
+      message: state.QuestionsState.message
    }
 }
 

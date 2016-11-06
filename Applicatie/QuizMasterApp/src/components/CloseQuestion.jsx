@@ -6,7 +6,7 @@ import {closeQuestion} from '../reducers';
 class CloseQuestionUI extends React.Component {
 
    closeQuestion() {
-      this.props.docloseQuestion()
+      this.props.docloseQuestion(this.props.quiz._id, this.props.roundNumber, this.props.questionNumber)
    }
 
    render() {
@@ -24,14 +24,17 @@ class CloseQuestionUI extends React.Component {
 
 function mapDispatchToProps(dispatch) {
    return {
-      docloseQuestion: () => dispatch(closeQuestion()),
+      docloseQuestion: (quizID, roundID, roundNumber) => dispatch(closeQuestion(quizID, roundID, roundNumber)),
       }
 }
 
 
 function mapStateToProps(state) {
    return {
-      questionID: state.questions.questionID
+       quiz: state.MainState.quizItem,
+       roundNumber:  state.QuestionsState.roundNumber,
+       questionNumber: state.QuestionsState.questionNumber,
+       message: state.PlayedQuestionState.message
    }
 }
 

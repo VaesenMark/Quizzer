@@ -1,7 +1,7 @@
 import React from 'react'
 import * as ReactRedux from 'react-redux';
 import {startQuiz} from '../reducers';
-import {checkTeamsItem} from './checkTeamsItem'
+import {CheckTeamsItem} from './checkTeamsItem'
 
 class CheckTeamsListUI extends React.Component {
     startQuiz(){
@@ -12,21 +12,32 @@ class CheckTeamsListUI extends React.Component {
         let theItems = [];
         console.log("items", this.props.teams);
         if (this.props.teams.length>0) {
+            this.props.teams.forEach(function(team){
+                console.log(team);
+                console.log(team.approved);
+            });
             theItems = this.props.teams.map((itm, idx) =>
-                <checkTeamsItem
+
+                <CheckTeamsItem
+                    item = {itm}
                     key = {itm._id}
-                    name = {itm.categoryName}
+                    name = {itm.teamName}
+                    approved = {itm.approved}
+
                 />
             )
+
         }
+
         console.log("items12", theItems, this.props.teams.length);
 
         return (<div>
                 <h1>test</h1>
-                {theItems}
+
                 <button id="markAsSeen" onClick={this.startQuiz.bind(this)}>
                     Start quiz
                 </button>
+                {theItems}
             </div>
         );
     }
@@ -41,8 +52,9 @@ function mapDispatchToProps(dispatch) {
 
 function mapStateToProps(state) {
     return {
-        quiz: state.headState.quizItem,
-        teams : state.team.teams
+        quiz: state.MainState.quizItem,
+        teams : state.TeamState.teams,
+        message: state.RoundState.message
     }
 }
 

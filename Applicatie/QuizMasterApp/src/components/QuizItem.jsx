@@ -15,6 +15,7 @@ class QuizItemUI extends React.Component {
       }
       return  (
           <div>
+             {this.props.message}
              <span onClick={clickHandler}>
              {this.props.status}  {this.props.password}
              </span>
@@ -32,6 +33,7 @@ function mapDispatchToProps(dispatch) {
 
 function mapStateToProps(state) {
    return {
+      message: state.TeamState.message
    }
 }
 
