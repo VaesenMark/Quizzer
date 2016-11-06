@@ -1,6 +1,6 @@
 import React from 'react'
 import * as ReactRedux from 'react-redux';
-import {approveAnswerTeam} from '../reducers';
+import {judgeAnswerAction} from '../reducers';
 //TODO binnengekomen calls met error goed afhandelen
 
 class PlayedQuestionItemsUI extends React.Component {
@@ -8,18 +8,29 @@ class PlayedQuestionItemsUI extends React.Component {
         super(props);
     }
 
+    acceptAnswer() {
+        this.props.judgeAnswer(this.props.teamId, true)
+    }
+
     render() {
-        let clickHandler = (evt) => {
-            evt.preventDefault();
-            console.log(this.props.quiz._id);
-            this.props.approveTeam(this.props.quiz._id, this.props.roundNumber, this.props.questionNumber, this.props.teamID)
-        }
+        // let clickHandler = (evt) => {
+        //     evt.preventDefault();
+        //     console.log(this.props.quiz._id);
+        //     this.props.approveTeam(this.props.quiz._id, this.props.roundNumber, this.props.questionNumber, this.props.teamId)
+        // };
+
         return  (
             <div>
+                Team: {this.props.teamId}
+                <br/>
+                Answer: {this.props.answer}
+                <br/>
+                { this.props.judgeAble ? <button onClick={this.acceptAnswer.bind(this)}>Accept</button> : '' }
+
                 {this.props.message}
-                <span onClick={clickHandler}>
-                 {this.props.answer}
-                 </span>
+                {/*<span onClick={clickHandler}>*/}
+                 {/*{this.props.answer}*/}
+                 {/*</span>*/}
             </div>
         )
     }
@@ -28,7 +39,8 @@ class PlayedQuestionItemsUI extends React.Component {
 
 function mapDispatchToProps(dispatch) {
     return {
-        approveTeam: (quizID, roundNumber,questionNumber, teamID) => dispatch(approveAnswerTeam(quizID, roundNumber,questionNumber, teamID ))
+        judgeAnswer: (teamId, accepted) => dispatch(judgeAnswerAction(teamId, accepted)),
+        // approveTeam: (quizID, roundNumber,questionNumber, teamID) => dispatch(approveAnswerTeam(quizID, roundNumber,questionNumber, teamID ))
     }
 }
 

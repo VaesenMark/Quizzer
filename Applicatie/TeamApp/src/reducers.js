@@ -15,6 +15,10 @@ export function tempAcceptApplianceAction() {
     return {type: "applianceAccepted"};
 }
 
+export function questionClosedAction() {
+    return {type: "questionClosed"};
+}
+
 
 
 // Reducer:
@@ -59,6 +63,14 @@ function baseReducer(state = baseState, action) {
                 roundNumber: {$set: action.result.roundNumber},
                 questionNumber: {$set: action.result.questionNumber},
                 currentScreen: {$set: 3},
+            };
+
+            return update(state, changes);
+        }
+        case 'questionClosed': {
+            console.log('action',action);
+            let changes = {
+                currentScreen: {$set: 4}
             };
 
             return update(state, changes);
@@ -193,8 +205,9 @@ export function questionStartedAction(questionNumber, roundNumber) {
         });
     };
 }
-export function answerJudgedAction(accepted) {
-    return {type: "accepted", result: accepted};
+export function AnswerAcceptedAction() {
+    console.log('zipzip');
+    return {type: "AnswerAccepted"};
 }
 
 
@@ -236,9 +249,9 @@ function answerInputReducer(state = initialAnswerInputState, action) {
 
             return update(state, changes);
         }
-        case 'answerJudgedAction': {
+        case 'AnswerAccepted': {
             let changes = {
-                accepted: {$set: action.result}
+                accepted: {$set: true}
             };
 
             return update(state, changes);

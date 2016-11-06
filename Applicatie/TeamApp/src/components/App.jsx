@@ -28,7 +28,13 @@ class AppUI extends React.Component {
                 <div>
                     <QuestionInput/>
                 </div>
-        } else {
+        } else if (this.props.currentScreen == 4) {
+            screenContent =
+                <div>
+                    <AnswerJudgement/>
+                </div>
+        }
+        else {
             screenContent =
                 <div>
                     <AnswerJudgement/>

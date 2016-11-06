@@ -30,3 +30,9 @@ websocket.onmessage = function(eventInfo) {
             // console.log("Unknown messageType:", message);
     }
 };
+
+websocket.sendJSON = function(data) {
+    this.send(JSON.stringify(data));
+};
+
+export const websockett = websocket;

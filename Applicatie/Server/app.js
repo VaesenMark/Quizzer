@@ -61,6 +61,33 @@ function acceptOrRefuseConnection(info) {
 wss.on("connection", function connection(req) {
     console.log('connected');
 
+    req.on('message', function(msg) {
+        console.log("MESSAGE", msg);
+        msg = JSON.parse(msg);
+        switch(msg.messageType) {
+            case "CloseQuestion":
+                console.log('schaap');
+                for(let client of wss.clients) {
+                    client.sendJSON({
+                        messageType: "QuestionClosed",
+                        quizId: msg.quizId
+                    });
+                }
+                break;
+            case "AnswerAccepted":
+                console.log('schaap2');
+                for(let client of wss.clients) {
+                    client.sendJSON({
+                        messageType: "AnswerAccepted",
+                        teamId: msg.teamId
+                    });
+                }
+                break;
+            default:
+
+        }
+    });
+
     req.sendJSON = function(data) {
         var jsonStr = JSON.stringify(data);
         this.send(jsonStr);
@@ -419,6 +446,7 @@ app.post('/quiz/:quizId/round/:roundNumber/question', function(req, res, next){
                                     res.json({message: err})
                                 }
                                 else {
+                                    questionStarted(questionNumber, req.params.roundNumber, req.params.quizId);
                                     res.status(200);
                                     res.json({
                                         message: "There is a question add to quiz/round " + req.params.roundNumber,
@@ -517,6 +545,7 @@ app.get('/quiz/:quizID/categories', function(req, res, next) {
 
 //Get Round Question
 app.get('/quiz/:quizId/round/:roundNumber/questions', function(req, res, next){
+    console.log('ttttttttttttt');
     try {
         const Quiz = mongoose.model('Quiz');
         const Category = mongoose.model('Category');
@@ -535,9 +564,10 @@ app.get('/quiz/:quizId/round/:roundNumber/questions', function(req, res, next){
                         res.json({message:err});
                     }
                     else {
+                        console.log('category',category);
                         Question.find({category: category.categoryName}, function (err, questions) {
                             if (err) {
-                                res.status(400)
+                                res.status(400);
                                 res.json({message: err});
                             }
                             else {
@@ -545,17 +575,20 @@ app.get('/quiz/:quizId/round/:roundNumber/questions', function(req, res, next){
                                 var questionsID =[];
                                 playedQuestions.forEach(function(playedQuestion){
                                     questionsID.push(playedQuestion.questionID)
-                                })
+                                });
                                 var newQuestions=[];
+                                console.log('questions',questions);
                                 questions.forEach(function(question) {
-                                    let id = question._id
+                                    let id = question._id;
                                     if (!questionsID.includes(id)) {
                                         newQuestions.push(question);
                                     }
                                     else{
                                         //todo else?
+                                        console.log('sadasdf');
                                     }
                                 });
+                                console.log('newQuestion',newQuestions);
                                 quiz.save(function (err, char) {
                                     if (err) {
                                         res.status(400);
@@ -591,10 +624,12 @@ app.get('/quiz/:quizId/round/:roundNumber/questions', function(req, res, next){
 
 //Get Quiz Categories that aren't play
 app.get('/quiz/:quizId/categories', function(req, res, next){
+    // TODO ONGEBRUIKTE URL?
     try {
         const Quiz = mongoose.model('Quiz');
         const Category = mongoose.model('Category');
         Category.find({}, function (err, categorie) {
+            console.log('zut',categorie);
             if (err) {
                 res.status(400)
                 res.json({message:err});
@@ -1284,15 +1319,6 @@ function answerSubmitted(quizId, roundNumber, questionNumber) {
             roundNumber: roundNumber,
             questionNumber: questionNumber
         });
-    }
-}
-
-function questionClosed(quizId, questionNumber) {
-    // Notify team of closed question
-    for(let client of expressWs.getWss().clients) {
-        if(client.upgradeReq.session.teamId && client.upgradeReq.session.quizId == quizId) {
-            client.send({message: "QuestionClosed"});
-        }
     }
 }
 

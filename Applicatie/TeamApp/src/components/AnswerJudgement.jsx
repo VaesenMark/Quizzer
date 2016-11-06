@@ -20,7 +20,7 @@ class AnswerJudgementUI extends React.Component {
                 <br/>
                 Your answer: {this.props.answer}
                 <br/>
-                Answer accepted: {this.props.answer}
+                Answer accepted: {this.props.accepted == true ? 'YES' : ''}
             </div>
         );
     }
@@ -32,7 +32,7 @@ function mapStateToProps(state) {
         questionNumber: state.base.questionNumber,
         question: state.base.question,
         answer: state.answer.answer,
-        message: state.answer.accepted
+        accepted: state.answer.accepted
     }
 }
 

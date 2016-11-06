@@ -1,6 +1,7 @@
 import React from 'react'
 import * as ReactRedux from 'react-redux';
 import {closeQuestion} from '../reducers';
+import {PlayedQuestionItem} from './playedQuestionItems';
 
 
 class CloseQuestionUI extends React.Component {
@@ -10,9 +11,25 @@ class CloseQuestionUI extends React.Component {
    }
 
    render() {
+       let theItems = [];
+       console.log('render');
+       console.log(this.props.playedQuestions);
+       if (this.props.playedQuestions.length>=1) {
+           theItems = this.props.playedQuestions.map((itm, idx) =>
+               <PlayedQuestionItem
+                             key = {itm._id}
+                             answer = {itm.answer}
+                             judgeAble = {false}
+                               teamId = {itm.teamID}
+                             approved = {itm.approved}
+               />
+           )
+       }
+
       return (<div>
-             <h1>test</h1>
+             <h1>Submitted answers</h1>
              {this.props.questionID}
+              {theItems}
              <button id="markAsSeen" onClick={this.closeQuestion.bind(this)}>
                 close question
              </button>
@@ -34,7 +51,8 @@ function mapStateToProps(state) {
        quiz: state.MainState.quizItem,
        roundNumber:  state.QuestionsState.roundNumber,
        questionNumber: state.QuestionsState.questionNumber,
-       message: state.PlayedQuestionState.message
+       message: state.PlayedQuestionState.message,
+       playedQuestions: state.PlayedQuestionState.answers
    }
 }
 

@@ -17,10 +17,36 @@ const Question = mongoose.model('Question');
 const Category = mongoose.model('Category');
 
 
-var category = new Category({ categoryName: 'Films' });
+var category = new Category({ categoryName: 'Film and TV' });
 
 
 category.save(function (err, char) {
+    if (err) {
+        console.log(err);
+        mongoose.connection.close();
+    }
+    else {
+        mongoose.connection.close();
+    }
+});
+
+var category2 = new Category({ categoryName: 'Art and Literature' });
+
+
+category2.save(function (err, char) {
+    if (err) {
+        console.log(err);
+        mongoose.connection.close();
+    }
+    else {
+        mongoose.connection.close();
+    }
+});
+
+var category3 = new Category({ categoryName: 'General Knowledge' });
+
+
+category3.save(function (err, char) {
     if (err) {
         console.log(err);
         mongoose.connection.close();
@@ -64,60 +90,60 @@ quizmaster.save(function (err, char) {
 });
 
 
-const Quiz = mongoose.model('Quiz');
-
-
-var quiz = new Quiz({ password: 'asd1', quizMasterID: 1, status: "1"  });
-
-quiz.rounds.push({ roundNumber: 1, categoryID: 1 });
-// quiz.rounds.push({ roundNumber: 2, categoryID: 2 });
+// const Quiz = mongoose.model('Quiz');
 //
-quiz.rounds[0].playedQuestions.push({ questionNumber: 1, questionID: 1 });
+//
+// var quiz = new Quiz({ password: 'asd1', quizMasterID: 1, status: "1"  });
 
-// quiz.rounds[0].playedQuestions[0].teamAnswers.push({ teamID: 1, answer: 'Red', approved: false });
-
-quiz.save(function (err, char) {
-    if (err) {
-        console.log(err);
-        mongoose.connection.close();
-    }
-    else {
-        mongoose.connection.close();
-    }
-});
-
-
-
-
-
-const Team = mongoose.model('Team');
-
-
-var team = new Team({ teamName: 'Team Mark', roundPoints: 0, approved: false, quizID: 1 });
+// quiz.rounds.push({ roundNumber: 1, categoryID: 1 });
+// // quiz.rounds.push({ roundNumber: 2, categoryID: 2 });
+// //
+// quiz.rounds[0].playedQuestions.push({ questionNumber: 1, questionID: 1 });
+//
+// // quiz.rounds[0].playedQuestions[0].teamAnswers.push({ teamID: 1, answer: 'Red', approved: false });
+//
+// quiz.save(function (err, char) {
+//     if (err) {
+//         console.log(err);
+//         mongoose.connection.close();
+//     }
+//     else {
+//         mongoose.connection.close();
+//     }
+// });
 
 
-team.save(function (err, char) {
-    if (err) {
-        console.log(err);
-        mongoose.connection.close();
-    }
-    else {
-        mongoose.connection.close();
-    }
-});
-
-Team.login('asd1', function(err, data) {
-    if (err) {
-        console.log(err);
-        mongoose.connection.close();
-    }
-    else {
-        console.log(data);
-        mongoose.connection.close();
-    }
-});
 
 
+
+// const Team = mongoose.model('Team');
+//
+//
+// var team = new Team({ teamName: 'Team Mark', roundPoints: 0, approved: false, quizID: 1 });
+//
+//
+// team.save(function (err, char) {
+//     if (err) {
+//         console.log(err);
+//         mongoose.connection.close();
+//     }
+//     else {
+//         mongoose.connection.close();
+//     }
+// });
+//
+// Team.login('asd1', function(err, data) {
+//     if (err) {
+//         console.log(err);
+//         mongoose.connection.close();
+//     }
+//     else {
+//         console.log(data);
+//         mongoose.connection.close();
+//     }
+// });
+//
+//
 Question.create(questions,function(err){
     if(err) return console.log(err);
     console.log("gelukt questions zijn toegevoegd");

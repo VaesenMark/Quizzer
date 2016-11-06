@@ -3,7 +3,7 @@ import * as ReactRedux from 'react-redux';
 import {store} from '../index';
 
 import {
-    applianceDeniedAction, applianceAcceptedAction, questionStartedAction, answerJudgedAction
+    applianceDeniedAction, applianceAcceptedAction, questionStartedAction, AnswerAcceptedAction, questionClosedAction
 } from '../reducers';
 
 
@@ -38,10 +38,19 @@ export default class Websocket extends React.Component {
                                 me.props.questionStarted(message.questionNumber, message.roundNumber);
                         }
                         break;
-                    case "AnswerJudged":
-                        if (message.quizId == store.getState().base.quizId && message.teamId == store.getState().base.teamId) {
-                            me.props.answerJudged(message.quizId, message.teamId);
+                    case "AnswerAccepted":
+                        if (message.teamId == store.getState().base.teamId) {
+                            console.log('zipzip');
+                            me.props.AnswerAccepted();
                         }
+                        break;
+                    case "QuestionClosed":
+                        if (message.quizId == store.getState().base.quizId) {
+                            console.log('bbbbb');
+                            me.props.questionClosed();
+                        }
+                        console.log('aaaaa');
+                        console.log('quizId',message.quizId);
                         break;
                     default:
                         console.log("Unknown messageType:", message);
@@ -68,7 +77,8 @@ function mapDispatchToProps(dispatch) {
         applianceAccepted: () => dispatch(applianceAcceptedAction()),
         applianceDenied: () => dispatch(applianceDeniedAction()),
         questionStarted: (questionNumber, roundNumber) => dispatch(questionStartedAction(questionNumber, roundNumber)),
-        answerJudged: () => dispatch(answerJudgedAction())
+        AnswerAccepted: () => dispatch(AnswerAcceptedAction()),
+        questionClosed: () => dispatch(questionClosedAction())
     }
 }
 

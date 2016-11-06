@@ -3,6 +3,7 @@ import quizMasterAPI from './quizMasterAPI'
 // import initialFrontPageData from './frontPageData';
 // import initialItemStatuses from './itemStatuses';
 import update from 'immutability-helper';
+import {websockett} from './websocket'
 const minerrStatuscode = 400;
 
 const MainState = {
@@ -96,9 +97,9 @@ export function newTeamApplianceAvailable(quizId){
 
 
 // Normal functions
-export function closeQuestion(quizID, roundID, roundNumber){
+export function closeQuestion(quizID, roundNumber, questionNumber){
     return (dispatch) => {
-        quizMasterAPI.getPlayedQuestionsAnswers(quizID, roundID, roundNumber, (err, response) => {
+        quizMasterAPI.getPlayedQuestionsAnswers(quizID, roundNumber, questionNumber, (err, response) => {
             if(err) {
                 dispatch({type: "errorPlayedQuestion", message: err});
             }
@@ -107,6 +108,7 @@ export function closeQuestion(quizID, roundID, roundNumber){
                     dispatch({type: "errorPlayedQuestion", message: response.message});
                 }
                 else {
+                    websockett.sendJSON({messageType: "CloseQuestion", quizId: quizID});
                     dispatch({type: "succesPlayedQuestions", answers: response});
                     dispatch({type: "goToCheckPage"});
                 }
@@ -196,18 +198,22 @@ export function addRound(quizID, categoryID) {
 
     return (dispatch) => {
             quizMasterAPI.setnewRound(quizID, categoryID, (err, response) => {
+                console.log('nrnn',response);
                 if(err) {
                     dispatch({type: "errorSetNewRound", message: err});
                 } else {
+                    console.log('1');
                     if (response.status >= minerrStatuscode) {
                         dispatch({type: "errorSetNewRound", message: response.message});
                     }
                     else {
+                        console.log('2');
                         dispatch({type: "succesSetNewRound", roundNumber: response.roundNumber});
                         dispatch({type: "goToQuestions", cattegory: response});
 
                         quizMasterAPI.getQuestions(quizID, response.roundNumber, (err, items) => {
-
+                            console.log('3');
+                            console.log('3',items);
                             if (err) {
                                 dispatch({type: 'errorGetAllQuestionsItems', success: false, message: err});
                             } else {
@@ -271,7 +277,8 @@ export function getNextQuestion(quizID,roundID){
                 }
                 else {
                     dispatch({type: 'successGetAllQuestionsItems', success: true, items: response});
-                    dispatch({type: 'goToQuestions'})
+                    dispatch({type: 'goToQuestions'});
+                    dispatch({type: 'clearAnswers'});
                 }
             }
         });
@@ -309,16 +316,20 @@ export function approveTeam(quizID,teamID){
     }
 }
 
-export function approveAnswerTeam(quizID,roundNumber,questionNumber,teamID){
+export function judgeAnswerAction(teamId, accepted){
     return (dispatch) => {
-        quizMasterAPI.approveTeamAnswer(quizID, roundNumber, questionNumber, teamID, (err, response) => {
+        quizMasterAPI.approveTeamAnswer(teamId, (err, response) => {
             if (err) {
+                console.log('11111');
                 dispatch({type: 'errorTeamAnswerApprove', success: false, message: err});
             } else {
+                console.log('22222');
                 if (response.status >= minerrStatuscode) {
                     dispatch({type: "errorTeamAnswerApprove", message: response.message});
                 }
                 else {
+                    console.log('33333');
+                    websockett.sendJSON({messageType: "AnswerAccepted", teamId});
                     dispatch({type: 'successTeamAnswerApprove', success: true, response});
                 }
             }
@@ -526,6 +537,12 @@ function PlayedQuestionReducer(state = playedQuestionsState, action) {
             let update = {
                 'message': '',
                 'answers': action.answers.answers
+            };
+            return copyAndUpdateObj(state, update);
+        }
+        case 'clearAnswers': {
+            let update = {
+                'answers': []
             };
             return copyAndUpdateObj(state, update);
         }

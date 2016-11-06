@@ -1,4 +1,5 @@
 import request from 'superagent';
+import {store} from './index';
 
 let quizMasterAPI = {
     getLogin(username, password,callback) {
@@ -29,6 +30,7 @@ let quizMasterAPI = {
         request
             .get('http://localhost:3000/quiz/'+id+'/categories')
             .end( (err,response) => {
+                console.log('apie',response.body);
                 callback(err, response.body);
             })
     },
@@ -36,6 +38,7 @@ let quizMasterAPI = {
         request
             .get('http://localhost:3000/quiz/'+quizID+'/round/'+roundID+'/questions')
             .end( (err,response) => {
+                console.log('yyyp',response);
                 callback(err, response.body.message);
             })
     },
@@ -60,6 +63,7 @@ let quizMasterAPI = {
             .post('http://localhost:3000/quiz/'+quizID+'/round')
             .send({categoryID: category._id})
             .end( (err,response) => {
+                console.log('rnd', response);
                 callback(err, response.body);
             })
     },
@@ -78,10 +82,12 @@ let quizMasterAPI = {
                 callback(err, response.body);
             })
     },
-    approveTeamAnswer(quizID,roundNumber,questionNumber,teamID, callback){
+    approveTeamAnswer(teamId, callback){
         request
-            .put('http://localhost:3000/quiz/'+quizID+'/round/'+roundNumber+'/questionnumber/'+questionNumber+"/team/"+teamID)
+            .put(`http://localhost:3000/quiz/${store.getState().MainState.quizItem._id}/round/${store.getState().RoundState.roundNumber}/question/${store.getState().QuestionsState.questionNumber}/team/${teamId}`)
             .end( (err,response) => {
+                console.log('tttt',err);
+                console.log('tttt2',response);
                 callback(err, response.body);
             })
     }

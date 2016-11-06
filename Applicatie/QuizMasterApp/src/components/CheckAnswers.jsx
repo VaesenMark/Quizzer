@@ -15,14 +15,19 @@ class CheckAnswersUI extends React.Component {
 
    render() {
        let theItems = [];
-       if (this.props.answers.length > 1) {
-            console.log('hoi',this.props.answers);
+       console.log('render');
+       console.log(this.props.playedQuestions);
+       if (this.props.playedQuestions.length>=1) {
+           theItems = this.props.playedQuestions.map((itm, idx) =>
+               <PlayedQuestionItem item={itm}
+                                   key = {itm._id}
+                                   answer = {itm.answer}
+                                   judgeAble = {true}
+                                   teamId = {itm.teamID}
+               />
+           )
        }
-       theItems=<PlayedQuestionItem item={null}
-                               key = {1}
-                               answer = {"Goed"}
-                                    teamID = {1}
-       />
+
        var nextRound = <button id="markAsSeen" onClick={this.nextQuestion.bind(this)}>
            Next Question
        </button>;
@@ -32,12 +37,14 @@ class CheckAnswersUI extends React.Component {
            </button>
        }
       return (<div>
+              <h1>Judge answers</h1>
               {this.props.message}
              quizid: {this.props.quizID}
             roundnunmber:  {this.props.roundNumber}
              number:{this.props.questionNumber}
-              {nextRound}
+
               {theItems}
+              {nextRound}
           </div>
       );
    }
@@ -57,8 +64,8 @@ function mapStateToProps(state) {
        quiz: state.MainState.quizItem,
       roundNumber:  state.QuestionsState.roundNumber,
       questionNumber: state.QuestionsState.questionNumber,
-       answers: state.PlayedQuestionState.answers,
        message: state.PlayedQuestionState.message,
+       playedQuestions: state.PlayedQuestionState.answers
    }
 }
 

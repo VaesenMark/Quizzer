@@ -17,6 +17,7 @@ class QuestionListUI extends React.Component {
              <QuestionItem item={itm}
                    key = {itm._id}
                             question = {itm.question}
+                           closeable = {false}
              />
          )
       }
