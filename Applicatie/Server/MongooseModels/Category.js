@@ -12,5 +12,6 @@ categorySchema.plugin(autoIncrement.plugin, {
     model: 'Category',
     startAt: 1
 });
-mongoose.model('Category', categorySchema);
+
+module.exports = mongoose.model('Category', categorySchema);
 

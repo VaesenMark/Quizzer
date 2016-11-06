@@ -20,5 +20,5 @@ questionSchema.plugin(autoIncrement.plugin, {
     model: 'Question',
     startAt: 1
 });
-mongoose.model('Question', questionSchema);
+module.exports = mongoose.model('Question', questionSchema);
 

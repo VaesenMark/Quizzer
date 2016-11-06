@@ -78,4 +78,4 @@ quizSchema.plugin(autoIncrement.plugin, {
     model: 'Quiz',
     startAt: 1
 });
-mongoose.model('Quiz', quizSchema);
+module.exports = mongoose.model('Quiz', quizSchema);
