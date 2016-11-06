@@ -851,9 +851,13 @@ app.get('/quizmaster/:quizmasterID/quiz',  function(req, res, next){
                 res.status(500);
                 res.json({message: err})
             }
-            else {
+            else if (quiz.length>1) {
                 res.status(200);
                 res.json({message: quiz})
+            }
+            else{
+                res.status(400);
+                res.json({message: "Create a new quiz"});
             }
 
         });
@@ -1336,3 +1340,5 @@ server.listen( 3000,
     function() {
         console.log("The Server is lisening on port 3000.")
     });
+
+module.exports = app;

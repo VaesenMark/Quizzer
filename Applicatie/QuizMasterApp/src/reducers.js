@@ -128,6 +128,7 @@ export function goToCheckTeams(item) {
 
 export function startQuiz(item) {
     return (dispatch) => {
+        console.log(item);
         quizMasterAPI.getCategories(item._id, (err, response) => {
             if(err) {
 
@@ -137,8 +138,8 @@ export function startQuiz(item) {
                     dispatch({type: "errorGetCategoriesItems", message: response.message});
                 }
                 else {
-
-                    dispatch({type: 'succesGetCategoriesItems', success: true, response});
+                    console.log(response);
+                    dispatch({type: 'successGetCategoriesItems', success: true, items: response});
                     dispatch({type: "goToCategories", item: item});
                 }
             }
@@ -206,7 +207,7 @@ export function getNextRound(quiz){
                     dispatch({type: "errorGetCategoriesItems", message: response.message});
                 }
                 else {
-                    dispatch({type: 'succesGetCategoriesItems', success: true, response});
+                    dispatch({type: 'successGetCategoriesItems', success: true, items: response});
                     dispatch({type: "goToCategories", item: quiz});
                 }
             }
@@ -421,6 +422,7 @@ function roundReducer(state = roundState, action) {
             };
             return copyAndUpdateObj(state, update);
         }
+
         case 'successGetCategoriesItems':{
             let update = {
                 'message': '',
