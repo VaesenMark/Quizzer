@@ -12,6 +12,7 @@ class QuizSelectionItemUI extends React.Component {
     }
 
     quizSelected() {
+        console.log('zzz',this.props.quizId);
         this.props.quizSelected(this.props.quizId)
     }
 
@@ -33,7 +34,6 @@ class QuizSelectionItemUI extends React.Component {
 
 function mapStateToProps(state) {
     return {
-        quizId: state.quizId
     }
 }
 

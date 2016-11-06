@@ -60,11 +60,7 @@ function acceptOrRefuseConnection(info) {
 
 
 wss.on("connection", function connection(req) {
-    sessionParser(req.upgradeReq, {}, function(){
-        console.log("New websocket connection:");
-        var sess = req.upgradeReq.session;
-        console.log("working = " + sess.working);
-    });
+    console.log('connected');
 
     req.sendJSON = function(data) {
         var jsonStr = JSON.stringify(data);
@@ -149,7 +145,27 @@ app.get('/quiz/:quizID/teams', function(req, res, next) {
 
 // ------ Quiz Routes ------
 
+//Get quizzes
+app.get('/quiz', function(req, res, next) {
+    const Quiz = mongoose.model('Quiz');
 
+    Quiz.find({}, function (err, quizzes) {
+        if (err) {
+            res.status(500);
+            res.json({message: err})
+        }
+        else {
+            if (quizzes === null) {
+                res.status(404);
+                res.json({message:"No quizzes found"})
+            }
+            else {
+                res.status(200);
+                res.json(quizzes);
+            }
+        }
+    });
+});
 
 //Start quiz
 app.post('/quiz', function(req, res, next) {
@@ -583,10 +599,27 @@ app.put('/quiz/close/:quizId',function(req, res) {
     });
 });
 
-// ??
-//Scoreboard app
+
+//Get quiz
 app.get('/quiz/:quizId', function(req, res, next){
-    res.send("get informatie van quiz " +req.params.quizId);
+    const Quiz = mongoose.model('Quiz');
+
+    Quiz.findOne({_id: req.params.quizId}, function (err, quiz) {
+        if (err) {
+            res.status(500);
+            res.json({message: err})
+        }
+        else {
+            if (quiz === null) {
+                res.status(404);
+                res.json({message:"No quiz found"})
+            }
+            else {
+                res.status(200);
+                res.json(quiz);
+            }
+        }
+    });
 });
 
 //Submit answer
@@ -965,18 +998,85 @@ app.use(function(req, res, next) {
     next();
 });
 
-app.post('/scoreboard/login', function(req, res, next){
-    if(req.body.username === req.body.password){
-        res.send("Scorebord: "+req.body.username+" is ingelogd");
-    }
-    else{
-        res.send("Gebruiker heeft het verkeerde wachtwoord opgegeven");
-    }
-});
 
+app.get('/scoreboard/scoreboardAnswers', function(req, res, next) {
+    try {
+        const Team = mongoose.model('Team');
+        const Quiz = mongoose.model('Quiz');
 
-app.get('/scoreboard/logout', function(req, res, next){
-    res.send("Gebruiker is uitgelogd");
+        // Find all teams of the quizId
+        Team.find(
+            {
+                quizID: req.body.quizId
+            },
+            function(err, teams) {
+                try {
+                    if (err) {
+                        throw new Error(err);
+                    }
+                    if(!team) {
+                        res.status(404);
+                        res.json({message: "Team not found"});
+                        return;
+                    }
+
+                    // Get the quiz to get the answers from
+                    Quiz.findOne(
+                        {
+                            _id: req.body.quizId
+                        },
+                        function(err, quiz) {
+                            try {
+                                if (err) {
+                                    throw new Error(err);
+                                }
+                                if(!team) {
+                                    res.status(404);
+                                    res.json({message: "Team not found"});
+                                    return;
+                                }
+
+                                // Quiz answers samenvoegen met teams
+                                let answers = quiz.rounds.find(x => x.roundNumber == req.body.roundNumber)
+                                    .playedQuestions.find(x => x.questionNumber == req.body.questionNumber)
+                                    .teamAnswers;
+                                let combinedObject = {};
+                                for(let teamObj of teams) {
+                                    for(let answerObj of answers) {
+                                        if (teamObj._id == answerObj.teamID) {
+                                            combinedObject.push({teamId: teamObj._id, teamName: teamObj.teamName, answer: answerObj.answer, approved: answerObj.approved})
+                                        }
+                                    }
+                                }
+
+                                res.json(combinedObject);
+                            }
+                            catch(exception) {
+                                console.log(exception);
+                                res.status(500);
+                                res.json({message: "A server error occured"});
+                            }
+                        }
+                    );
+
+                    res.json(question);
+                }
+                catch(exception) {
+                    console.log(exception);
+                    res.status(500);
+                    res.json({message: "A server error occured"});
+                }
+            }
+        );
+    }
+    catch(exception) {
+        console.log(exception);
+        res.status(500);
+        res.json({message: "A server error occured"});
+    }
+    quizId
+        roundNumber
+            questionNumber
 });
 
 
