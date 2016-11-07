@@ -102,7 +102,7 @@ let quizMasterAPI = {
                 callback(err, response.body);
             })
     },
-    endRound(quizID){
+    endRound(quizID,callback){
         request
             .put('http://localhost:3000/quiz/'+quizID+'/round/close')
             .end( (err,response) => {

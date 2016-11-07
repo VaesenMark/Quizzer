@@ -185,12 +185,13 @@ export function closeAndEndTheQuiz(quizID, quizMasterID) {
                             dispatch({type: "errorGetAllQuizItems", message: response.message});
                         }
                         else {
-                            quizMasterAPI.endRound(quiz._id, (err, response) => {
+                            dispatch({type: 'successGetAllQuizItems', success: true, items: response});
+                            quizMasterAPI.endRound(quizID, (err, response) => {
                                 if (err) {
-                                    dispatch({type: 'errorEndRound', success: false, message: err});
+                                    dispatch({type: 'errorEndRound', success: false, message: response.message});
                                 }
                                 else {
-                                    dispatch({type: 'successGetAllQuizItems', success: true, items: response});
+
                                     dispatch({type: 'goToQuiz'});
                                 }
                             })
@@ -315,12 +316,13 @@ export function getNextRound(quiz){
                     dispatch({type: "errorGetCategoriesItems", message: response.message});
                 }
                 else {
+                    dispatch({type: 'successGetCategoriesItems', success: true, items: response});
                     quizMasterAPI.endRound(quiz._id, (err, response) => {
                         if(err){
-                            dispatch({ type: 'errorEndRound', success:false, message: err});
+                            dispatch({ type: 'errorEndRound', success:false, message: response.message});
                         }
                         else{
-                            dispatch({type: 'successGetCategoriesItems', success: true, items: response});
+
                             dispatch({type: "goToCategories", item: quiz});
                             dispatch({type: 'clearAnswers'});
                         }
