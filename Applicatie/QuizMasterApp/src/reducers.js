@@ -453,7 +453,8 @@ export function addQuestion(quizID, roundNumber, question){
                     dispatch({type: "errorSaveQuestions", message: response.message});
                 }
                 else {
-                    websockett.sendJSON({messageType: "QuestionStarted", quizId: quizID, questionNumber: response.questionNumber, roundNumber: roundNumber, questionId: question._id});
+                    websockett.sendJSON({messageType: "QuestionStarted", quizId: quizID, questionNumber: response.questionNumber, roundNumber: roundNumber, questionId: questionID});
+                    websockett.sendJSON({messageType: "QuestionStartedScoreboard", quizId: quizID});
                     dispatch({type: 'successSaveQuestion', success: true, questionNumber: response.questionNumber, item: question});
                     dispatch({
                         type: 'goToClosePage',
