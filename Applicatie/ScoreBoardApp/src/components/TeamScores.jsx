@@ -11,6 +11,7 @@ class TeamScoresUI extends React.Component {
     render() {
         let theItems = [];
         if (this.props.teamScores) {
+            console.log(this.props.teamScores);
             theItems = this.props.teamScores.map((itm, idx) =>
                 <TeamScoreItem teamName={itm.teamName}
                                    roundPoints={itm.roundPoints}
@@ -18,6 +19,7 @@ class TeamScoresUI extends React.Component {
         }
         return (
             <div>
+                {this.props.teamScores ? <strong>Team scores</strong> : ''}
                 {theItems}
             </div>
         );

@@ -32,6 +32,14 @@ export function questionStarted(quizId) {
     };
 }
 
+export function endQuiz() {
+    return (dispatch) => {
+
+        dispatch({ type: 'endQuiz' });
+
+    };
+}
+
 
 // Normal calls
 export function getQuizes() {
@@ -88,10 +96,10 @@ export function updateTeamScores(quizId) {
                     let quizTeams = [];
                     for(let team of teams) {
                         if(team.quizID == quizId) {
-                            quizTeams.push(teams)
+                            quizTeams.push(team)
                         }
                     }
-                    dispatch({ type: 'updateTeamScores', teams });
+                    dispatch({ type: 'updateTeamScores', quizTeams });
                 }
 
             }
@@ -150,7 +158,13 @@ function baseReducer(state = baseState, action) {
         }
         case 'updateTeamScores': {
             let changes = {
-                teamScores: {$set: action.teams}
+                teamScores: {$set: action.quizTeams}
+            };
+            return update(state, changes);
+        }
+        case 'endQuiz': {
+            let changes = {
+                currentScreen: {$set: 3}
             };
             return update(state, changes);
         }

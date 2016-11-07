@@ -15,6 +15,7 @@ class TeamScoreItemUI extends React.Component {
                 <br/>
                 RoundPoints: {this.props.roundPoints}
                 <br/>
+                <br/>
             </div>
         );
     }

@@ -15,12 +15,9 @@ var sessionParser = require('express-session')({
     saveUninitialized: true
 });
 
-var cors = require('cors');
-
 var ws = require('ws');
 var bodyParser = require('body-parser');
 var http = require('http');
-var path = require('path');
 
 var app = express();
 

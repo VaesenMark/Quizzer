@@ -1,5 +1,5 @@
 import {store} from './index';
-import {questionStarted, updateAnswers, getQuizes, updateTeamScores} from './reducers'
+import {questionStarted, updateAnswers, getQuizes, updateTeamScores, endQuiz} from './reducers'
 
 const websocket = new WebSocket('ws://localhost:3000');
 
@@ -15,7 +15,6 @@ websocket.onmessage = function(eventInfo) {
             }
             break;
         case "QuestionClosedScoreboard":
-
             if (message.quizId == store.getState().base.quizId) {
                 store.dispatch(updateAnswers(message.quizId));
             }
@@ -31,6 +30,17 @@ websocket.onmessage = function(eventInfo) {
             }
             break;
         case "QuizTeamScoreChanged":
+            if (message.quizId == store.getState().base.quizId) {
+                store.dispatch(updateTeamScores(message.quizId));
+            }
+            break;
+        case "QuizClosed":
+            if (message.quizId == store.getState().base.quizId) {
+                store.dispatch(updateTeamScores(message.quizId));
+                store.dispatch(endQuiz());
+            }
+            break;
+        case "RoundClosed":
             if (message.quizId == store.getState().base.quizId) {
                 store.dispatch(updateTeamScores(message.quizId));
             }
