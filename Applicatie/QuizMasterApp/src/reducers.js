@@ -168,7 +168,7 @@ export function closeQuiz(quizID, quizMasterID){
     }
 }
 
-export function closeAndEndTheQuiz(quizID, quizMasterID){
+export function closeAndEndTheQuiz(quizID, quizMasterID) {
     return (dispatch) => {
 
         quizMasterAPI.closeQuiz(quizID, quizMasterID, (err, response)=> {
@@ -186,20 +186,20 @@ export function closeAndEndTheQuiz(quizID, quizMasterID){
                         }
                         else {
                             quizMasterAPI.endRound(quiz._id, (err, response) => {
-                                if(err){
-                                    dispatch({ type: 'errorEndRound', success:false, message: err});
+                                if (err) {
+                                    dispatch({type: 'errorEndRound', success: false, message: err});
                                 }
                                 else {
                                     dispatch({type: 'successGetAllQuizItems', success: true, items: response});
                                     dispatch({type: 'goToQuiz'});
                                 }
-                        });
+                            })
                         }
-                    }
-                });
+                    };
+                })
             }
         })
-    }
+    };
 }
 
 export function editUsername(username) {
