@@ -1334,7 +1334,7 @@ app.use(function(req, res, next) {
 });
 
 
-app.get('/scoreboard/scoreboardAnswers', function(req, res, next) {
+app.get('/scoreboard/scoreboardAnswers/:quizId', function(req, res, next) {
     try {
         const Team = mongoose.model('Team');
         const Quiz = mongoose.model('Quiz');
@@ -1342,40 +1342,41 @@ app.get('/scoreboard/scoreboardAnswers', function(req, res, next) {
         // Find all teams of the quizId
         Team.find(
             {
-                quizID: req.body.quizId
+                quizID: req.params.quizId
             },
             function(err, teams) {
                 try {
                     if (err) {
                         throw new Error(err);
                     }
-                    if(!team) {
+                    if(!teams) {
                         res.status(404);
                         res.json({message: "Team not found"});
                         return;
                     }
 
-                    // Get the quiz to get the answers from
+                    // Get the quiz to get the needed answers
                     Quiz.findOne(
                         {
-                            _id: req.body.quizId
+                            _id: req.params.quizId
                         },
                         function(err, quiz) {
                             try {
                                 if (err) {
                                     throw new Error(err);
                                 }
-                                if(!team) {
+                                if(!quiz) {
                                     res.status(404);
                                     res.json({message: "Team not found"});
                                     return;
                                 }
 
-                                // Quiz answers samenvoegen met teams
-                                let answers = quiz.rounds.find(x => x.roundNumber == req.body.roundNumber)
-                                    .playedQuestions.find(x => x.questionNumber == req.body.questionNumber)
-                                    .teamAnswers;
-                                let combinedObject = {};
+                                // Combine team with answers
+                                const lastRound = quiz.rounds.slice(-1)[0];
+                                const lastQuestion = lastRound.playedQuestions.slice(-1)[0];
+                                let answers = lastQuestion.teamAnswers;
+                                console.log(answers);
+                                let combinedObject = [];
                                 for(let teamObj of teams) {
                                     for(let answerObj of answers) {
                                         if (teamObj._id == answerObj.teamID) {
@@ -1383,7 +1384,7 @@ app.get('/scoreboard/scoreboardAnswers', function(req, res, next) {
                                         }
                                     }
                                 }
-
+                                console.log(combinedObject);
                                 res.json(combinedObject);
                             }
                             catch(exception) {
@@ -1393,8 +1394,6 @@ app.get('/scoreboard/scoreboardAnswers', function(req, res, next) {
                             }
                         }
                     );
-
-                    res.json(question);
                 }
                 catch(exception) {
                     console.log(exception);
@@ -1412,6 +1411,140 @@ app.get('/scoreboard/scoreboardAnswers', function(req, res, next) {
 });
 
 
+
+//Get scoreboard overview
+app.get('/scoreboard/quizOverview/:quizId', function(req, res, next) {
+    try {
+        const Quiz = mongoose.model('Quiz');
+        const Question = mongoose.model('Question');
+        const Category = mongoose.model('Category');
+
+        // Get the quiz
+        Quiz.findOne({_id: req.params.quizId}, function (err, quiz) {
+            try {
+                if (err) {
+                    res.status(500);
+                    res.json({message: err})
+                }
+                else {
+                    if (quiz === null) {
+                        res.status(404);
+                        res.json({message: "No quiz found"})
+                    }
+                    else {
+                        const lastRound = quiz.rounds.slice(-1)[0];
+                        const lastQuestion = lastRound.playedQuestions.slice(-1)[0];
+
+                        // Get question string
+                        Question.findOne({_id: lastQuestion.questionID}, function (err, question) {
+                            try {
+                                if (err) {
+                                    res.status(500);
+                                    res.json({message: err})
+                                }
+                                else {
+                                    if (question === null) {
+                                        res.status(404);
+                                        res.json({message: "No question found"})
+                                    }
+                                    else {
+
+                                        // Get category string
+                                        Category.findOne({_id: lastRound.categoryID}, function (err, category) {
+                                            try {
+                                                if (err) {
+                                                    res.status(500);
+                                                    res.json({message: err})
+                                                }
+                                                else {
+                                                    if (category === null) {
+                                                        res.status(404);
+                                                        res.json({message: "No category found"})
+                                                    }
+                                                    else {
+                                                        let quizInfo = {};
+                                                        quizInfo.quizId = quiz._id;
+                                                        quizInfo.password = quiz.password;
+                                                        quizInfo.quizMasterId = quiz.quizMasterID;
+                                                        quizInfo.roundNumber = lastRound.roundNumber;
+                                                        quizInfo.questionNumber = lastQuestion.questionNumber;
+                                                        quizInfo.question = question.question;
+                                                        quizInfo.category = category.categoryName;
+                                                        quizInfo.password = quiz.password;
+                                                        res.status(200);
+                                                        res.json(quizInfo);
+                                                    }
+                                                }
+                                            }
+                                            catch (exception) {
+                                                console.log(exception);
+                                                res.status(500);
+                                                res.json({message: "A server error occured"});
+                                            }
+                                        });
+                                    }
+                                }
+                            }
+                            catch (exception) {
+                                console.log(exception);
+                                res.status(500);
+                                res.json({message: "A server error occured"});
+                            }
+                        });
+                    }
+                }
+            }
+            catch (exception) {
+                console.log(exception);
+                res.status(500);
+                res.json({message: "A server error occured"});
+            }
+        });
+    }
+    catch (exception) {
+        console.log(exception);
+        res.status(500);
+        res.json({message: "A server error occured"});
+    }
+});
+
+// --
+//Team routes(Weet niet of die er al was)
+app.get('/team', function(req, res, next) {
+    try {
+        const Team = mongoose.model('Team');
+
+        // Get the quiz
+        Team.find({}, function (err, teams) {
+            try {
+                if (err) {
+                    res.status(500);
+                    res.json({message: err})
+                }
+                else {
+                    if (teams === null) {
+                        res.status(404);
+                        res.json({message: "No Team found"})
+                    }
+                    else {
+                        res.status(200);
+                        res.json(teams);
+                    }
+                }
+            }
+            catch (exception) {
+                console.log(exception);
+                res.status(500);
+                res.json({message: "A server error occured"});
+            }
+        });
+    }
+    catch (exception) {
+        console.log(exception);
+        res.status(500);
+        res.json({message: "A server error occured"});
+    }
+});
 
 httpServer.listen( 3000,
     function() {

@@ -2,6 +2,20 @@ import request from 'superagent';
 import {store} from './index';
 
 let teamAppAPI = {
+    getScoreBoardOverview(quizId, callback) {
+        request
+            .get(`http://localhost:3000/scoreboard/quizOverview/${quizId}`)
+            .withCredentials()
+            .end( (err,response) => {
+                if(err) {
+                    console.log(err);
+                }
+                else {
+                    console.log('response getQuiz', response);
+                    callback(null, response.body);
+                }
+            })
+    },
     getQuiz(quizId, callback) {
         request
             .get(`http://localhost:3000/quiz/${quizId}`)
@@ -16,11 +30,10 @@ let teamAppAPI = {
                 }
             })
     },
-    getScoreboardAnswers(callback) {
+    getScoreboardAnswers(quizId, callback) {
         request
-            .get(`http://localhost:3000/scoreboardAnswers`)
+            .get(`http://localhost:3000/scoreboard/scoreboardAnswers/${quizId}`)
             .withCredentials()
-            .send({ quizId: store.getState().base.quizId, roundNumber: store.getState().base.roundNumber, questionNumber: store.getState().base.questionNumber })
             .end( (err,response) => {
                 if(err) {
                     console.log(err);
@@ -41,6 +54,20 @@ let teamAppAPI = {
                 }
                 else {
                     console.log('response getQuizes', response);
+                    callback(err, response.body);
+                }
+            })
+    },
+    getTeams(callback) {
+        request
+            .get(`http://localhost:3000/team`)
+            .withCredentials()
+            .end( (err,response) => {
+                if(err) {
+                    console.log(err);
+                }
+                else {
+                    console.log('response getTeams', response);
                     callback(err, response.body);
                 }
             })

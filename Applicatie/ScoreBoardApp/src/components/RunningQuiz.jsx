@@ -1,9 +1,8 @@
 import React from 'react';
 import * as ReactRedux from 'react-redux';
+import {TeamSubmission} from './TeamSubmission'
+import {TeamScores} from './TeamScores'
 
-import {
-    updateAnswerAction, submitAnswerAction
-} from '../reducers';
 
 
 class RunningQuizUI extends React.Component {
@@ -14,23 +13,31 @@ class RunningQuizUI extends React.Component {
     render() {
         let theItems = [];
         if (this.props.teamSubmissions) {
+            console.log('aaaaaaaaaaa', this.props.teamSubmissions);
             theItems = this.props.teamSubmissions.map((itm, idx) =>
                 <TeamSubmission teamName={itm.teamName}
-                                submittedAnswer={itm.submittedAnswer}
-                                answerApproved={itm.answerApproved}
+                                submittedAnswer={itm.answer}
+                                answerApproved={itm.approved}
                                 key={itm.teamName}/>
             );
         }
         return (
             <div>
                 <div className="topbar">
-                    Question {this.props.question}, Category: {this.props.category}
+                    <h3>Question: {this.props.question}</h3>
+                    <h3>Category: {this.props.category}</h3>
+                    <h3>Round: {this.props.roundNumber}</h3>
+                    <h3>Question: {this.props.questionNumber}/12</h3>
                 </div>
+                <hr/>
                 <div className="teamSubmissions">
+                    <strong>Team answers:</strong>
                     {theItems}
                 </div>
-                <div className="bottomBar">
-                    Quizz password: {this.props.quizPassword}, Round: {this.props.roundNumber}, Question: {this.props.questionNumber}/12
+                <hr/>
+                <div className="Team scores">
+                    <strong>Team scores</strong>
+                    <TeamScores/>
                 </div>
             </div>
         );

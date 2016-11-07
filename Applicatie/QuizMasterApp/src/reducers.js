@@ -109,6 +109,7 @@ export function closeQuestion(quizID, roundNumber, questionNumber){
                 }
                 else {
                     websockett.sendJSON({messageType: "CloseQuestion", quizId: quizID});
+                    websockett.sendJSON({messageType: "QuestionClosedScoreboard", quizId: quizID});
                     dispatch({type: "succesPlayedQuestions", answers: response});
                     dispatch({type: "goToCheckPage"});
                 }
@@ -340,7 +341,7 @@ export function approveTeam(quizID,teamID){
     }
 }
 
-export function judgeAnswerAction(teamId, accepted){
+export function judgeAnswerAction(teamId, accepted, quizId){
     return (dispatch) => {
         quizMasterAPI.approveTeamAnswer(teamId, (err, response) => {
             if (err) {
@@ -354,6 +355,7 @@ export function judgeAnswerAction(teamId, accepted){
                 else {
                     console.log('33333');
                     websockett.sendJSON({messageType: "AnswerAccepted", teamId});
+                    websockett.sendJSON({messageType: "QuestionApprovedScoreboard", quizId: quizId});
                     dispatch({type: 'successTeamAnswerApprove', success: true, response});
                 }
             }
@@ -381,6 +383,7 @@ export function AddQuiz(ID){
                                 dispatch({type: "errorGetAllQuizItems", message: response.message});
                             }
                             else {
+                                websockett.sendJSON({messageType: "QuizCreated"});
                                 dispatch({type: 'successGetAllQuizItems', success: true, items: response});
                             }
                         }
@@ -402,6 +405,7 @@ export function addQuestion(quizID, roundNumber, questionID){
                 }
                 else {
                     websockett.sendJSON({messageType: "QuestionStarted", quizId: quizID, questionNumber: response.questionNumber, roundNumber: roundNumber, questionId: questionID});
+                    websockett.sendJSON({messageType: "QuestionStartedScoreboard", quizId: quizID});
                     dispatch({type: 'successSaveQuestion', success: true, questionNumber: response.questionNumber, response});
                     dispatch({
                         type: 'goToClosePage',

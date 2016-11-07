@@ -31,3 +31,5 @@ ReactDOM.render( mainComponent, document.getElementById('react-root') );
 export const store = theStore;
 
 theStore.dispatch(getQuizes());
+
+import './websocket'

@@ -27,7 +27,6 @@ wss.on("connection", function connection(req) {
                     });
                 }
                 break;
-
             case "CloseQuestion":
                 // Quizmaster closes the quest, notidy the team of it
                 console.log('schaap');
@@ -61,6 +60,58 @@ wss.on("connection", function connection(req) {
                     });
                 }
                 break;
+            case "QuestionStartedScoreboard":
+                // Quizmaster accepts the answer, notify scoreboard of it
+                console.log('schaap11');
+                for(let client of wss.clients) {
+                    client.sendJSON({
+                        messageType: "QuestionStartedScoreboard",
+                        quizId: msg.quizId
+                    });
+                }
+                break;
+            case "QuestionClosedScoreboard":
+                // Quizmaster closes the answer, notify scoreboard of it
+                console.log('schaap22');
+                for(let client of wss.clients) {
+                    client.sendJSON({
+                        messageType: "QuestionClosedScoreboard",
+                        quizId: msg.quizId
+                    });
+                }
+                break;
+            case "QuestionApprovedScoreboard":
+                // Quizmaster approves an answer, notify scoreboard of it
+                console.log('schaap666');
+                for(let client of wss.clients) {
+                    client.sendJSON({
+                        messageType: "QuestionApprovedScoreboard",
+                        quizId: msg.quizId
+                    });
+                }
+                break;
+            case "QuizCreated":
+                // Quizmaster approves an answer, notify scoreboard of it
+                console.log('schaap666');
+                for(let client of wss.clients) {
+                    client.sendJSON({
+                        messageType: "QuizCreated"
+                    });
+                }
+                break;
+            case "QuizTeamScoreChanged":
+                // Quizmaster approves an answer, notify scoreboard of it
+                console.log('schaap888');
+                for(let client of wss.clients) {
+                    client.sendJSON({
+                        messageType: "QuizTeamScoreChanged",
+                        quizId: msg.quizId
+                    });
+                }
+                break;
+
+
+
 
 
             // TeamApp
@@ -86,6 +137,7 @@ wss.on("connection", function connection(req) {
                     });
                 }
                 break;
+
 
 
 

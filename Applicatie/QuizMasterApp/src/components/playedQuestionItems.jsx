@@ -9,7 +9,7 @@ class PlayedQuestionItemsUI extends React.Component {
     }
 
     acceptAnswer() {
-        this.props.judgeAnswer(this.props.teamId, true)
+        this.props.judgeAnswer(this.props.teamId, true, this.props.quiz._id)
     }
 
     render() {
@@ -39,7 +39,7 @@ class PlayedQuestionItemsUI extends React.Component {
 
 function mapDispatchToProps(dispatch) {
     return {
-        judgeAnswer: (teamId, accepted) => dispatch(judgeAnswerAction(teamId, accepted)),
+        judgeAnswer: (teamId, accepted, quizId) => dispatch(judgeAnswerAction(teamId, accepted, quizId)),
         // approveTeam: (quizID, roundNumber,questionNumber, teamID) => dispatch(approveAnswerTeam(quizID, roundNumber,questionNumber, teamID ))
     }
 }

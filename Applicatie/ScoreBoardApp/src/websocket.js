@@ -1,5 +1,5 @@
 import {store} from './index';
-import {applianceAccepted, applianceDenied, questionStarted, answerJudged} from './reducers'
+import {questionStarted, updateAnswers, getQuizes, updateTeamScores} from './reducers'
 
 const websocket = new WebSocket('ws://localhost:3000');
 
@@ -8,30 +8,54 @@ websocket.onmessage = function(eventInfo) {
 
     var message = JSON.parse(eventInfo.data);
 
-    // Team appliance accepted/denied
+
     switch (message.messageType) {
-        case "TeamAppliance":
-            if (message.teamId == store.getState().base.teamId) {
-                if (message.accepted) {
-                    store.dispatch(applianceAccepted());
-                }
-                else {
-                    store.dispatch(applianceDenied());
-                }
-            }
-            break;
-        case "QuestionStarted":
+        case "QuestionStartedScoreboard":
+            console.log('1234');
             if (message.quizId == store.getState().base.quizId) {
-                store.dispatch(questionStarted(message.questionId, message.roundNumber, message.questionNumber));
+                console.log('12345');
+                store.dispatch(questionStarted(message.quizId));
             }
             break;
-        case "AnswerJudged":
-            if (message.quizId == store.getState().base.quizId && message.teamId == store.getState().base.teamId) {
-                store.dispatch(answerJudged(message.quizId, message.teamId));
+        case "QuestionClosedScoreboard":
+            console.log('223');
+
+            if (message.quizId == store.getState().base.quizId) {
+                console.log('334');
+                store.dispatch(updateAnswers(message.quizId));
             }
             break;
+        case "QuestionApprovedScoreboard":
+            console.log('666');
+            console.log('mesQuiID', message.quizId);
+            console.log('storQuiID', store.getState().base.quizId);
+            if (message.quizId == store.getState().base.quizId) {
+                console.log('667');
+                store.dispatch(updateAnswers(message.quizId));
+            }
+            break;
+        case "QuizCreated":
+            console.log('777');
+            console.log('mesQuiID', message.quizId);
+            console.log('storQuiID', store.getState().base.quizId);
+                console.log('667');
+            if (store.getState().base.currentScreen == 1) {
+                console.log('667');
+                store.dispatch(getQuizes(message.quizId));
+            }
+            break;
+        case "QuizTeamScoreChanged":
+            console.log('777');
+            console.log('mesQuiID', message.quizId);
+            console.log('storQuiID', store.getState().base.quizId);
+            console.log('667');
+            if (message.quizId == store.getState().base.quizId) {
+                console.log('667');
+                store.dispatch(updateTeamScores(message.quizId));
+            }
+            break;
+
         default:
-            console.log("Unknown messageType:", message);
     }
 };
 

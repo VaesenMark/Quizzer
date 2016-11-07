@@ -3,7 +3,6 @@ import * as ReactRedux from 'react-redux';
 import {QuizSelection} from './QuizSelection';
 import {RunningQuiz} from './RunningQuiz';
 import {EndScreen} from './EndScreen';
-import {WS} from './Websocket'
 
 class AppUI extends React.Component {
     constructor(props) {
@@ -22,7 +21,7 @@ class AppUI extends React.Component {
                 <div>
                     <RunningQuiz/>
                 </div>
-        } else {
+        } else if (this.props.currentScreen == 3) {
             screenContent =
                 <div>
                     <EndScreen/>

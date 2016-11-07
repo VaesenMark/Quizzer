@@ -13,13 +13,15 @@ class QuizSelectiontUI extends React.Component {
         if (this.props.activeQuizes) {
             theItems = this.props.activeQuizes.map((itm, idx) =>
                 <QuizSelectionItem quizId={itm._id}
-                                   quizMaster={itm.quizMasterID}
                                    quizStatus={itm.status}
+                                   password={itm.password}
                                    key={itm._id}/>);
         }
         return (
             <div>
                 {theItems}
+                <br/>
+                <h1>{this.props.password ? 'Password: '+this.props.password : ''}</h1>
             </div>
         );
     }
@@ -28,7 +30,8 @@ class QuizSelectiontUI extends React.Component {
 
 function mapStateToProps(state) {
     return {
-        activeQuizes: state.base.activeQuizes
+        activeQuizes: state.base.activeQuizes,
+        password: state.base.password
     }
 }
 

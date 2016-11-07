@@ -13,15 +13,13 @@ class QuizSelectionItemUI extends React.Component {
 
     quizSelected() {
         console.log('zzz',this.props.quizId);
-        this.props.quizSelected(this.props.quizId)
+        this.props.quizSelected(this.props.quizId, this.props.quizStatus)
     }
 
     render() {
         return (
             <div className="quizSelectionBlock">
                 QuizId: {this.props.quizId}
-                <br/>
-                QuizMaster: {this.props.quizMaster}
                 <br/>
                 QuizStatus: {this.props.quizStatus}
                 <br/>
@@ -40,7 +38,7 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
     return {
-        quizSelected: (quizId) => dispatch(quizSelectedAction(quizId))
+        quizSelected: (quizId, quizStatus) => dispatch(quizSelectedAction(quizId, quizStatus))
     }
 }
 
