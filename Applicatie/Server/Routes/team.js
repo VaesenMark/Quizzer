@@ -109,7 +109,6 @@ app.get('/', function(req, res, next) {
                                             }
                                             // req.session.teamId = team._id;
                                             // req.session.quizId = quiz._id;
-                                            console.log('aaaaaaa');
 
 
                                             res.json({
@@ -189,10 +188,6 @@ app.get('/:teamId', function(req, res, next) {
 
 // Edit team
 app.put('/:teamId', function(req, res, next) {
-    console.log('teamname', req.body.teamName);
-    console.log('roundPoints', req.body.roundPoints);
-    console.log('approved', req.body.approved);
-    console.log('quizID', req.body.quizID);
     try {
         const Team = mongoose.model('Team');
         Team.update(

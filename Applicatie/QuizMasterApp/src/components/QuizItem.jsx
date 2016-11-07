@@ -14,7 +14,6 @@ class QuizItemUI extends React.Component {
 
    render() {
       let clickHandler = (evt) => {
-         console.log(this.props.item);
          evt.preventDefault();
          this.props.goToCheckTeams(this.props.item)
       };

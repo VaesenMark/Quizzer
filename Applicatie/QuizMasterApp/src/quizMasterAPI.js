@@ -14,12 +14,10 @@ let quizMasterAPI = {
         request
             .get('http://localhost:3000/quizmaster/'+id+'/quiz')
             .end( (err,response) => {
-                console.log(response.body);
                 callback(err, response.body.message);
             })
     },
     getTeams(id,callback){
-        console.log("id", id);
         request
             .get('http://localhost:3000/quiz/'+id+'/teams')
             .end( (err,response) => {
@@ -31,7 +29,6 @@ let quizMasterAPI = {
         request
             .get('http://localhost:3000/quiz/'+id+'/categories')
             .end( (err,response) => {
-                console.log('apie',response.body);
                 callback(err, response.body);
             })
     },
@@ -39,7 +36,6 @@ let quizMasterAPI = {
         request
             .get('http://localhost:3000/quiz/'+quizID+'/round/'+roundID+'/questions')
             .end( (err,response) => {
-                console.log('yyyp',response);
                 callback(err, response.body.message);
             })
     },
@@ -55,7 +51,6 @@ let quizMasterAPI = {
         request
             .get('http://localhost:3000/quiz/'+quizID+'/round/'+roundNumber+'/question/'+questionNumber)
             .end( (err,response) => {
-                console.log(response);
                 callback(err, response.body);
             })
     },
@@ -64,7 +59,6 @@ let quizMasterAPI = {
             .post('http://localhost:3000/quiz/'+quizID+'/round')
             .send({categoryID: category._id})
             .end( (err,response) => {
-                console.log('rnd', response);
                 callback(err, response.body);
             })
     },
@@ -80,7 +74,6 @@ let quizMasterAPI = {
         request
             .put('http://localhost:3000/quiz/'+quizID+'/team/'+teamID)
             .end( (err,response) => {
-                console.log(err, response.body);
                 callback(err, response.body);
             })
     },
@@ -88,8 +81,6 @@ let quizMasterAPI = {
         request
             .put(`http://localhost:3000/quiz/${store.getState().MainState.quizItem._id}/round/${store.getState().RoundState.roundNumber}/question/${store.getState().QuestionsState.questionNumber}/team/${teamId}`)
             .end( (err,response) => {
-                console.log('tttt',err);
-                console.log('tttt2',response);
                 callback(err, response.body);
             })
     },
@@ -98,7 +89,6 @@ let quizMasterAPI = {
             .put('http://localhost:3000/quiz/close')
             .send({quizID: quizID, quizMasterID: quizMasterID })
             .end( (err,response) => {
-                console.log(response, quizMasterID);
                 callback(err, response.body);
             })
     },

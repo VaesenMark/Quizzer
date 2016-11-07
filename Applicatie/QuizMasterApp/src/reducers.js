@@ -54,23 +54,17 @@ const teamState = {
 
 // Websocket functions
 export function newAnswerAvailable(quizID, roundNumber, questionNumber){
-    console.log('11');
     return (dispatch) => {
         quizMasterAPI.getPlayedQuestionsAnswers(quizID, roundNumber, questionNumber, (err, response) => {
-            console.log('22');
+
             if(err) {
-                console.log('33');
-                console.log('Error getting answers');
+
             }
             else {
-                console.log('44');
                 if(response.status >= minerrStatuscode){
-                    console.log('55');
-                    console.log('Error getting answers');
+
                 }
                 else {
-                    console.log('66');
-                    console.log('response',response);
                     dispatch({type: "succesPlayedQuestions", answers: response});
                 }
             }
@@ -79,7 +73,7 @@ export function newAnswerAvailable(quizID, roundNumber, questionNumber){
 }
 
 export function newTeamApplianceAvailable(quizId){
-    console.log('1111');
+
     return (dispatch) => {
         quizMasterAPI.getTeams(quizId, (err, response) => {
             if(err) {
@@ -235,7 +229,6 @@ export function goToCheckTeams(item) {
 
 export function startQuiz(item) {
     return (dispatch) => {
-        console.log(item);
         quizMasterAPI.getCategories(item._id, (err, response) => {
             if(err) {
 
@@ -257,22 +250,17 @@ export function addRound(quizID, categoryID) {
 
     return (dispatch) => {
             quizMasterAPI.setnewRound(quizID, categoryID, (err, response) => {
-                console.log('nrnn',response);
                 if(err) {
                     dispatch({type: "errorSetNewRound", message: err});
                 } else {
-                    console.log('1');
                     if (response.status >= minerrStatuscode) {
                         dispatch({type: "errorSetNewRound", message: response.message});
                     }
                     else {
-                        console.log('2');
                         dispatch({type: "succesSetNewRound", roundNumber: response.roundNumber});
                         dispatch({type: "goToQuestions", cattegory: response});
 
                         quizMasterAPI.getQuestions(quizID, response.roundNumber, (err, items) => {
-                            console.log('3');
-                            console.log('3',items);
                             if (err) {
                                 dispatch({type: 'errorGetAllQuestionsItems', success: false, message: err});
                             } else {
@@ -355,17 +343,12 @@ export function getNextQuestion(quizID,roundID){
 }
 
 export function approveTeam(quizID,teamID){
-    console.log(quizID,teamID);
     return (dispatch) => {
         quizMasterAPI.approveTeam(quizID, teamID, (err, response) => {
-            console.log(response);
             if (err) {
                 dispatch({type: 'errorTeamApprove', success: false, message: response.message});
-                console.log("test1",response.status, response.message);
             } else {
-                console.log(response.status);
                 if (response.status >= minerrStatuscode) {
-                    console.log(response.status, response.message);
                     dispatch({type: "errorTeamApprove", message: response.message});
                 }
                 else {
@@ -373,7 +356,6 @@ export function approveTeam(quizID,teamID){
                     quizMasterAPI.getTeams(quizID, (err, response) => {
                         if (err) {
                             dispatch({type: 'errorGetTeams', success: false, message: err});
-                            console.log("test2",response.status, response.message);
                         } else {
                             if (response.status >= minerrStatuscode) {
                                 dispatch({type: "errorTeamApprove", message: response.message});
@@ -394,15 +376,12 @@ export function judgeAnswerAction(teamId, accepted, quizId){
     return (dispatch) => {
         quizMasterAPI.approveTeamAnswer(teamId, (err, response) => {
             if (err) {
-                console.log('11111');
                 dispatch({type: 'errorTeamAnswerApprove', success: false, message: err});
             } else {
-                console.log('22222');
                 if (response.status >= minerrStatuscode) {
                     dispatch({type: "errorTeamAnswerApprove", message: response.message});
                 }
                 else {
-                    console.log('33333');
                     websockett.sendJSON({messageType: "AnswerAccepted", teamId});
                     websockett.sendJSON({messageType: "QuestionApprovedScoreboard", quizId: quizId});
                     dispatch({type: 'successTeamAnswerApprove', success: true, response});
@@ -526,13 +505,11 @@ function questionsReducer(state = questionState, action) {
             return copyAndUpdateObj(state, update);
         }
         case 'successSaveQuestion':{
-            console.log(action.item);
             let update = {
                 'message': '',
                 'items': action.questionNumber,
                 'recentQuestion': action.item
             };
-            console.log(copyAndUpdateObj(state, update))
             return copyAndUpdateObj(state, update);
         }
         case 'errorGetAllQuestionsItems':{

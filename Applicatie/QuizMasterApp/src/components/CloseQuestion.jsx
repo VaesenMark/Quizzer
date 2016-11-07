@@ -12,8 +12,6 @@ class CloseQuestionUI extends React.Component {
 
    render() {
        let theItems = [];
-       console.log('render');
-       console.log(this.props.playedQuestions);
        if (this.props.playedQuestions.length>=1) {
            theItems = this.props.playedQuestions.map((itm, idx) =>
                <PlayedQuestionItem

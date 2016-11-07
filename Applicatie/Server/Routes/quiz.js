@@ -33,11 +33,9 @@ app.put('/:quizID/round/close', function(req, res, next) {
                         playedQuestion.teamAnswers.forEach(function (teamAnswer) {
                             let exist = false;
                             teamScores.forEach(function (teamScore) {
-                                console.log(teamScore.teamID, teamAnswer.teamID)
                                 if (teamScore.teamID == teamAnswer.teamID) {
                                     exist = true;
                                     if(teamAnswer.approved){
-                                        console.log("test");
                                         teamScore.points=teamScore.points+1;
                                     }
                                 }
@@ -48,7 +46,6 @@ app.put('/:quizID/round/close', function(req, res, next) {
                                     point = 1;
                                 }
                                 var teamscore = {teamID: teamAnswer.teamID,points: point};
-                                console.log(teamscore);
                                 teamScores.push(teamscore);
                             }
                         });
@@ -68,7 +65,6 @@ app.put('/:quizID/round/close', function(req, res, next) {
                             points = 1;
                         }
 
-                        console.log(place, points);
                         place++;
                         Team.findOne({_id: teamscore.teamID}, function (err, team) {
                             if (err) {
@@ -161,7 +157,6 @@ app.post('/', function(req, res, next) {
                     res.json({message: err})
                 }
                 else {
-                    console.log(quizMaster);
                     if (quizMaster) {
                         var quiz = new Quiz({
                             password: createRandomString(8),
@@ -230,8 +225,6 @@ app.get('/:quizID/teams', function(req, res, next) {
                         }
                         Team.find({quizID: req.params.quizID}, function (err, teams) {
                             try {
-                                console.log("_____________________________________")
-                                console.log(teams);
                                 if (err) {
                                     res.status(500);
                                     res.json({message: err});
@@ -281,14 +274,12 @@ app.get('/:quizId/teams', function(req, res, next){
                     res.json({message: err});
                 }
                 else {
-                    console.log(teams.length);
                     if (teams.length <= 0) {
                         res.status(400);
                         res.json({message: "The're are no teams signed in for this quiz"});
                     }
                     else {
                         res.status(200)
-                        console.log(teams);
                         res.json({teams: teams});
                     }
                 }
@@ -653,7 +644,6 @@ app.get('/:quizID/categories', function(req, res, next) {
 
 //Get Round Question
 app.get('/:quizId/round/:roundNumber/questions', function(req, res, next){
-    console.log('ttttttttttttt');
     try {
         const Quiz = mongoose.model('Quiz');
         const Category = mongoose.model('Category');
@@ -892,7 +882,6 @@ app.put('/close',function(req, res) {
         const Quiz = mongoose.model('Quiz');
 
         Quiz.findOne({_id: req.body.quizID, quizMasterID: req.body.quizMasterID}, function (err, quiz) {
-            console.log(req.body.quizID, req.body.quizMasterID)
             try {
                 if (err) {
                     res.send(err);
@@ -991,7 +980,6 @@ app.post('/:quizId/round/:roundNumber/question/:questionNumber/teamanswer/:teamI
                     let existingAnswer = quiz.rounds.find(x => x.roundNumber == req.params.roundNumber)
                         .playedQuestions.find(x => x.questionNumber == req.params.questionNumber)
                         .teamAnswers.find(x => x.teamID == req.params.teamId);
-                    console.log(existingAnswer);
                     if(existingAnswer) {
                         existingAnswer.answer = req.body.answer;
                         quiz.save(function (err, quiz) {

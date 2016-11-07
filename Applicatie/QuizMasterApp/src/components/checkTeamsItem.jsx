@@ -15,7 +15,6 @@ class CheckTeamItemsUI extends React.Component {
    render() {
 
        let button = '';
-       console.log(this.props.approved);
        if(!this.props.approved){
            button = <button id="button" onClick={this.approveTeam.bind(this)}>approve</button>
        }
