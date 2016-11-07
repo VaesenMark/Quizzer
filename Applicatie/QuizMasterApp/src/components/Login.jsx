@@ -29,7 +29,7 @@ class LoginUi extends React.Component {
              <label htmlFor="Password">
                 Password <input id="quizMasterPassword" value={this.props.password} onChange={this.passwordChange.bind(this)}/>
              </label>
-             <button id="markAsSeen" onClick={this.doLogin.bind(this)}>
+             <button id="button" onClick={this.doLogin.bind(this)}>
                 Login
              </button>
               {this.props.loginMessage}

@@ -10,8 +10,15 @@ class CheckTeamsListUI extends React.Component {
 
     render() {
         let theItems = [];
-        console.log("items", this.props.teams);
+        let startQuiz = '';
+        console.log("items", this.props.teams.length);
+
         if (this.props.teams.length>0) {
+            if(this.props.teams.length>=2){
+                startQuiz = <button id="button" onClick={this.startQuiz.bind(this)}>
+                    Start quiz
+                </button>
+            }
             this.props.teams.forEach(function(team){
                 console.log(team);
                 console.log(team.approved);
@@ -32,11 +39,11 @@ class CheckTeamsListUI extends React.Component {
         console.log("items12", theItems, this.props.teams.length);
 
         return (<div>
-                <h1>{this.props.quiz.password}</h1>
 
-                <button id="markAsSeen" onClick={this.startQuiz.bind(this)}>
-                    Start quiz
-                </button>
+
+                <h1>quizID: {this.props.quiz._id}  Wachtwoord:  {this.props.quiz.password}</h1>
+                {this.props.message}<br/>
+                {startQuiz}
                 {theItems}
             </div>
         );
@@ -54,7 +61,7 @@ function mapStateToProps(state) {
     return {
         quiz: state.MainState.quizItem,
         teams : state.TeamState.teams,
-        message: state.RoundState.message
+        message: state.TeamState.message
     }
 }
 

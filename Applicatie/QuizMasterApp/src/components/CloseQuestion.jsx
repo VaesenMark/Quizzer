@@ -30,7 +30,7 @@ class CloseQuestionUI extends React.Component {
              <h1>Submitted answers</h1>
              {this.props.questionID}
               {theItems}
-             <button id="markAsSeen" onClick={this.closeQuestion.bind(this)}>
+             <button id="button" onClick={this.closeQuestion.bind(this)}>
                 close question
              </button>
           </div>
