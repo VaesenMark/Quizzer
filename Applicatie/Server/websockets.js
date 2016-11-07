@@ -17,9 +17,7 @@ wss.on("connection", function connection(req) {
             // Quizmaster App
             case "TeamApplianceJudged":
                 // Quizmaster closes the question, notidy the team of it
-                console.log('schaap4');
                 for(let client of wss.clients) {
-                    console.log('bla');
                     client.sendJSON({
                         messageType: "TeamApplianceJudged",
                         teamId: msg.teamId,
@@ -29,7 +27,6 @@ wss.on("connection", function connection(req) {
                 break;
             case "CloseQuestion":
                 // Quizmaster closes the quest, notidy the team of it
-                console.log('schaap');
                 for(let client of wss.clients) {
                     client.sendJSON({
                         messageType: "QuestionClosed",
@@ -39,7 +36,6 @@ wss.on("connection", function connection(req) {
                 break;
             case "AnswerAccepted":
                 // Quizmaster accepts the answer, notify team of it
-                console.log('schaap2');
                 for(let client of wss.clients) {
                     client.sendJSON({
                         messageType: "AnswerAccepted",
@@ -49,7 +45,6 @@ wss.on("connection", function connection(req) {
                 break;
             case "QuestionStarted":
                 // Quizmaster accepts the answer, notify team of it
-                console.log('schaap2');
                 for(let client of wss.clients) {
                     client.sendJSON({
                         messageType: "QuestionStarted",
@@ -62,7 +57,6 @@ wss.on("connection", function connection(req) {
                 break;
             case "QuestionStartedScoreboard":
                 // Quizmaster accepts the answer, notify scoreboard of it
-                console.log('schaap11');
                 for(let client of wss.clients) {
                     client.sendJSON({
                         messageType: "QuestionStartedScoreboard",
@@ -72,7 +66,6 @@ wss.on("connection", function connection(req) {
                 break;
             case "QuestionClosedScoreboard":
                 // Quizmaster closes the answer, notify scoreboard of it
-                console.log('schaap22');
                 for(let client of wss.clients) {
                     client.sendJSON({
                         messageType: "QuestionClosedScoreboard",
@@ -82,7 +75,6 @@ wss.on("connection", function connection(req) {
                 break;
             case "QuestionApprovedScoreboard":
                 // Quizmaster approves an answer, notify scoreboard of it
-                console.log('schaap666');
                 for(let client of wss.clients) {
                     client.sendJSON({
                         messageType: "QuestionApprovedScoreboard",
@@ -92,7 +84,6 @@ wss.on("connection", function connection(req) {
                 break;
             case "QuizCreated":
                 // Quizmaster approves an answer, notify scoreboard of it
-                console.log('schaap666');
                 for(let client of wss.clients) {
                     client.sendJSON({
                         messageType: "QuizCreated"
@@ -101,7 +92,6 @@ wss.on("connection", function connection(req) {
                 break;
             case "QuizTeamScoreChanged":
                 // Quizmaster approves an answer, notify scoreboard of it
-                console.log('schaap888');
                 for(let client of wss.clients) {
                     client.sendJSON({
                         messageType: "QuizTeamScoreChanged",
@@ -126,7 +116,6 @@ wss.on("connection", function connection(req) {
             // TeamApp
             case "TeamLoggedIn":
                 // Team logged in, notify quizmaster of it
-                console.log('schaap3');
                 for(let client of wss.clients) {
                     client.sendJSON({
                         messageType: "NewTeamAppliance",
@@ -136,7 +125,6 @@ wss.on("connection", function connection(req) {
                 break;
             case "AnswerSubmitted":
                 // Team subitted answer, notify quizmaster of it
-                console.log('schaap8');
                 for(let client of wss.clients) {
                     client.sendJSON({
                         messageType: "AnswerSubmitted",
@@ -147,8 +135,16 @@ wss.on("connection", function connection(req) {
                 }
                 break;
 
-
-
+            case "showFinalScreen":
+                console.log("test show finalScreen");
+                // Go To final screen
+                for(let client of wss.clients) {
+                    client.sendJSON({
+                        messageType: "showFinalScreen",
+                        quizID: msg.quizID,
+                    });
+                }
+                break;
 
 
             default:

@@ -4,6 +4,7 @@ import {Login} from './Login';
 import {QuestionInput} from './AnswerInput';
 import {AnswerJudgement} from './AnswerJudgement';
 import WaitingRoomUI from './WaitingRoom';
+import {Final} from './Final';
 
 class AppUI extends React.Component {
     constructor(props) {
@@ -31,6 +32,11 @@ class AppUI extends React.Component {
             screenContent =
                 <div>
                     <AnswerJudgement/>
+                </div>
+        } else if (this.props.currentScreen == 5) {
+            screenContent =
+                <div>
+                    <Final/>
                 </div>
         }
         else {

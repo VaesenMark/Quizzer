@@ -180,6 +180,7 @@ export function closeAndEndTheQuiz(quizID, quizMasterID) {
                         }
                         else {
                             dispatch({type: 'successGetAllQuizItems', success: true, items: response});
+                            websockett.sendJSON({messageType: "showFinalScreen", quizID: quizID});
                             quizMasterAPI.endRound(quizID, (err, response) => {
                                 if (err) {
                                     dispatch({type: 'errorEndRound', success: false, message: response.message});

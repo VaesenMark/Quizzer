@@ -9,28 +9,21 @@ websocket.onmessage = function(eventInfo) {
     var message = JSON.parse(eventInfo.data);
 
 
-    console.log('message', message);
     switch (message.messageType) {
         // New answer available
         case "AnswerSubmitted":
-            console.log('88888888888');
-            console.log('88888',message);
             if (message.quizId == store.getState().MainState.quizItem._id) {
-                console.log('222');
                 store.dispatch(newAnswerAvailable(message.quizId, message.roundNumber, message.questionNumber));
             }
             break;
-        // Team appliance available
+        // Team applianceavailable
         case "NewTeamAppliance":
 
-            console.log('storeQuizId',message.quizId == store.getState().MainState.quizItem._id);
             if (message.quizId == store.getState().MainState.quizItem._id) {
-                console.log('222');
                 store.dispatch(newTeamApplianceAvailable(message.quizId));
             }
             break;
         default:
-            // console.log("Unknown messageType:", message);
     }
 };
 

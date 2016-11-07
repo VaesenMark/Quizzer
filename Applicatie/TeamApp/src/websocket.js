@@ -1,6 +1,6 @@
 import {store} from './index';
 import {
-    applianceDeniedAction, applianceAcceptedAction, questionStartedAction, AnswerAcceptedAction, questionClosedAction
+    applianceDeniedAction, applianceAcceptedAction, questionStartedAction, AnswerAcceptedAction, questionClosedAction,showFinalScreen
 } from './reducers';
 
 const websocket = new WebSocket('ws://localhost:3000');
@@ -42,6 +42,14 @@ websocket.onmessage = function(eventInfo) {
         case "QuestionClosed":
             if (message.quizId == store.getState().base.quizId) {
                 store.dispatch(questionClosedAction());
+            }
+            break;
+
+        // The question is closed
+        case "showFinalScreen":
+            console.log("websockets",message.quizID,store.getState().base.quizId);
+            if (message.quizID == store.getState().base.quizId) {
+                store.dispatch(showFinalScreen());
             }
             break;
         default:

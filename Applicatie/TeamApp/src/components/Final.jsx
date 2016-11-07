@@ -1,0 +1,23 @@
+import React from 'react';
+import * as ReactRedux from 'react-redux';
+
+class FinalUI extends React.Component {
+    render() {
+        return (
+            <h1>Einde van het spel</h1>
+        )
+    }
+}
+
+function mapStateToProps(state) {
+    return {
+    }
+}
+
+
+function mapDispatchToProps(dispatch) {
+    return {
+    }
+}
+export const Final =
+    ReactRedux.connect(mapStateToProps, mapDispatchToProps)(FinalUI);

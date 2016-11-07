@@ -16,6 +16,9 @@ export function questionClosedAction() {
     return {type: "questionClosed"};
 }
 
+export function showFinalScreen() {
+    return {type: "showFinalScreen"};
+}
 
 
 // Reducer:
@@ -63,6 +66,15 @@ function baseReducer(state = baseState, action) {
 
             return update(state, changes);
         }
+
+        case 'showFinalScreen': {
+            let changes = {
+                currentScreen: {$set: 5}
+            };
+            console.log(update(state, changes));
+            return update(state, changes);
+        }
+
         default:
             return state;
     }
