@@ -4,7 +4,7 @@ import * as ReactRedux from 'react-redux';
 class FinalUI extends React.Component {
     render() {
         return (
-            <h1>Einde van het spel</h1>
+            <h1>This is the end of the game</h1>
         )
     }
 }
