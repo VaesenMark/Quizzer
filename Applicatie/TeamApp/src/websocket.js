@@ -6,7 +6,6 @@ import {
 const websocket = new WebSocket('ws://localhost:3000');
 
 websocket.onmessage = function(eventInfo) {
-    console.log('message received');
 
     var message = JSON.parse(eventInfo.data);
 
@@ -15,7 +14,6 @@ websocket.onmessage = function(eventInfo) {
 
         // Your appliance is accepted/denied
         case "TeamApplianceJudged":
-            console.log('asd',message);
             if (message.teamId == store.getState().base.teamId) {
                 if (message.accepted) {
                     store.dispatch(applianceAcceptedAction());
@@ -29,7 +27,6 @@ websocket.onmessage = function(eventInfo) {
         // New question just started
         case "QuestionStarted":
             if (message.quizId == store.getState().base.quizId) {
-                console.log('suc');
                 store.dispatch(questionStartedAction(message.questionNumber, message.roundNumber, message.questionId));
             }
             break;
@@ -37,7 +34,6 @@ websocket.onmessage = function(eventInfo) {
         // Your answer is accepted
         case "AnswerAccepted":
             if (message.teamId == store.getState().base.teamId) {
-                console.log('zipzip');
                 store.dispatch(AnswerAcceptedAction());
             }
             break;
@@ -45,7 +41,6 @@ websocket.onmessage = function(eventInfo) {
         // The question is closed
         case "QuestionClosed":
             if (message.quizId == store.getState().base.quizId) {
-                console.log('bbbbb');
                 store.dispatch(questionClosedAction());
             }
             break;

@@ -117,7 +117,7 @@ app.get('/', function(req, res, next) {
     try {
         const Quiz = mongoose.model('Quiz');
 
-        Quiz.find({_id}, function (err, quizzes) {
+        Quiz.find({}, function (err, quizzes) {
             try {
                 if (err) {
                     res.status(500);
@@ -987,25 +987,48 @@ app.post('/:quizId/round/:roundNumber/question/:questionNumber/teamanswer/:teamI
                         res.json({message: "Unknown quiz"});
                         return;
                     }
-                    // TODO check if team has already submitted a question
-                    quiz.rounds.find(x => x.roundNumber == req.params.roundNumber)
+                    // check if team has already submitted a question, and uptdate then
+                    let existingAnswer = quiz.rounds.find(x => x.roundNumber == req.params.roundNumber)
                         .playedQuestions.find(x => x.questionNumber == req.params.questionNumber)
-                        .teamAnswers.push({teamID: req.params.teamId, answer: req.body.answer, approved: false});
+                        .teamAnswers.find(x => x.teamID == req.params.teamId);
+                    console.log(existingAnswer);
+                    if(existingAnswer) {
+                        existingAnswer.answer = req.body.answer;
+                        quiz.save(function (err, quiz) {
+                            try {
+                                if (err) {
+                                    throw new Error(err);
+                                }
 
-                    quiz.save(function (err, quiz) {
-                        try {
-                            if (err) {
-                                throw new Error(err);
+                                res.json({message: "Answer submitted"});
                             }
+                            catch(exception) {
+                                console.log(exception);
+                                res.status(500);
+                                res.json({message: "A server error occured"});
+                            }
+                        });
+                    }
+                    else {
+                        quiz.rounds.find(x => x.roundNumber == req.params.roundNumber)
+                            .playedQuestions.find(x => x.questionNumber == req.params.questionNumber)
+                            .teamAnswers.push({teamID: req.params.teamId, answer: req.body.answer, approved: false});
 
-                            res.json({message: "Answer submitted"});
-                        }
-                        catch(exception) {
-                            console.log(exception);
-                            res.status(500);
-                            res.json({message: "A server error occured"});
-                        }
-                    });
+                        quiz.save(function (err, quiz) {
+                            try {
+                                if (err) {
+                                    throw new Error(err);
+                                }
+
+                                res.json({message: "Answer submitted"});
+                            }
+                            catch(exception) {
+                                console.log(exception);
+                                res.status(500);
+                                res.json({message: "A server error occured"});
+                            }
+                        });
+                    }
                 }
                 catch (exception) {
                     console.log(exception);

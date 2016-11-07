@@ -11,7 +11,6 @@ let teamAppAPI = {
                     console.log(err);
                 }
                 else {
-                    console.log('response getQuiz', response);
                     callback(null, response.body);
                 }
             })
@@ -25,7 +24,6 @@ let teamAppAPI = {
                     console.log(err);
                 }
                 else {
-                    console.log('response getQuiz', response);
                     callback(null, response.body);
                 }
             })
@@ -39,7 +37,6 @@ let teamAppAPI = {
                     console.log(err);
                 }
                 else {
-                    console.log('response getScoreBoardAnswers', response);
                     callback(err, response.body);
                 }
             })
@@ -53,7 +50,6 @@ let teamAppAPI = {
                     console.log(err);
                 }
                 else {
-                    console.log('response getQuizes', response);
                     callback(err, response.body);
                 }
             })
@@ -67,7 +63,6 @@ let teamAppAPI = {
                     console.log(err);
                 }
                 else {
-                    console.log('response getTeams', response);
                     callback(err, response.body);
                 }
             })

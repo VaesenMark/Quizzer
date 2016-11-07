@@ -12,7 +12,6 @@ class QuizSelectionItemUI extends React.Component {
     }
 
     quizSelected() {
-        console.log('zzz',this.props.quizId);
         this.props.quizSelected(this.props.quizId, this.props.quizStatus)
     }
 

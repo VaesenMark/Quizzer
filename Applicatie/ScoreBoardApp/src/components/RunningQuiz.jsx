@@ -13,7 +13,6 @@ class RunningQuizUI extends React.Component {
     render() {
         let theItems = [];
         if (this.props.teamSubmissions) {
-            console.log('aaaaaaaaaaa', this.props.teamSubmissions);
             theItems = this.props.teamSubmissions.map((itm, idx) =>
                 <TeamSubmission teamName={itm.teamName}
                                 submittedAnswer={itm.answer}

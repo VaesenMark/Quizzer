@@ -43,16 +43,12 @@ app.use((req, res, next) => {
 app.use(sessionParser);
 
 
-function acceptOrRefuseConnection(info) {
-    return true;
-}
-
 var quizmaster = require('./Routes/quizmaster');
-var scorebord = require('./Routes/scorebord');
+var scoreboard = require('./Routes/scorebord');
 var team = require('./Routes/team');
 var quiz = require('./Routes/quiz');
 app.use('/quizmaster', quizmaster);
-app.use('/scorebord', scorebord);
+app.use('/scoreboard', scoreboard);
 app.use('/team', team);
 app.use('/quiz', quiz);
 

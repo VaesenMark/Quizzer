@@ -5,7 +5,6 @@ import * as ReactRedux from 'react-redux';
 class TeamSubmissionUI extends React.Component {
     constructor(props) {
         super(props);
-        console.log('zzz',this.props.answerApproved);
     }
 
     render() {

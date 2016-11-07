@@ -8,13 +8,11 @@ import update from 'immutability-helper';
 
 // Websocket calls
 export function updateAnswers(quizId) {
-    console.log('questionClosed1');
     return (dispatch) => {
         scoreBoardAPI.getScoreboardAnswers(quizId, function(err, answers) {
             if(err) {
                 console.log('error');
             } else {
-                console.log('questionClosed2', answers);
                 dispatch({ type: 'updateAnswers', answers });
             }
         });
@@ -28,7 +26,6 @@ export function questionStarted(quizId) {
             if(err) {
                 console.log('error');
             } else {
-                console.log('questionStarted2', quiz);
                 dispatch({ type: 'updateScoreboardOverview', quiz });
             }
         });
@@ -38,13 +35,11 @@ export function questionStarted(quizId) {
 
 // Normal calls
 export function getQuizes() {
-    console.log('get?');
     return (dispatch) => {
         scoreBoardAPI.getQuizes(function(err, quizes) {
             if(err) {
                 console.log('error');
             } else {
-                console.log('quizesRetreived', quizes);
                 dispatch({ type: 'quizesFetched', quizes });
             }
         });
@@ -71,7 +66,6 @@ export function quizSelectedAction(quizId, quizStatus) {
                             if (err) {
                                 console.log('error');
                             } else {
-                                console.log('quizRetreived', quiz);
                                 dispatch({type: 'updateScoreboardOverview', quiz});
                             }
                         });

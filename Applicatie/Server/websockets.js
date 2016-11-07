@@ -109,6 +109,15 @@ wss.on("connection", function connection(req) {
                     });
                 }
                 break;
+            case "QuizClosed":
+                // Quizmaster closes quiz, notify team and scoreboard of it
+                for(let client of wss.clients) {
+                    client.sendJSON({
+                        messageType: "QuizClosed",
+                        quizId: msg.quizId
+                    });
+                }
+                break;
 
 
 

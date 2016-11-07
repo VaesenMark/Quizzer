@@ -1,3 +1,10 @@
+const mongoose = require('mongoose');
+require('../MongooseModels/connection');
+require('../MongooseModels/Team');
+require('../MongooseModels/Category');
+require('../MongooseModels/Question');
+require('../MongooseModels/Quiz');
+
 var express = require('express');
 var fs = require('fs');
 var app = express();
