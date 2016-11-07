@@ -171,7 +171,7 @@ app.get('/quiz', function(req, res, next) {
     try {
         const Quiz = mongoose.model('Quiz');
 
-        Quiz.find({_id}, function (err, quizzes) {
+        Quiz.find({}, function (err, quizzes) {
             try {
                 if (err) {
                     res.status(500);

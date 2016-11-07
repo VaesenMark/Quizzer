@@ -193,6 +193,7 @@ export function closeAndEndTheQuiz(quizID, quizMasterID){
                                     dispatch({type: 'successGetAllQuizItems', success: true, items: response});
                                     dispatch({type: 'goToQuiz'});
                                 }
+                        });
                         }
                     }
                 });
@@ -450,7 +451,8 @@ export function addQuestion(quizID, roundNumber, question){
                     dispatch({type: "errorSaveQuestions", message: response.message});
                 }
                 else {
-                    websockett.sendJSON({messageType: "QuestionStarted", quizId: quizID, questionNumber: response.questionNumber, roundNumber: roundNumber, questionId: question._id});
+                    websockett.sendJSON({messageType: "QuestionStarted", quizId: quizID, questionNumber: response.questionNumber, roundNumber: roundNumber, questionId: questionID});
+                    websockett.sendJSON({messageType: "QuestionStartedScoreboard", quizId: quizID});
                     dispatch({type: 'successSaveQuestion', success: true, questionNumber: response.questionNumber, item: question});
                     dispatch({
                         type: 'goToClosePage',
@@ -565,7 +567,7 @@ function roundReducer(state = roundState, action) {
                 'message': action.message
             };
             return copyAndUpdateObj(state, update);
-        },
+        }
         case 'errorEndRound':{
             let update = {
                 'message': action.message
