@@ -184,8 +184,14 @@ export function closeAndEndTheQuiz(quizID, quizMasterID){
                             dispatch({type: "errorGetAllQuizItems", message: response.message});
                         }
                         else {
-                            dispatch({type: 'successGetAllQuizItems', success: true, items: response});
-                            dispatch({type: 'goToQuiz'});
+                            quizMasterAPI.endRound(quiz._id, (err, response) => {
+                                if(err){
+                                    dispatch({ type: 'errorEndRound', success:false, message: err});
+                                }
+                                else {
+                                    dispatch({type: 'successGetAllQuizItems', success: true, items: response});
+                                    dispatch({type: 'goToQuiz'});
+                                }
                         }
                     }
                 });
@@ -307,9 +313,16 @@ export function getNextRound(quiz){
                     dispatch({type: "errorGetCategoriesItems", message: response.message});
                 }
                 else {
-                    dispatch({type: 'successGetCategoriesItems', success: true, items: response});
-                    dispatch({type: "goToCategories", item: quiz});
-                    dispatch({type: 'clearAnswers'});
+                    quizMasterAPI.endRound(quiz._id, (err, response) => {
+                        if(err){
+                            dispatch({ type: 'errorEndRound', success:false, message: err});
+                        }
+                        else{
+                            dispatch({type: 'successGetCategoriesItems', success: true, items: response});
+                            dispatch({type: "goToCategories", item: quiz});
+                            dispatch({type: 'clearAnswers'});
+                        }
+                    });
                 }
             }
         });
@@ -545,6 +558,12 @@ function questionsReducer(state = questionState, action) {
 function roundReducer(state = roundState, action) {
     switch (action.type) {
         case 'errorGetCategoriesItems':{
+            let update = {
+                'message': action.message
+            };
+            return copyAndUpdateObj(state, update);
+        },
+        case 'errorEndRound':{
             let update = {
                 'message': action.message
             };

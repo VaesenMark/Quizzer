@@ -62,31 +62,107 @@ function acceptOrRefuseConnection(info) {
 
 
 
-app.post('/testmark', function(req, res, next) {
-    console.log('testmark');
+app.put('/quiz/:quizID/round/close', function(req, res, next) {
+    const Quiz = mongoose.model('Quiz');
+    const Team = mongoose.model('Team');
+    Quiz.findOne({_id: req.params.quizID}, function (err, quiz) {
+        try {
+            if (err) {
+                res.status(500);
+                res.json({message: err})
+            }
+            else {
+                if (!quiz) {
+                    res.status(404);
+                    res.json({message: "No quizzes found"})
+                }
+                else {
+                    let teamScores = [];
+                    let playedquestions = quiz.rounds[(quiz.rounds.length - 1)].playedQuestions;
+                    playedquestions.forEach(function (playedQuestion) {
+                        playedQuestion.teamAnswers.forEach(function (teamAnswer) {
+                            let exist = false;
+                            teamScores.forEach(function (teamScore) {
+                                console.log(teamScore.teamID, teamAnswer.teamID)
+                                if (teamScore.teamID == teamAnswer.teamID) {
+                                    exist = true;
+                                    if(teamAnswer.approved){
+                                        console.log("test");
+                                        teamScore.points=teamScore.points+1;
+                                    }
+                                }
+                            });
+                            if (!exist) {
+                                var point = 0
+                                if(teamAnswer.approved) {
+                                    point = 1;
+                                }
+                                var teamscore = {teamID: teamAnswer.teamID,points: point};
+                                console.log(teamscore);
+                                teamScores.push(teamscore);
+                            }
+                        });
+                    });
+                    teamScores.sort(function(a, b){return b-a});
+                    let place = 1;
+                    var error = null;
+                    teamScores.forEach(function (teamscore) {
+                        let points = 0.1;
+                        if(place == 1){
+                            points = 4;
+                        }
+                        else if(place == 2){
+                            points = 2;
+                        }
+                        else if(place == 3){
+                            points = 1;
+                        }
 
-    // teamApplianceJudged(71, true);
-
-    for(let client of wss.clients) {
-        // client.sendJSON({
-        //     messageType: "NewTeamApplianceMade",
-        //     quizId: quizId
-        // });
-        sessionParser(client.upgradeReq, {}, function(asd){
-            console.log('asd', asd);
-            console.log("New websocket connection:");
-            var sess = client.upgradeReq.session;
-            console.log(sess);
-        });
-    }
-
-    // for(let client of theWebSocketServer.clients) {
-    //
-    //     client.sendJSON({
-    //         message: "ApplianceAccepted"
-    //     });
-    // }
+                        console.log(place, points);
+                        place++;
+                        Team.findOne({_id: teamscore.teamID}, function (err, team) {
+                            if (err) {
+                                res.status(500);
+                                res.json({message: err})
+                            }
+                            else {
+                                if (!team) {
+                                    res.status(404);
+                                    res.json({message: "No quizzes found"})
+                                }
+                                else {
+                                    team.roundPoints += points;
+                                    team.save(function (err, char) {
+                                        if (err) {
+                                            error = err;
+                                        }
+                                        else {
+                                        }
+                                    });
+                                }
+                            }
+                        })
+                    })
+                    if(error){
+                        res.status(500);
+                        res.json({message: error});
+                    }
+                    else{
+                        res.status(200);
+                        res.json({message: "points are changed"});
+                    }
+                }
+            }
+        }
+        catch (exception) {
+            console.log(exception);
+            res.status(500);
+            res.json({message: "A server error occured"});
+        }
+    });
 });
+
+
 
 
 
@@ -95,7 +171,7 @@ app.get('/quiz', function(req, res, next) {
     try {
         const Quiz = mongoose.model('Quiz');
 
-        Quiz.find({}, function (err, quizzes) {
+        Quiz.find({_id}, function (err, quizzes) {
             try {
                 if (err) {
                     res.status(500);

@@ -101,6 +101,13 @@ let quizMasterAPI = {
                 console.log(response, quizMasterID);
                 callback(err, response.body);
             })
+    },
+    endRound(quizID){
+        request
+            .put('http://localhost:3000/quiz/'+quizID+'/round/close')
+            .end( (err,response) => {
+                callback(err, response.body);
+            })
     }
 };
 
