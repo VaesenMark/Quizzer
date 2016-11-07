@@ -11,7 +11,6 @@ class CheckTeamsListUI extends React.Component {
     render() {
         let theItems = [];
         let startQuiz = '';
-        console.log("items", this.props.teams.length);
 
         if (this.props.teams.length>0) {
             if(this.props.teams.length>=2){
@@ -19,10 +18,6 @@ class CheckTeamsListUI extends React.Component {
                     Start quiz
                 </button>
             }
-            this.props.teams.forEach(function(team){
-                console.log(team);
-                console.log(team.approved);
-            });
             theItems = this.props.teams.map((itm, idx) =>
 
                 <CheckTeamsItem
@@ -35,8 +30,6 @@ class CheckTeamsListUI extends React.Component {
             )
 
         }
-
-        console.log("items12", theItems, this.props.teams.length);
 
         return (<div>
 

@@ -10,7 +10,6 @@ class CategorieItemUI extends React.Component {
    render() {
       let clickHandler = (evt) => {
          evt.preventDefault();
-         console.log(this.props.quiz._id);
          this.props.addRound(this.props.quiz._id, this.props.item)
       }
       return  (

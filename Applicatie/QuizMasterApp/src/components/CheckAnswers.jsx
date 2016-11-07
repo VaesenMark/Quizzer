@@ -18,9 +18,6 @@ class CheckAnswersUI extends React.Component {
 
    render() {
        let theItems = [];
-       console.log('render');
-       console.log(this.props.playedQuestions);
-       console.log("questions", this.props.question);
        if (this.props.playedQuestions.length>=1) {
            theItems = this.props.playedQuestions.map((itm, idx) =>
                <PlayedQuestionItem item={itm}

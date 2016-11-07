@@ -58,7 +58,6 @@ app.get('/scoreboardAnswers/:quizId', function(req, res, next) {
                                 const lastRound = quiz.rounds.slice(-1)[0];
                                 const lastQuestion = lastRound.playedQuestions.slice(-1)[0];
                                 let answers = lastQuestion.teamAnswers;
-                                console.log(answers);
                                 let combinedObject = [];
                                 for(let teamObj of teams) {
                                     for(let answerObj of answers) {
@@ -67,7 +66,6 @@ app.get('/scoreboardAnswers/:quizId', function(req, res, next) {
                                         }
                                     }
                                 }
-                                console.log(combinedObject);
                                 res.json(combinedObject);
                             }
                             catch(exception) {

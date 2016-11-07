@@ -51,7 +51,6 @@ app.use('/quiz', quiz);
 
 // Get question
 app.get('/question/:questionId', function(req, res, next) {
-    console.log('1');
     try {
         const Question = mongoose.model('Question');
         Question.findOne(
@@ -59,7 +58,6 @@ app.get('/question/:questionId', function(req, res, next) {
                 _id: req.params.questionId
             },
             function(err, question) {
-                console.log('2',question);
                 try {
                     if (err) {
                         throw new Error(err);

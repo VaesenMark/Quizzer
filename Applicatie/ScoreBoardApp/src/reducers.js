@@ -20,7 +20,6 @@ export function updateAnswers(quizId) {
 }
 
 export function questionStarted(quizId) {
-    console.log('questionStarted1');
     return (dispatch) => {
         scoreBoardAPI.getScoreBoardOverview(quizId, function(err, quiz) {
             if(err) {
