@@ -89,7 +89,7 @@ app.get('/', function(req, res, next) {
                                     }
                                     if (count > 0) {
                                         // Another team has the teamname in use
-                                        res.status(400);
+                                        res.status(403);
                                         res.json({message: "Teamname is already in use"});
                                         return;
                                     }

@@ -35,7 +35,6 @@ class RunningQuizUI extends React.Component {
                 </div>
                 <hr/>
                 <div className="Team scores">
-                    <strong>Team scores</strong>
                     <TeamScores/>
                 </div>
             </div>

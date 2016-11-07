@@ -186,7 +186,7 @@ export function closeAndEndTheQuiz(quizID, quizMasterID) {
                                     dispatch({type: 'errorEndRound', success: false, message: response.message});
                                 }
                                 else {
-
+                                    websockett.sendJSON({messageType: "QuizClosed", quizId: quizID});
                                     dispatch({type: 'goToQuiz'});
                                 }
                             })
@@ -311,7 +311,7 @@ export function getNextRound(quiz){
                             dispatch({ type: 'errorEndRound', success:false, message: response.message});
                         }
                         else{
-
+                            websockett.sendJSON({messageType: "RoundClosed", quizId: quiz._id});
                             dispatch({type: "goToCategories", item: quiz});
                             dispatch({type: 'clearAnswers'});
                         }

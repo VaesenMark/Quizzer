@@ -50,6 +50,7 @@ function baseReducer(state = baseState, action) {
             return update(state, changes);
         }
         case 'getQuestionSuccess': {
+            console.log('action',action);
             let changes = {
                 question: {$set: action.result.question},
                 roundNumber: {$set: action.result.roundNumber},
@@ -60,6 +61,7 @@ function baseReducer(state = baseState, action) {
             return update(state, changes);
         }
         case 'questionClosed': {
+            console.log('action',action);
             let changes = {
                 currentScreen: {$set: 4}
             };
@@ -110,6 +112,7 @@ export function submitLoginAction(password, teamname) {
                 dispatch({ type: 'loginFailed', result: "Something went wrong" });
             } else {
                 websockett.sendJSON({messageType: "TeamLoggedIn", quizId: result.quizId });
+                console.log('suc', result);
                 dispatch({ type: 'loginFinished', result });
             }
         });
@@ -193,6 +196,7 @@ export function submitAnswerAction(answer) {
 }
 export function questionStartedAction(questionNumber, roundNumber, questionId) {
     return (dispatch) => {
+        console.log('ques1',questionNumber);
         teamAppAPI.getQuestion(questionId, function(err, result) {
             const question = result.question;
             let obj = {questionNumber: questionNumber, question: question, roundNumber: roundNumber};
@@ -206,6 +210,7 @@ export function questionStartedAction(questionNumber, roundNumber, questionId) {
     };
 }
 export function AnswerAcceptedAction() {
+    console.log('zipzip');
     return {type: "AnswerAccepted"};
 }
 
@@ -256,6 +261,7 @@ function answerInputReducer(state = initialAnswerInputState, action) {
             return update(state, changes);
         }
         case 'clearAnswer': {
+            console.log('action',action);
             let changes = {
                 answer: {$set: ""}
             };
