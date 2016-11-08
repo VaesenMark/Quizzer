@@ -8,20 +8,26 @@ class CheckTeamItemsUI extends React.Component {
    }
 
     approveTeam(){
-        this.props.approveTeam1(this.props.quiz._id, this.props.item._id);
+        this.props.approveTeam(this.props.quiz._id, this.props.item._id, true);
+    }
+    deniedTeam(){
+        this.props.approveTeam(this.props.quiz._id, this.props.item._id, false);
 
     }
 
    render() {
 
-       let button = '';
+       let approveButton = '';
+       let deniedButton = '';
        if(!this.props.approved){
-           button = <button id="button" onClick={this.approveTeam.bind(this)}>approve</button>
+           approveButton = <button className="btn btn-primary" id="checkTeamItemButton" onClick={this.approveTeam.bind(this)}>approve</button>
+           deniedButton = <button className="btn btn-primary" id="checkTeamItemButton" onClick={this.deniedTeam.bind(this)}>denied</button>
        }
 
       return  (
-          <div>{this.props.message}
-          <h1>{this.props.name} -  {button}</h1></div>
+          <div id="checkTeamItem">{this.props.message}
+          <h2>{this.props.name} -  </h2>{approveButton}{deniedButton}
+          </div>
       )
    }
 }
@@ -29,7 +35,7 @@ class CheckTeamItemsUI extends React.Component {
 
 function mapDispatchToProps(dispatch) {
    return {
-      approveTeam1: (quizID,teamID) => dispatch(approveTeam(quizID, teamID))
+      approveTeam: (quizID,teamID, approved) => dispatch(approveTeam(quizID, teamID, approved))
    }
 }
 

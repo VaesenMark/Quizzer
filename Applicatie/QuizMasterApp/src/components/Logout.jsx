@@ -13,8 +13,8 @@ class LogoutUI extends React.Component {
    }
 
    render() {
-      return (<div>
-             <button id="button" onClick={this.doLogout.bind(this)}>
+      return (<div id="Logout">
+             <button id="button" className="btn btn-primary" onClick={this.doLogout.bind(this)}>
                 Logout
              </button>
           </div>

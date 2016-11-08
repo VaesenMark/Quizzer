@@ -2,6 +2,12 @@ import React from 'react'
 import * as ReactRedux from 'react-redux';
 import {loginAction, editPassword, editUsername} from '../reducers';
 
+import Row from 'react-bootstrap/lib/Row';
+import Col from 'react-bootstrap/lib/Col';
+import Form from 'react-bootstrap/lib/Form';
+import FormControl from 'react-bootstrap/lib/FormControl'
+import FormGroup from 'react-bootstrap/lib/FormGroup'
+import ControlLabel from 'react-bootstrap/lib/ControlLabel'
 
 class LoginUi extends React.Component {
    constructor(props) {
@@ -15,25 +21,43 @@ class LoginUi extends React.Component {
       this.props.doEditPassword(evt.target.value)
    }
 
-   doLogin(){
+   doLogin(e){
+      e.preventDefault();
       this.props.getLogin(this.props.username, this.props.password);
    }
 
 
 
    render() {
-      return (<div>
-             <label htmlFor="Username">
-                Username <input id="listSizeField" value={this.props.username} onChange={this.usernameChange.bind(this)}/>
-             </label><br/>
-             <label htmlFor="Password">
-                Password <input id="quizMasterPassword" value={this.props.password} onChange={this.passwordChange.bind(this)}/>
-             </label>
-             <button id="button" onClick={this.doLogin.bind(this)}>
-                Login
-             </button>
-              {this.props.loginMessage}
-          </div>
+      return (
+          <div id="Login">
+             <Form>
+             <FormGroup>
+                <ControlLabel>Username</ControlLabel>
+                <FormControl
+                    type="text"
+                    className="maxInputWidth"
+                    value={this.props.username}
+                    onChange={this.usernameChange.bind(this)}
+                />
+             </FormGroup>
+             <FormGroup>
+                <ControlLabel>Password</ControlLabel>
+                <FormControl
+                    type="text"
+                    className="maxInputWidth"
+                    value={this.props.password}
+                    onChange={this.passwordChange.bind(this)}
+                />
+             </FormGroup>
+                <button className="btn btn-primary" id="inglogButton" onClick={this.doLogin.bind(this)}>
+                   Login
+                </button>
+                </Form>
+             </div>
+
+
+
       );
    }
 }

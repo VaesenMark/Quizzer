@@ -4,6 +4,7 @@ import quizMasterAPI from './quizMasterAPI'
 // import initialItemStatuses from './itemStatuses';
 import update from 'immutability-helper';
 import {websockett} from './websocket'
+
 const minerrStatuscode = 400;
 
 const MainState = {
@@ -343,9 +344,11 @@ export function getNextQuestion(quizID,roundID){
     }
 }
 
-export function approveTeam(quizID,teamID){
+export function approveTeam(quizID,teamID, boolApproved){
     return (dispatch) => {
-        quizMasterAPI.approveTeam(quizID, teamID, (err, response) => {
+
+        quizMasterAPI.approveTeam(quizID, teamID, boolApproved, (err, response) => {
+            console.log(err, response);
             if (err) {
                 dispatch({type: 'errorTeamApprove', success: false, message: response.message});
             } else {
@@ -353,6 +356,7 @@ export function approveTeam(quizID,teamID){
                     dispatch({type: "errorTeamApprove", message: response.message});
                 }
                 else {
+                    console.log(quizID);
                     dispatch({type: 'succesTeamApprove', success: true, teams: response});
                     quizMasterAPI.getTeams(quizID, (err, response) => {
                         if (err) {
@@ -362,7 +366,8 @@ export function approveTeam(quizID,teamID){
                                 dispatch({type: "errorTeamApprove", message: response.message});
                             }
                             else {
-                                websockett.sendJSON({messageType: "TeamApplianceJudged", teamId: teamID, accepted: true});
+                                console.log(boolApproved);
+                                websockett.sendJSON({messageType: "TeamApplianceJudged", teamId: teamID, accepted: boolApproved});
                                 dispatch({type: 'succesGetTeams', success: true, teams: response});
                             }
                         }

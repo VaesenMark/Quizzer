@@ -18,42 +18,52 @@ class CheckAnswersUI extends React.Component {
 
    render() {
        let theItems = [];
-       if (this.props.playedQuestions.length>=1) {
+       if (this.props.playedQuestions.length >= 1) {
            theItems = this.props.playedQuestions.map((itm, idx) =>
                <PlayedQuestionItem item={itm}
-                                   key = {itm._id}
-                                   answer = {itm.answer}
-                                   judgeAble = {true}
-                                   teamId = {itm.teamID}
+                                   key={itm._id}
+                                   answer={itm.answer}
+                                   judgeAble={true}
+                                   teamId={itm.teamID}
                />
            )
        }
        var closeQuiz = '';
-       var nextQuestion = <button id="button" onClick={this.nextQuestion.bind(this)}>
+       var nextQuestion = <button className="btn btn-primary" id="button" onClick={this.nextQuestion.bind(this)}>
            Next Question
        </button>;
-       if(this.props.questionNumber >= 12){
-           closeQuiz = <button id="selectButton" onClick={this.closeTheQuiz.bind(this)}>Close quiz</button>
-           if(this.props.items.length > 1) {
-               nextQuestion = <button id="button" onClick={this.nextRound.bind(this)}>
+       if (this.props.questionNumber >= 12) {
+           closeQuiz =
+               <button className="btn btn-primary" id="selectButton" onClick={this.closeTheQuiz.bind(this)}>Close
+                   quiz</button>
+           if (this.props.items.length > 1) {
+               nextQuestion = <button className="btn btn-primary" id="button" onClick={this.nextRound.bind(this)}>
                    Next Round
                </button>
            }
        }
-      return (<div>
-              <h1>Judge answers</h1>
-              <h1>vraag: {this.props.question.question}</h1>
-              <h2>antwoord: {this.props.question.answer}</h2>
-              {this.props.message}
-              quizid: {this.props.quiz._id} -
-              ronde:  {this.props.roundNumber} -
-              vraag:{this.props.questionNumber}/12
-          <br/>
-              {theItems}
-              {nextQuestion}
-              {closeQuiz}
-          </div>
-      );
+       return (<div>
+               <h1>Judge answers
+                   quizid: {this.props.quiz._id} -
+                   ronde: {this.props.roundNumber} -
+                   vraag:{this.props.questionNumber}/12
+               </h1>
+               <div className="Question">
+                   <h1>question: {this.props.question.question}</h1>
+                   <h2 id="givenAnswer">answer: {this.props.question.answer}</h2>
+               </div>
+               {this.props.message}
+
+               <br/>
+               <div className="givenAnswers">
+                   {theItems}
+                   <div className="nextButtons">
+                       {nextQuestion}
+                       {closeQuiz}
+                   </div>
+               </div>
+           </div>
+       );
    }
 }
 
