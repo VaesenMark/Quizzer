@@ -21,12 +21,10 @@ class QuizSelectionItemUI extends React.Component {
     render() {
         return (
             <Col xs={6} sm={4} md={3}>
-                <Panel header={`Quiz ID ${this.props.quizId}`} bsStyle="primary">
-                    QuizId: {this.props.quizId}
+                <Panel header={`Quiz ID ${this.props.quizId}`} bsStyle="primary" className="text-center">
                     <br/>
-                    QuizStatus: {this.props.quizStatus}
-                    <br/>
-                    <button onClick={this.quizSelected.bind(this)}>Submit</button>
+                    <button onClick={this.quizSelected.bind(this)}>Select</button>
+                    <br/><br/>
                 </Panel>
             </Col>
         );

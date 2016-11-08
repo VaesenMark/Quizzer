@@ -45,6 +45,11 @@ websocket.onmessage = function(eventInfo) {
                 store.dispatch(updateTeamScores(message.quizId));
             }
             break;
+        case "QuestionStarted":
+            if (message.quizId == store.getState().base.quizId) {
+                store.dispatch(questionStarted(message.quizId));
+            }
+            break;
 
         default:
     }

@@ -2,6 +2,7 @@ import React from 'react';
 import * as ReactRedux from 'react-redux';
 import {TeamScoreItem} from './TeamScoreItem';
 
+import Table from 'react-bootstrap/lib/Table';
 
 class TeamScoresUI extends React.Component {
     constructor(props) {
@@ -20,7 +21,18 @@ class TeamScoresUI extends React.Component {
         return (
             <div>
                 {this.props.teamScores ? <strong>Team scores</strong> : ''}
-                {theItems}
+                {this.props.teamScores ?
+                    <Table striped bordered condensed hover>
+                        <thead>
+                            <tr>
+                                <th>Team</th>
+                                <th>Round Points</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {theItems}
+                        </tbody>
+                    </Table> : ''}
             </div>
         );
     }

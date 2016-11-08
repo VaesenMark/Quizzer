@@ -10,13 +10,10 @@ class TeamScoreItemUI extends React.Component {
 
     render() {
         return (
-            <div className="TeamScores">
-                TeamName: {this.props.teamName}
-                <br/>
-                RoundPoints: {this.props.roundPoints}
-                <br/>
-                <br/>
-            </div>
+            <tr>
+                <td>{this.props.teamName}</td>
+                <td>{this.props.roundPoints}</td>
+            </tr>
         );
     }
 }

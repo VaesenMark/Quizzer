@@ -3,6 +3,7 @@ import * as ReactRedux from 'react-redux';
 import {QuizSelection} from './QuizSelection';
 import {RunningQuiz} from './RunningQuiz';
 import {TeamScores} from './TeamScores';
+import {PasswordScreen} from './Password';
 
 
 class AppUI extends React.Component {
@@ -26,6 +27,12 @@ class AppUI extends React.Component {
             screenContent =
                 <div>
                     <TeamScores/>
+                </div>
+        }
+        else if (this.props.currentScreen == 4) {
+            screenContent =
+                <div>
+                    <PasswordScreen/>
                 </div>
         }
         return (

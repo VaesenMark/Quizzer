@@ -70,10 +70,11 @@ export function quizSelectedAction(quizId, quizStatus) {
                     console.log('error');
                 } else {
                     if (quiz.status == 1) {
-
                     }
                     else if (quiz.status == 2) {
                         dispatch({type: 'showQuizPassword', quiz});
+                        dispatch({type: 'setQuizId', quiz});
+                        dispatch({type: 'openPasswordScreen'});
                     }
                     else {
                         scoreBoardAPI.getScoreBoardOverview(quizId, function (err, quiz) {
@@ -174,6 +175,19 @@ function baseReducer(state = baseState, action) {
             };
             return update(state, changes);
         }
+        case 'setQuizId': {
+            let changes = {
+                quizId: {$set: action.quiz._id}
+            };
+            return update(state, changes);
+        }
+        case 'openPasswordScreen': {
+            let changes = {
+                currentScreen: {$set: 4}
+            };
+            return update(state, changes);
+        }
+
         default:
             return state;
     }

@@ -1,6 +1,6 @@
 import React from 'react';
 import * as ReactRedux from 'react-redux';
-import {TeamSubmission} from './TeamSubmission'
+import {TeamSubmissions} from './TeamSubmissions'
 import {TeamScores} from './TeamScores'
 
 import Row from 'react-bootstrap/lib/Row';
@@ -12,41 +12,35 @@ class RunningQuizUI extends React.Component {
     }
 
     render() {
-        let theItems = [];
-        if (this.props.teamSubmissions) {
-            theItems = this.props.teamSubmissions.map((itm, idx) =>
-                <TeamSubmission teamName={itm.teamName}
-                                submittedAnswer={itm.answer}
-                                answerApproved={itm.approved}
-                                key={itm.teamName}/>
-            );
-        }
         return (
             <div>
                 <div className="topBar">
                     <br/>
-                    <h4><strong>Question:</strong></h4>
-                    <h4>{this.props.question}</h4>
+                    <span className="scoreBoardQuestion">{this.props.question}</span>
                     <br/>
                 </div>
                 <hr/>
                 <div className="gameScores">
-                    <div className="teamSubmissions">
-                        <strong>Team answers:</strong>
-                        {theItems}
-                    </div>
-
-                    <div className="Team scores">
-                        <TeamScores/>
-                    </div>
+                    <Row>
+                        <Col xs={12} sm={8}>
+                            <div className="teamSubmissions">
+                                <TeamSubmissions/>
+                            </div>
+                        </Col>
+                        <Col xs={12} sm={4}>
+                            <div className="teamScores">
+                                <TeamScores/>
+                            </div>
+                        </Col>
+                    </Row>
                 </div>
                 <hr/>
                 <div className="bottomBar">
                     <Row>
                         <Col xs={12} sm={6}>
-                            <h4>Question {this.props.questionNumber}/12 --- Round {this.props.roundNumber}</h4>
+                            <h4>Question {this.props.questionNumber}/12  -  Round {this.props.roundNumber}</h4>
                         </Col>
-                        <Col xs={12} sm={4} className="text-center">
+                        <Col xs={12} sm={6} className="text-center">
                             <h4>Category: {this.props.category}</h4>
                         </Col>
                     </Row>
