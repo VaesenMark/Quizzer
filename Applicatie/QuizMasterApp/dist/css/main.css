@@ -1,4 +1,4 @@
-.QuestionItem,
+
 .CategoryItem,
 .QuizItem{
     width: 25%;
@@ -106,8 +106,56 @@ button#CategoryItem {
     float: left;
 }
 
-div#QuestionItem {
+div.QuestionItem {
     margin-bottom: 5px;
+    min-width: 350px;
 }
 
 button#QuestionItemButton {margin-left: 10px;margin-right: 10px;}
+
+.playedQuestionItem {
+    width: 33%;
+    min-width: 150px;
+    height: 75px;
+    float: left;
+    text-align: center;
+}
+
+.closeQuestion {
+    width: 100%;
+    float: left;
+    text-align: center;
+}
+
+.nextButtons {
+    width: 50%;
+    float: left;
+    text-align: center;
+    margin-top: 100px;
+    margin-left: 25%;
+}
+
+.givenAnswers {
+    width: 100%;
+    float: left;
+}
+
+.givenAnswers {
+    width: 100%;
+    float: left;
+}
+
+.Question {
+    width: 100%;
+    float: left;
+    text-align: center;
+}
+
+h1 {
+    text-align: center;
+}
+
+h2#givenAnswer {
+    text-align: center;
+    width: 100%;
+}

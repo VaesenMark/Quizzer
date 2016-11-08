@@ -20,12 +20,12 @@ class PlayedQuestionItemsUI extends React.Component {
         // };
 
         return  (
-            <div>
+            <div className="playedQuestionItem">
                 Team: {this.props.teamId}
                 <br/>
                 Answer: {this.props.answer}
                 <br/>
-                { this.props.judgeAble ? <button onClick={this.acceptAnswer.bind(this)}>Accept</button> : '' }
+                { this.props.judgeAble ? <button className="btn btn-primary" onClick={this.acceptAnswer.bind(this)}>Accept</button> : '' }
 
                 {this.props.message}
                 {/*<span onClick={clickHandler}>*/}

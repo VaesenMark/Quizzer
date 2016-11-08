@@ -12,27 +12,31 @@ class CloseQuestionUI extends React.Component {
 
    render() {
        let theItems = [];
-       if (this.props.playedQuestions.length>=1) {
+       if (this.props.playedQuestions.length >= 1) {
            theItems = this.props.playedQuestions.map((itm, idx) =>
                <PlayedQuestionItem
-                             key = {itm._id}
-                             answer = {itm.answer}
-                             judgeAble = {false}
-                               teamId = {itm.teamID}
-                             approved = {itm.approved}
+                   key={itm._id}
+                   answer={itm.answer}
+                   judgeAble={false}
+                   teamId={itm.teamID}
+                   approved={itm.approved}
                />
            )
        }
 
-      return (<div>
-             <h1>Submitted answers</h1>
-             {this.props.questionID}
-              {theItems}
-             <button id="button" onClick={this.closeQuestion.bind(this)}>
-                close question
-             </button>
-          </div>
-      );
+       return (<div>
+               <h1>Submitted answers</h1>
+               {this.props.questionID}
+               <div className="givenAnswers">
+                   {theItems}
+                   <div className="closeQuestion">
+                       <button className="btn btn-primary" id="button" onClick={this.closeQuestion.bind(this)}>
+                           close question
+                       </button>
+                   </div>
+               </div>
+           </div>
+       );
    }
 }
 

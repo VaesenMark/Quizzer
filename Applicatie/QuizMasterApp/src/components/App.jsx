@@ -35,7 +35,7 @@ class AppUI extends React.Component {
 
       }
       else if(this.props.currentPage == 6){
-         content = <div><CloseQuestion/><Logout/></div>
+         content = <div><CloseQuestion/></div>
 
       }
       else if(this.props.currentPage == 7){

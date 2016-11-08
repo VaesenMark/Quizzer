@@ -382,7 +382,6 @@ app.get('/:quizID/round/:roundNumber/question/:questionNumber', function(req, re
                 else if (quiz != null) {
                     let round = quiz.rounds.find(x => x.roundNumber == req.params.roundNumber);
                     var result = round.playedQuestions.find(x=> x.questionNumber == req.params.questionNumber).teamAnswers;
-
                     res.status(200);
                     res.json({answers: result})
                 }
