@@ -72,7 +72,7 @@ app.get('/', function(req, res, next) {
                         if (quiz === null) {
                             // Password not found
                             res.status(403);
-                            res.json({message: "Invalid password"});
+                            res.json({message: "InvalidPassword"});
                             return;
                         }
 
@@ -90,7 +90,7 @@ app.get('/', function(req, res, next) {
                                     if (count > 0) {
                                         // Another team has the teamname in use
                                         res.status(403);
-                                        res.json({message: "Teamname is already in use"});
+                                        res.json({message: "TeamnameInUse"});
                                         return;
                                     }
 
@@ -112,7 +112,7 @@ app.get('/', function(req, res, next) {
 
 
                                             res.json({
-                                                message: "Team successfully logged in. Waiting for the quizmaster to approve it",
+                                                message: "TeamRegistered",
                                                 teamId: team._id,
                                                 quizId: quiz._id
                                             });

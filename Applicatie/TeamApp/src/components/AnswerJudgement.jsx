@@ -1,5 +1,7 @@
 import React from 'react';
 import * as ReactRedux from 'react-redux';
+import Row from 'react-bootstrap/lib/Row';
+import Col from 'react-bootstrap/lib/Col';
 
 
 class AnswerJudgementUI extends React.Component {
@@ -10,13 +12,38 @@ class AnswerJudgementUI extends React.Component {
     render() {
         return (
             <div>
-                Question closed. Wait for the quizmaster to evaluate your asnwer.
+                <h2>Question closed</h2>
                 <br/>
-                {this.props.questionNumber}: {this.props.question}
+                Wait for the quizmaster to evaluate your answer.
+                <br/><br/><br/>
+                <Row>
+                    <Col xs={12} sm={2}>
+                        <strong>The question:</strong>
+                    </Col>
+                    <Col xs={12} sm={10}>
+                        {this.props.question}
+                    </Col>
+                </Row>
                 <br/>
-                Your answer: {this.props.answer}
+                <Row>
+                    <Col xs={12} sm={2}>
+                        <strong>Your answer:</strong>
+                    </Col>
+                    <Col xs={12} sm={10}>
+                        {this.props.answer}
+                    </Col>
+                </Row>
                 <br/>
-                Answer accepted: {this.props.accepted == true ? 'YES' : ''}
+                <Row>
+                    <Col xs={12} sm={2}>
+                        <strong>Answer accepted:</strong>
+                    </Col>
+                    <Col xs={12} sm={10}>
+                        <span className="answerJudgedText">{this.props.accepted == true ? 'YES' : ''}</span>
+                    </Col>
+                </Row>
+                <br/><br/><br/>
+                Question {this.props.questionNumber}/12
             </div>
         );
     }

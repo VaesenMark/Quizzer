@@ -38,8 +38,8 @@ function baseReducer(state = baseState, action) {
     switch (action.type) {
         case 'loginFinished': {
             let changes = {
-                quizId: {$set: action.result.quizId},
-                teamId: {$set: action.result.teamId}
+                quizId: {$set: action.obj.quizId},
+                teamId: {$set: action.obj.teamId}
             };
             return update(state, changes);
         }
@@ -106,17 +106,42 @@ export function applianceDeniedAction() {
 }
 // Login api call
 export function submitLoginAction(password, teamname) {
-    return (dispatch) => {
-        teamAppAPI.login(password, teamname, function(err, result) {
-            if(err) {
-                dispatch({ type: 'loginFailed', result: "Something went wrong" });
-            } else {
-                websockett.sendJSON({messageType: "TeamLoggedIn", quizId: result.quizId });
-                console.log('suc', result);
-                dispatch({ type: 'loginFinished', result });
-            }
-        });
-    };
+
+    if(!teamname || teamname.length === 0) {
+        return (dispatch) => {
+            let obj = {message: "", success: false, quizId: 0, teamId: 0};
+            obj.message = "Teamname cannot be empty";
+            dispatch({type: 'loginFinished', obj});
+        }
+    }
+    else {
+        return (dispatch) => {
+            teamAppAPI.login(password, teamname, function (err, result) {
+
+                let obj = {message: "", success: false, quizId: 0, teamId: 0};
+                if (err) {
+                    if (result.message === "InvalidPassword") {
+                        obj.message = "Invalid password. Make sure you entered it correctly";
+                    }
+                    else if(result.message === "TeamnameInUse") {
+                        obj.message = "That teamname is already in use";
+                    }
+                    else {
+                        console.log(err);
+                        obj.message = "Something went wrong";
+                    }
+                } else {
+                    websockett.sendJSON({messageType: "TeamLoggedIn", quizId: result.quizId});
+                    obj.message = "Your team has been registered. Wait for the quizmaster to approve it";
+                    obj.success = true;
+                    obj.quizId = result.quizId;
+                    obj.teamId = result.teamId;
+                }
+                dispatch({type: 'loginFinished', obj});
+            });
+        }
+    }
+
 }
 
 
@@ -128,7 +153,7 @@ const initialLoginState = {
     password: "",
     teamname: "",
     loginMessage: "",
-    blaat: ""
+    loginSuccess: null
 };
 
 function loginReducer(state = initialLoginState, action) {
@@ -149,14 +174,8 @@ function loginReducer(state = initialLoginState, action) {
         }
         case 'loginFinished': {
             let changes = {
-                loginMessage: {$set: action.result.message}
-            };
-
-            return update(state, changes);
-        }
-        case 'loginFailed': {
-            let changes = {
-                loginMessage: {$set: action.result}
+                loginMessage: {$set: action.obj.message},
+                loginSuccess: {$set: action.obj.success}
             };
 
             return update(state, changes);
@@ -182,17 +201,30 @@ export function updateAnswerAction(answer) {
     return {type: "updateAnswer", answer: answer};
 }
 export function submitAnswerAction(answer) {
-    return (dispatch) => {
-        teamAppAPI.submitAnswer(answer, function(err, result) {
-            const message = result.message;
-            if(err) {
-                dispatch({ type: 'submitFailed', result: "Something went wrong" });
-            } else {
-                websockett.sendJSON({messageType: "AnswerSubmitted", quizId: store.getState().base.quizId, roundNumber: store.getState().base.roundNumber, questionNumber: store.getState().base.questionNumber});
-                dispatch({ type: 'submitFinished', result: message });
-            }
-        });
-    };
+
+    if(!answer || answer.length === 0) {
+        return (dispatch) => {
+            dispatch({type: 'submitFailed', result: "Enter an answer first"});
+        }
+    }
+    else {
+        return (dispatch) => {
+            teamAppAPI.submitAnswer(answer, function (err, result) {
+                const message = result.message;
+                if (err) {
+                    dispatch({type: 'submitFailed', result: "Something went wrong"});
+                } else {
+                    websockett.sendJSON({
+                        messageType: "AnswerSubmitted",
+                        quizId: store.getState().base.quizId,
+                        roundNumber: store.getState().base.roundNumber,
+                        questionNumber: store.getState().base.questionNumber
+                    });
+                    dispatch({type: 'submitFinished', result: message});
+                }
+            });
+        };
+    }
 }
 export function questionStartedAction(questionNumber, roundNumber, questionId) {
     return (dispatch) => {
@@ -220,7 +252,8 @@ export function AnswerAcceptedAction() {
 const initialAnswerInputState = {
     answer: "",
     message: "",
-    accepted: false
+    accepted: false,
+    submitSuccess: null
 };
 
 function answerInputReducer(state = initialAnswerInputState, action) {
@@ -234,7 +267,8 @@ function answerInputReducer(state = initialAnswerInputState, action) {
         }
         case 'submitFailed': {
             let changes = {
-                message: {$set: action.result}
+                message: {$set: action.result},
+                submitSuccess: {$set: false}
             };
 
             return update(state, changes);
@@ -248,7 +282,8 @@ function answerInputReducer(state = initialAnswerInputState, action) {
         }
         case 'submitFinished': {
             let changes = {
-                accepted: {$set: action.result}
+                submitSuccess: {$set: true},
+                message: {$set: action.result}
             };
 
             return update(state, changes);
@@ -263,7 +298,10 @@ function answerInputReducer(state = initialAnswerInputState, action) {
         case 'clearAnswer': {
             console.log('action',action);
             let changes = {
-                answer: {$set: ""}
+                answer: {$set: ""},
+                accepted: {$set: false},
+                submitSuccess: {$set: null},
+                message: {$set: ""}
             };
 
             return update(state, changes);

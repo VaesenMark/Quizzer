@@ -988,7 +988,7 @@ app.post('/:quizId/round/:roundNumber/question/:questionNumber/teamanswer/:teamI
                                     throw new Error(err);
                                 }
 
-                                res.json({message: "Answer submitted"});
+                                res.json({message: "Your answer has been updated"});
                             }
                             catch(exception) {
                                 console.log(exception);
@@ -1008,7 +1008,7 @@ app.post('/:quizId/round/:roundNumber/question/:questionNumber/teamanswer/:teamI
                                     throw new Error(err);
                                 }
 
-                                res.json({message: "Answer submitted"});
+                                res.json({message: "Your answer has been submitted"});
                             }
                             catch(exception) {
                                 console.log(exception);

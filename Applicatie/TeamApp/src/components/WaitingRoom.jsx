@@ -9,7 +9,8 @@ export default class WaitingRoomUI extends React.Component {
     render() {
         return (
             <div>
-                <h1>Wait for the quizmaster to start the game</h1>
+                <h2>Your team registration has been accepted</h2>
+                <h2>Wait for the quizmaster to start the game</h2>
             </div>
         );
     }

@@ -10,12 +10,7 @@ let teamAppAPI = {
             .end( (err,response) => {
                 if(err) {
                     console.log(err);
-                    if(err.status === 403 || err.status === 500) {
-                        callback(null, response.body);
-                    }
-                    else {
-                        callback(err, response.body);
-                    }
+                    callback(err, response.body);
                 }
                 else {
                     callback(null, response.body);
@@ -31,7 +26,7 @@ let teamAppAPI = {
                 if(err) {
                     console.log(err);
                     if(err.status === 403 || err.status === 500) {
-                        callback(null, response.body);
+                        callback(nuerll, response.body);
                     }
                     else {
                         callback(err, response.body);
@@ -51,12 +46,7 @@ let teamAppAPI = {
             .end( (err,response) => {
                 if(err) {
                     console.log(err);
-                    if(err.status === 404 || err.status === 500) {
-                        callback(null, response.body);
-                    }
-                    else {
-                        callback(err, response.body);
-                    }
+                    callback(err, response.body);
                 }
                 else {
                     callback(null, response.body);
