@@ -314,25 +314,32 @@ app.put('/:quizID/team/:teamID', function(req, res, next) {
                 else {
                     Team.findOne({_id: req.params.teamID}, function (err, team) {
                         try {
+                            console.log(team);
                             if (err) {
                                 res.status(500);
                                 res.json({message: err});
                             }
                             else {
                                 if (team.quizID == req.params.quizID) {
-                                    team.approved = true;
-                                    team.update({approved: true});
-                                    team.save(function (err, char) {
-                                        if (err) {
+                                    if (req.body.approved) {
+                                        team.approved = true;
+                                        team.save(function (err, char) {
+                                            console.log(err);
+                                            if (err) {
 
-                                            res.status(500);
-                                            res.json({message: err})
-                                        }
-                                        else {
-                                            res.status(200);
-                                            res.json({message: "Team accepted"});
-                                        }
-                                    });
+                                                res.status(500);
+                                                res.json({message: err})
+                                            }
+                                            else {
+                                                res.status(200);
+                                                res.json({message: "Team accepted"});
+                                            }
+                                        });
+                                    }
+                                    else{
+                                        res.status(200);
+                                        res.json({message: "Team denied"});
+                                    }
                                 }
                                 else {
                                     res.status(500);

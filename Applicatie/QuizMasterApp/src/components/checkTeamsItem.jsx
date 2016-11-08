@@ -21,7 +21,7 @@ class CheckTeamItemsUI extends React.Component {
        let deniedButton = '';
        if(!this.props.approved){
            approveButton = <button className="btn btn-primary" id="checkTeamItemButton" onClick={this.approveTeam.bind(this)}>approve</button>
-           deniedButton = <button className="btn btn-primary" id="checkTeamItemButton" onClick={this.approveTeam.bind(this)}>denied</button>
+           deniedButton = <button className="btn btn-primary" id="checkTeamItemButton" onClick={this.deniedTeam.bind(this)}>denied</button>
        }
 
       return  (

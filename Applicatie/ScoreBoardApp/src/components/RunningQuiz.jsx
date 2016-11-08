@@ -3,7 +3,8 @@ import * as ReactRedux from 'react-redux';
 import {TeamSubmission} from './TeamSubmission'
 import {TeamScores} from './TeamScores'
 
-
+import Row from 'react-bootstrap/lib/Row';
+import Col from 'react-bootstrap/lib/Col';
 
 class RunningQuizUI extends React.Component {
     constructor(props) {
@@ -22,20 +23,33 @@ class RunningQuizUI extends React.Component {
         }
         return (
             <div>
-                <div className="topbar">
-                    <h3>Question: {this.props.question}</h3>
-                    <h3>Category: {this.props.category}</h3>
-                    <h3>Round: {this.props.roundNumber}</h3>
-                    <h3>Question: {this.props.questionNumber}/12</h3>
+                <div className="topBar">
+                    <br/>
+                    <h4><strong>Question:</strong></h4>
+                    <h4>{this.props.question}</h4>
+                    <br/>
                 </div>
                 <hr/>
-                <div className="teamSubmissions">
-                    <strong>Team answers:</strong>
-                    {theItems}
+                <div className="gameScores">
+                    <div className="teamSubmissions">
+                        <strong>Team answers:</strong>
+                        {theItems}
+                    </div>
+
+                    <div className="Team scores">
+                        <TeamScores/>
+                    </div>
                 </div>
                 <hr/>
-                <div className="Team scores">
-                    <TeamScores/>
+                <div className="bottomBar">
+                    <Row>
+                        <Col xs={12} sm={6}>
+                            <h4>Question {this.props.questionNumber}/12 --- Round {this.props.roundNumber}</h4>
+                        </Col>
+                        <Col xs={12} sm={4} className="text-center">
+                            <h4>Category: {this.props.category}</h4>
+                        </Col>
+                    </Row>
                 </div>
             </div>
         );

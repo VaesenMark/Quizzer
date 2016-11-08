@@ -70,9 +70,10 @@ let quizMasterAPI = {
                     callback(err, response.body);
                 })
         },
-    approveTeam(quizID,teamID, callback){
+    approveTeam(quizID,teamID, boolApproved, callback){
         request
             .put('http://localhost:3000/quiz/'+quizID+'/team/'+teamID)
+            .send({approved: boolApproved})
             .end( (err,response) => {
                 callback(err, response.body);
             })

@@ -16,7 +16,7 @@ class CategorieItemUI extends React.Component {
           <div className="CategoryItem">
              {this.props.message}
 
-             <button onClick={clickHandler}>
+             <button id="CategoryItem" className="btn btn-primary" onClick={clickHandler}>
              select
              </button>
              {this.props.name}
