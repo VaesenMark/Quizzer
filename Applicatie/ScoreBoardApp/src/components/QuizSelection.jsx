@@ -2,6 +2,7 @@ import React from 'react';
 import * as ReactRedux from 'react-redux';
 import {QuizSelectionItem} from './QuizSelectionItem';
 
+import Row from 'react-bootstrap/lib/Row';
 
 class QuizSelectiontUI extends React.Component {
     constructor(props) {
@@ -19,7 +20,11 @@ class QuizSelectiontUI extends React.Component {
         }
         return (
             <div>
-                {theItems}
+                Select a quiz you want to inspect.
+                <br/><br/>
+                <Row>
+                    {theItems}
+                </Row>
                 <br/>
                 <h1>{this.props.password ? 'Password: '+this.props.password : ''}</h1>
             </div>

@@ -29,7 +29,7 @@ class AppUI extends React.Component {
                 </div>
         }
         return (
-            <div>
+            <div className="container">
                 <h1>Scoreboard</h1>
                 {screenContent}
             </div>

@@ -132,7 +132,7 @@ export function submitLoginAction(password, teamname) {
                     }
                 } else {
                     websockett.sendJSON({messageType: "TeamLoggedIn", quizId: result.quizId});
-                    obj.message = "Your team has been registered. Wait for the quizmaster to approve it";
+                    obj.message = "Your team registration has been send. Wait for the quizmaster to approve it";
                     obj.success = true;
                     obj.quizId = result.quizId;
                     obj.teamId = result.teamId;
@@ -182,7 +182,8 @@ function loginReducer(state = initialLoginState, action) {
         }
         case 'applianceDenied': {
             let changes = {
-                loginMessage: {$set: "Your teamname has been denied. Please choose another one"}
+                loginMessage: {$set: "Your teamname has been denied. Please choose another one"},
+                loginSuccess: {$set: false},
             };
             return update(state, changes);
         }

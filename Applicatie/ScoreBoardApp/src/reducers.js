@@ -47,7 +47,14 @@ export function getQuizes() {
             if(err) {
                 console.log('error');
             } else {
-                dispatch({ type: 'quizesFetched', quizes });
+                // Filter out closed quizes
+                let filteredQuizes = [];
+                for(let quiz of quizes) {
+                    if(quiz.status != 4) {
+                        filteredQuizes.push(quiz)
+                    }
+                }
+                dispatch({ type: 'quizesFetched', filteredQuizes });
             }
         });
     };
@@ -139,7 +146,7 @@ function baseReducer(state = baseState, action) {
         }
         case 'quizesFetched': {
             let changes = {
-                activeQuizes: {$set: action.quizes}
+                activeQuizes: {$set: action.filteredQuizes}
             };
             return update(state, changes);
         }
