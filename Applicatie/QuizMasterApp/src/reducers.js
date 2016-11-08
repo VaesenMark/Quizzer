@@ -4,6 +4,7 @@ import quizMasterAPI from './quizMasterAPI'
 // import initialItemStatuses from './itemStatuses';
 import update from 'immutability-helper';
 import {websockett} from './websocket'
+
 const minerrStatuscode = 400;
 
 const MainState = {
@@ -343,7 +344,7 @@ export function getNextQuestion(quizID,roundID){
     }
 }
 
-export function approveTeam(quizID,teamID){
+export function approveTeam(quizID,teamID, boolApproved){
     return (dispatch) => {
         quizMasterAPI.approveTeam(quizID, teamID, (err, response) => {
             if (err) {

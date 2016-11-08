@@ -31,10 +31,11 @@ class ChoseQuizUI extends React.Component {
               <div id="QuizList" >
               {theItems}
               </div>
-              <button id="addQuiz" onClick={this.addQuiz.bind(this)}>
+              <div id="addQuiz">
+              <button className="btn btn-primary" id="addQuizButton" onClick={this.addQuiz.bind(this)}>
                   addQuiz
-
               </button>
+                  </div>
           </div>
       );
    }

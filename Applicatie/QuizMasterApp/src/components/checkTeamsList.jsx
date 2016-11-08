@@ -32,16 +32,16 @@ class CheckTeamsListUI extends React.Component {
         }
 
         return (<div>
-
-
-                <h1>quizID: {this.props.quiz._id}  Wachtwoord:  {this.props.quiz.password}</h1>
-                {this.props.message}<br/>
-                {startQuiz}
-                {theItems}
-            </div>
-        );
+                    <div id="CheckTeamHead">
+                        <h1>quizID: {this.props.quiz._id}  Wachtwoord:  {this.props.quiz.password}</h1>
+                    </div>
+                    {this.props.message}<br/>
+                    {startQuiz}
+                 {theItems}
+                </div>
+            );
+        }
     }
-}
 
 
 function mapDispatchToProps(dispatch) {

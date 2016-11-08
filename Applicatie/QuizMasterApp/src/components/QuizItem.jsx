@@ -19,14 +19,14 @@ class QuizItemUI extends React.Component {
       };
       var closeButton = '';
       if(this.props.item.status ==3){
-         closeButton = <button id="selectButton" onClick={this.closeTheQuiz.bind(this)}>close </button>
+         closeButton = <button id="closeButton"  className="btn btn-primary" onClick={this.closeTheQuiz.bind(this)}>close </button>
       }
 
       return  (
 
           <div className="QuizItem">
              {this.props.message}
-             <button id="selectButton" onClick={clickHandler}>Select </button>
+             <button id="selectButton"  className="btn btn-primary" onClick={clickHandler}>Select </button>
                   {this.props.password}
              {closeButton}
           </div>
